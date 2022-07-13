@@ -40,8 +40,6 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
 
         String query = getQuery(queryInfo, args, qr);
 
-        System.out.println(query);
-
         List<E> results = getQueryResults(query);
 
         if (queryInfo.getQueryType() == QueryType.RETRIEVE_SINGLE && results.size() > 1)
@@ -94,9 +92,9 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
                     params.put(namedParameters.get(i).replace(cp.getOpName(), ""), args[i]);
                 }
             } else { // Query style is: QueryStyle.QUERY_OBJECT
+                namedParameters.forEach(p -> System.out.println(p));
                 Map<String, Object> paramMap = ReflectionUtils.toParameterMap(args[0]);
                 for (String key : paramMap.keySet()) {
-                    System.out.println(key + ": " + paramMap.get(key));
                     ComparisonType cp = ComparisonType.getComparisonType(key);
                     params.put(key.replace(cp.getOpName(), ""), paramMap.get(key));
                 }

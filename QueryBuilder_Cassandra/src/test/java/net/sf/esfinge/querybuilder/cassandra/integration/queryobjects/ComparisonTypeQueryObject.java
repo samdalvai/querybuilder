@@ -5,7 +5,7 @@ import net.sf.esfinge.querybuilder.annotation.Contains;
 public class ComparisonTypeQueryObject {
 	
 	private Integer ageGreater;
-	//private Integer ageLesser;
+	private Integer ageLesser;
 	
 	//@Contains
 	private String name;
@@ -18,12 +18,12 @@ public class ComparisonTypeQueryObject {
 	public void setAgeGreater(Integer ageGreater) {
 		this.ageGreater = ageGreater;
 	}
-	/*public Integer getAgeLesser() {
+	public Integer getAgeLesser() {
 		return ageLesser;
 	}
 	public void setAgeLesser(Integer ageLesser) {
 		this.ageLesser = ageLesser;
-	}*/
+	}
 	public String getName() {
 		return name;
 	}

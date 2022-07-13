@@ -30,6 +30,7 @@ public class QueryBuilderJPAQueryObjectTest extends CassandraBasicDatabaseTest {
 	public void queryObjectWithComparisonTypeTest(){
 		ComparisonTypeQueryObject qo = new ComparisonTypeQueryObject();
 		qo.setAgeGreater(18);
+		qo.setAgeLesser(48);
 		qo.setName("Antonio");
 		qo.setLastName("Marques");
 		List<Person> list = testQuery.getPerson(qo);

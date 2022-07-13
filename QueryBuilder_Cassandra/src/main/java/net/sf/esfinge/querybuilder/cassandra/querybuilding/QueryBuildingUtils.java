@@ -1,6 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.QueryParametersMismatchException;
+import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
 import java.util.Arrays;
 
@@ -41,5 +42,11 @@ public class QueryBuildingUtils {
             return "'" + value + "'";
 
         return "" + value + "";
+    }
+
+    public static String getParameterNameFromParameterWithComparison(String namedParameter){
+        ComparisonType cp = ComparisonType.getComparisonType(namedParameter);
+        System.out.println(cp.getOpName());
+        return namedParameter.replace(cp.getOpName(), "");
     }
 }
