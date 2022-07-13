@@ -1,5 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding;
 
+import net.sf.esfinge.querybuilder.cassandra.exceptions.ComparisonTypeNotFoundException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.QueryParametersMismatchException;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
@@ -44,9 +45,46 @@ public class QueryBuildingUtils {
         return "" + value + "";
     }
 
-    public static String getParameterNameFromParameterWithComparison(String namedParameter){
-        ComparisonType cp = ComparisonType.getComparisonType(namedParameter);
+    public static String extractParameterNameFromParameterWithComparison(String namedParameter) {
+        ComparisonType cp = getComparisonType(namedParameter);
         System.out.println(cp.getOpName());
         return namedParameter.replace(cp.getOpName(), "");
     }
+
+    public static ComparisonType getComparisonType(String property) {
+        ComparisonType[] comparisons = ComparisonType.values();
+        ComparisonType out = null;
+
+        // Get the longest comparison match among the comparisons
+        // Starting from the right
+        int longest = 0;
+        for (ComparisonType c : comparisons) {
+            int i = property.length() - 1;
+            int j = c.getOpName().length() - 1;
+            int currentMatch = 0;
+
+            while (i >= 0 && j >= 0) {
+                if (property.charAt(i) == c.getOpName().charAt(j)) {
+                    currentMatch++;
+                    i--;
+                    j--;
+                    if (currentMatch > longest) {
+                        if (j == 0){
+                            longest = currentMatch;
+                            out = c;
+                        }
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (out == null)
+            throw new ComparisonTypeNotFoundException("Comparison type not found for: " + property);
+
+        return out;
+    }
+
+
 }

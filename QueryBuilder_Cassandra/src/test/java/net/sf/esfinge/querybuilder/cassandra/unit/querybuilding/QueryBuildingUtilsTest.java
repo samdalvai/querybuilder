@@ -1,5 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding;
 
+import net.sf.esfinge.querybuilder.cassandra.exceptions.ComparisonTypeNotFoundException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.QueryParametersMismatchException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
@@ -94,50 +95,20 @@ public class QueryBuildingUtilsTest {
 
     @Test
     public void getParameterNameFromParameterWithComparisonTest(){
-        List<String> name = new ArrayList<>();
-        name.add("last");
-        name.add("Name");
-        name.add("Lesser");
-        name.add("Or");
-        name.add("Equals");
-        System.out.println("The comparison type:");
-        System.out.println(getComparisonType("lastNameLesserOrEquals").getOpName());
-        System.out.println("What??");
-
-
-        assertEquals("name", QueryBuildingUtils.getParameterNameFromParameterWithComparison("nameEquals"));
-        assertEquals("age", QueryBuildingUtils.getParameterNameFromParameterWithComparison("ageLesser"));
-        assertEquals("lastName", QueryBuildingUtils.getParameterNameFromParameterWithComparison("lastNameLesserOrEquals"));
+        assertEquals("name", QueryBuildingUtils.extractParameterNameFromParameterWithComparison("nameEquals"));
+        assertEquals("age", QueryBuildingUtils.extractParameterNameFromParameterWithComparison("ageLesser"));
+        assertEquals("lastName", QueryBuildingUtils.extractParameterNameFromParameterWithComparison("lastNameLesserOrEquals"));
     }
 
-    // TODO: IMPLEMENT THIS METHOD
-    public static ComparisonType getComparisonType(List<String> comparisonName, int index) {
-        for(ComparisonType cp : ComparisonType.values()){
-            String[] values = cp.name().split("_");
-            boolean flag = true;
-            for(int i = 0; i<values.length; i++){
-                if(comparisonName.size() <= index+i || !values[i].toLowerCase().equals(comparisonName.get(index+i))){
-                    flag = false;
-                }
-            }
-            if(flag)
-                return cp;
-        }
-        return ComparisonType.EQUALS;
+    @Test
+    public void getComparisonTypeTest() {
+        assertEquals(ComparisonType.EQUALS, QueryBuildingUtils.getComparisonType("lastNameEquals"));
+        assertEquals(ComparisonType.GREATER, QueryBuildingUtils.getComparisonType("lastNameGreater"));
+        assertEquals(ComparisonType.LESSER_OR_EQUALS, QueryBuildingUtils.getComparisonType("lastNameLesserOrEquals"));
     }
 
-    public static ComparisonType getComparisonType(String property) {
-        ComparisonType[] var1 = ComparisonType.values();
-        int var2 = var1.length;
-
-        for(int var3 = 0; var3 < var2; ++var3) {
-            ComparisonType comparisonType = var1[var3];
-            String comparison = comparisonType.name().replace("_", "");
-            if (property.toUpperCase().contains(comparison)) {
-                return comparisonType;
-            }
-        }
-
-        return ComparisonType.EQUALS;
+    @Test(expected = ComparisonTypeNotFoundException.class)
+    public void getComparisonTypeWithComparisonTypeNotFoundTest() {
+        QueryBuildingUtils.getComparisonType("lastNameEqualseee");
     }
 }
