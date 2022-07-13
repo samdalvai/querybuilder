@@ -2,6 +2,7 @@ package net.sf.esfinge.querybuilder.cassandra;
 
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ConditionStatement;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.OrderByClause;
+import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
 import net.sf.esfinge.querybuilder.methodparser.conditions.NullOption;
 
@@ -40,6 +41,10 @@ public class CassandraQueryRepresentation implements QueryRepresentation {
     @Override
     public Object getQuery(Map<String, Object> parameters) {
         updateConditions(parameters);
+
+        for (String key : parameters.keySet()) {
+            System.out.println(key + ": " + parameters.get(key));
+        }
 
         StringBuilder builder = new StringBuilder();
         builder.append("SELECT * FROM <#keyspace-name#>.").append(entity);
