@@ -21,6 +21,7 @@ public class QueryBuilderJPAQueryObjectTest extends CassandraBasicDatabaseTest {
 		qo.setLastName("Silva");
 		qo.setAge(20);
 		Person p = testQuery.getPerson(qo);
+
 		assertEquals(new Integer(1),p.getId());		
 	}
 	
