@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class CassandraQueryBuilderNullValuesTest extends CassandraBasicDatabaseTest {
 	
-	private CassandraTestNullValueQueries testQuery = QueryBuilder.create(CassandraTestNullValueQueries.class);;
+	private CassandraTestNullValueQueries testQuery = QueryBuilder.create(CassandraTestNullValueQueries.class);
 
 	@Test(expected = UnsupportedCassandraOperationException.class)
 	public void compareToNullQueryTest(){
