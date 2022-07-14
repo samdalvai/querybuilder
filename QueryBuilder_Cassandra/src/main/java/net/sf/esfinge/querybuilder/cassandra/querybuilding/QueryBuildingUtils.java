@@ -5,6 +5,7 @@ import net.sf.esfinge.querybuilder.cassandra.exceptions.QueryParametersMismatchE
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class QueryBuildingUtils {
 
@@ -81,5 +82,9 @@ public class QueryBuildingUtils {
         return out;
     }
 
+    public void printMap(Map<String,Object> map){
+        for (String key : map.keySet())
+            System.out.println(key + ": " + map.get(key));
+    }
 
 }

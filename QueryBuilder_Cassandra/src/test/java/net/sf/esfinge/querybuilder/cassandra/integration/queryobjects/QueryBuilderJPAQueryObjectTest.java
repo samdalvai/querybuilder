@@ -1,8 +1,8 @@
 package net.sf.esfinge.querybuilder.cassandra.integration.queryobjects;
 
 import net.sf.esfinge.querybuilder.QueryBuilder;
+import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedCassandraOperationException;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseTest;
-import net.sf.esfinge.querybuilder.cassandra.integration.domainterms.CassandraTestDomainQuery;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
 import org.junit.Test;
 
@@ -29,10 +29,8 @@ public class QueryBuilderJPAQueryObjectTest extends CassandraBasicDatabaseTest {
 	@Test
 	public void queryObjectWithComparisonTypeTest(){
 		ComparisonTypeQueryObject qo = new ComparisonTypeQueryObject();
-		qo.setAgeGreater(18);
-		qo.setAgeLesser(48);
-		qo.setName("Antonio");
-		qo.setLastName("Marques");
+		qo.setAgeGreater(25);
+		qo.setAgeLesser(40);
 		List<Person> list = testQuery.getPerson(qo);
 		Person p = list.get(0);
 
@@ -40,37 +38,29 @@ public class QueryBuilderJPAQueryObjectTest extends CassandraBasicDatabaseTest {
 		assertEquals("Antonio",p.getName());
 	}
 
-	/*@Test
-	public void queryObjectWithDomainTerm(){
-		ComparisonTypeQueryObject qo = new ComparisonTypeQueryObject();
-		qo.setAgeGreater(1);
-		qo.setAgeLesser(100);
-		qo.setName("a");
-		qo.setLastName("e");
-		List<Person> list = testQuery.getPersonSilvaFamily(qo);
-		Person p = list.get(0);
-		assertEquals(1,list.size());
-		assertEquals(new Integer(2),p.getId());
+	@Test(expected = UnsupportedCassandraOperationException.class)
+	public void queryObjectWithNullComparisonTest(){
+		CompareNullQueryObject qo = new CompareNullQueryObject();
+		qo.setLastName("Test");
+		List<Person> list = testQuery.getPerson(qo);
 	}
 
 	@Test
-	public void queryObjectWithNullComparison(){
-		CompareNullQueryObject qo = new CompareNullQueryObject();
-		qo.setName("M");
+	public void queryObjectIgnoreNullTest(){
+		IgnoreNullQueryObject qo = new IgnoreNullQueryObject();
+		qo.setLastName("Silva");
 		List<Person> list = testQuery.getPerson(qo);
-		assertEquals(1,list.size());
+		assertEquals(2,list.size());
 		Person p = list.get(0);
-		assertEquals(new Integer(3),p.getId());
+		assertEquals(new Integer(1),p.getId());
 	}
 
 	@Test
-	public void queryObjectIgnoreNull(){
-		CompareNullQueryObject qo = new CompareNullQueryObject();
-		qo.setLastName("B");
+	public void queryObjectIgnoreNullWithNullValueTest(){
+		IgnoreNullQueryObject qo = new IgnoreNullQueryObject();
+		qo.setLastName(null);
 		List<Person> list = testQuery.getPerson(qo);
-		assertEquals(1,list.size());
-		Person p = list.get(0);
-		assertEquals(new Integer(5),p.getId());
+		assertEquals(5,list.size());
 	}
 
 	@Test
@@ -78,17 +68,15 @@ public class QueryBuilderJPAQueryObjectTest extends CassandraBasicDatabaseTest {
 		ComparisonTypeQueryObject qo = new ComparisonTypeQueryObject();
 		qo.setAgeGreater(1);
 		qo.setAgeLesser(100);
-		qo.setName("a");
-		qo.setLastName("e");
 
 		List<Person> list = testQuery.getPersonOrderByNameAsc(qo);
-		assertEquals(new Integer(2),list.get(0).getId());
-		assertEquals(new Integer(5),list.get(1).getId());
+		assertEquals("Antonio",list.get(0).getName());
+		assertEquals("Silvia",list.get(list.size() - 1).getName());
 
 		list = testQuery.getPersonOrderByNameDesc(qo);
-		assertEquals(new Integer(5),list.get(0).getId());
-		assertEquals(new Integer(2),list.get(1).getId());
-	}*/
+		assertEquals("Silvia",list.get(0).getName());
+		assertEquals("Antonio",list.get(list.size() - 1).getName());
+	}
 	
 
 }

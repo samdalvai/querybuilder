@@ -1,10 +1,10 @@
 package net.sf.esfinge.querybuilder.cassandra.integration.queryobjects;
 
-import net.sf.esfinge.querybuilder.annotation.CompareToNull;
+import net.sf.esfinge.querybuilder.annotation.IgnoreWhenNull;
 
-public class CompareNullQueryObject {
+public class IgnoreNullQueryObject {
 	
-	@CompareToNull
+	@IgnoreWhenNull
 	private String lastName;
 
 	public String getLastName() {

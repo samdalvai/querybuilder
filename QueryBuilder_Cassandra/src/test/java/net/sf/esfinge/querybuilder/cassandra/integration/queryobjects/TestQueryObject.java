@@ -12,8 +12,9 @@ public interface TestQueryObject {
 	
 	public Person getPerson(@QueryObject SimpleQueryObject qo);
 	public List<Person> getPerson(@QueryObject ComparisonTypeQueryObject qo);
-	public List<Person> getPersonSilvaFamily(@QueryObject ComparisonTypeQueryObject qo);
+
 	public List<Person> getPerson(@QueryObject CompareNullQueryObject qo);
+	public List<Person> getPerson(@QueryObject IgnoreNullQueryObject qo);
 	public List<Person> getPersonOrderByNameAsc(@QueryObject ComparisonTypeQueryObject qo);
 	public List<Person> getPersonOrderByNameDesc(@QueryObject ComparisonTypeQueryObject qo);
 
