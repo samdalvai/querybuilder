@@ -17,9 +17,9 @@ public class QueryBuildingUtils {
         String newQuery = query;
 
         // Skip substituting values equal to null
-        for (int i = 0; i < args.length; i++) {
-            if (args[i] != null)
-                newQuery = newQuery.substring(0, newQuery.indexOf('?')) + getValueRepresentationByType(args[i]) + newQuery.substring(newQuery.indexOf('?') + 1);
+        for (Object arg : args) {
+            if (arg != null)
+                newQuery = newQuery.substring(0, newQuery.indexOf('?')) + getValueRepresentationByType(arg) + newQuery.substring(newQuery.indexOf('?') + 1);
         }
 
         return newQuery;
@@ -47,7 +47,8 @@ public class QueryBuildingUtils {
 
     public static String extractParameterNameFromParameterWithComparison(String namedParameter) {
         ComparisonType cp = getComparisonType(namedParameter);
-        return namedParameter.replace(cp.getOpName(), "");
+
+        return cp == null ? namedParameter : namedParameter.replace(cp.getOpName(), "");
     }
 
     public static ComparisonType getComparisonType(String property) {
@@ -76,9 +77,6 @@ public class QueryBuildingUtils {
                 }
             }
         }
-
-        if (out == null)
-            throw new ComparisonTypeNotFoundException("Comparison type not found for: " + property);
 
         return out;
     }

@@ -104,8 +104,10 @@ public class QueryBuildingUtilsTest {
         assertEquals(ComparisonType.LESSER_OR_EQUALS, QueryBuildingUtils.getComparisonType("lastNameLesserOrEquals"));
     }
 
-    @Test(expected = ComparisonTypeNotFoundException.class)
+    @Test
     public void getComparisonTypeWithComparisonTypeNotFoundTest() {
-        QueryBuildingUtils.getComparisonType("lastNameEqualseee");
+        assertEquals(null, QueryBuildingUtils.getComparisonType("lastNameEqualsWhatever"));
+        assertEquals(null, QueryBuildingUtils.getComparisonType("lastName"));
+        assertEquals(null, QueryBuildingUtils.getComparisonType("lastNameEqualseee"));
     }
 }
