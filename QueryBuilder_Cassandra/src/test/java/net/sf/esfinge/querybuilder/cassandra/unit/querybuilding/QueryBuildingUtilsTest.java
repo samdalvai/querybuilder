@@ -6,9 +6,6 @@ import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueryBuildingUtilsTest {

@@ -47,7 +47,6 @@ public class QueryBuildingUtils {
 
     public static String extractParameterNameFromParameterWithComparison(String namedParameter) {
         ComparisonType cp = getComparisonType(namedParameter);
-        System.out.println(cp.getOpName());
         return namedParameter.replace(cp.getOpName(), "");
     }
 
@@ -59,17 +58,15 @@ public class QueryBuildingUtils {
         // Starting from the right
         int longest = 0;
         for (ComparisonType c : comparisons) {
-            int i = property.length() - 1;
-            int j = c.getOpName().length() - 1;
+            int i = 0;
             int currentMatch = 0;
 
-            while (i >= 0 && j >= 0) {
-                if (property.charAt(i) == c.getOpName().charAt(j)) {
+            while (i < property.length() - 1 && i < c.getOpName().length() - 1) {
+                if (property.charAt(property.length() - 1 - i) == c.getOpName().charAt(c.getOpName().length() - 1 - i)) {
                     currentMatch++;
-                    i--;
-                    j--;
+                    i++;
                     if (currentMatch > longest) {
-                        if (j == 0){
+                        if (c.getOpName().length() - 1 == i){
                             longest = currentMatch;
                             out = c;
                         }
