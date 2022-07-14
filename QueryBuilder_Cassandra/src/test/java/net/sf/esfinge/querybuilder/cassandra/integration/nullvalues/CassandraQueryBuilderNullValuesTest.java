@@ -29,7 +29,7 @@ public class CassandraQueryBuilderNullValuesTest extends CassandraBasicDatabaseT
 	}
 	
 	@Test
-	public void ignoreWhenNullWithTwoParams(){
+	public void ignoreWhenNullWithTwoParamsOneNullTest(){
 		List<Person> list = testQuery.getPersonByNameAndLastName("Marcos", null);
 		assertEquals("The list should have 1 person", 1, list.size());
 		assertEquals("The person should be Marcos", "Marcos", list.get(0).getName());
@@ -38,10 +38,20 @@ public class CassandraQueryBuilderNullValuesTest extends CassandraBasicDatabaseT
 		assertEquals("The list should have 2 persons", 2, list.size());
 		assertEquals("The first person should be Pedro", "Pedro", list.get(0).getName());
 		assertEquals("The first person should be Marcos", "Marcos", list.get(1).getName());
+	}
 
-		list = testQuery.getPersonByNameAndLastName("Marcos", "Silva");
+	@Test
+	public void ignoreWhenNullWithTwoParamsNotNullTest(){
+		List<Person> list = testQuery.getPersonByNameAndLastName("Marcos", "Silva");
 		assertEquals("The list should have 1 person", 1, list.size());
 		assertEquals("The first person should be Marcos", "Marcos", list.get(0).getName());
 	}
+
+	@Test
+	public void ignoreWhenNullWithTwoParamsBothNullTest(){
+		List<Person> list = testQuery.getPersonByNameAndLastName(null, null);
+		assertEquals("The list should have 5 persons", 5, list.size());
+	}
+
 
 }
