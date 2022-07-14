@@ -239,7 +239,7 @@ public class CassandraDynamicQueriesTest {
         params.put("name", null);
 
         String query4 = qr.getQuery(params).toString();
-        assertEquals(query4, "SELECT * FROM <#keyspace-name#>.Person WHERE age >= 18 AND lastname = 'McLoud' ALLOW FILTERING");
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age >= 18 AND lastname = 'McLoud' ALLOW FILTERING", query4);
     }
 
     @Test
