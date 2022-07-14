@@ -88,15 +88,12 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
             List<String> namedParameters = queryInfo.getNamedParemeters();
             if (queryInfo.getQueryStyle() == QueryStyle.METHOD_SIGNATURE) {
                 for (int i = 0; i < args.length; i++) {
-                    String paramName = QueryBuildingUtils.extractParameterNameFromParameterWithComparison(namedParameters.get(i));
-                    params.put(paramName, args[i]);
+                    params.put(namedParameters.get(i), args[i]);
                 }
             } else { // Query style is: QueryStyle.QUERY_OBJECT
-                namedParameters.forEach(p -> System.out.println(p));
                 Map<String, Object> paramMap = ReflectionUtils.toParameterMap(args[0]);
                 for (String key : paramMap.keySet()) {
-                    String paramName = QueryBuildingUtils.extractParameterNameFromParameterWithComparison(key);
-                    params.put(paramName, paramMap.get(key));
+                    params.put(key, paramMap.get(key));
                 }
             }
 

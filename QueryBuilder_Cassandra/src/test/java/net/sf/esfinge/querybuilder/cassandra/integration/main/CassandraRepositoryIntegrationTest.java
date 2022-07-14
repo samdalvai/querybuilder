@@ -1,4 +1,4 @@
-package net.sf.esfinge.querybuilder.cassandra.integration;
+package net.sf.esfinge.querybuilder.cassandra.integration.main;
 
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.MappingManager;

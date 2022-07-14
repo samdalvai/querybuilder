@@ -1,4 +1,4 @@
-package net.sf.esfinge.querybuilder.cassandra.integration;
+package net.sf.esfinge.querybuilder.cassandra.integration.main;
 
 import net.sf.esfinge.querybuilder.QueryBuilder;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseTest;

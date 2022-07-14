@@ -42,17 +42,22 @@ public class CassandraQueryRepresentation implements QueryRepresentation {
     public Object getQuery(Map<String, Object> parameters) {
         updateConditions(parameters);
 
-        for (String key : parameters.keySet()) {
-            System.out.println(key + ": " + parameters.get(key));
-        }
-
         StringBuilder builder = new StringBuilder();
         builder.append("SELECT * FROM <#keyspace-name#>.").append(entity);
 
         for (ConditionStatement statement : conditions) {
-            if (parameters.get(statement.getPropertyName()) != null || statement.getNullOption() != NullOption.IGNORE_WHEN_NULL) {
+            String propertyName = statement.getPropertyName();
 
-                statement.setValue(parameters.get(statement.getPropertyName()));
+            // Check if the property name in the parameter map is named after the param name + comparison convention
+            // if so, update the name of the property for the search this is used for the Query objects with comparison
+            if (parameters.get(statement.getPropertyName()) == null){
+                if (parameters.get(propertyName + statement.getComparisonType().getOpName()) != null)
+                    propertyName += statement.getComparisonType().getOpName();
+            }
+
+            if (parameters.get(propertyName) != null || statement.getNullOption() != NullOption.IGNORE_WHEN_NULL) {
+
+                statement.setValue(parameters.get(propertyName));
 
                 if (!(statement.getValue() == null && statement.getNullOption() == NullOption.IGNORE_WHEN_NULL)) {
                     if (!builder.toString().contains("WHERE"))
