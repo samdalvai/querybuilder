@@ -1,6 +1,5 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding;
 
-import net.sf.esfinge.querybuilder.cassandra.exceptions.ComparisonTypeNotFoundException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.QueryParametersMismatchException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
@@ -91,7 +90,7 @@ public class QueryBuildingUtilsTest {
     }
 
     @Test
-    public void getParameterNameFromParameterWithComparisonTest(){
+    public void getParameterNameFromParameterWithComparisonTest() {
         assertEquals("name", QueryBuildingUtils.extractParameterNameFromParameterWithComparison("nameEquals"));
         assertEquals("age", QueryBuildingUtils.extractParameterNameFromParameterWithComparison("ageLesser"));
         assertEquals("lastName", QueryBuildingUtils.extractParameterNameFromParameterWithComparison("lastNameLesserOrEquals"));

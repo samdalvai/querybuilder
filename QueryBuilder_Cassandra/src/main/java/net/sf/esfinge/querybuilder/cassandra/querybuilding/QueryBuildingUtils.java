@@ -1,6 +1,5 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding;
 
-import net.sf.esfinge.querybuilder.cassandra.exceptions.ComparisonTypeNotFoundException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.QueryParametersMismatchException;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
@@ -68,7 +67,7 @@ public class QueryBuildingUtils {
                     currentMatch++;
                     i++;
                     if (currentMatch > longest) {
-                        if (c.getOpName().length() - 1 == i){
+                        if (c.getOpName().length() - 1 == i) {
                             longest = currentMatch;
                             out = c;
                         }
@@ -82,7 +81,7 @@ public class QueryBuildingUtils {
         return out;
     }
 
-    public void printMap(Map<String,Object> map){
+    public void printMap(Map<String, Object> map) {
         for (String key : map.keySet())
             System.out.println(key + ": " + map.get(key));
     }

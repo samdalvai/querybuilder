@@ -7,15 +7,19 @@ import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
 
 import java.util.List;
 
-@DomainTerm(term="silva family", conditions=@Condition(property="lastName",value="Silva"))
+@DomainTerm(term = "silva family", conditions = @Condition(property = "lastName", value = "Silva"))
 public interface TestQueryObject {
-	
-	public Person getPerson(@QueryObject SimpleQueryObject qo);
-	public List<Person> getPerson(@QueryObject ComparisonTypeQueryObject qo);
 
-	public List<Person> getPerson(@QueryObject CompareNullQueryObject qo);
-	public List<Person> getPerson(@QueryObject IgnoreNullQueryObject qo);
-	public List<Person> getPersonOrderByNameAsc(@QueryObject ComparisonTypeQueryObject qo);
-	public List<Person> getPersonOrderByNameDesc(@QueryObject ComparisonTypeQueryObject qo);
+    Person getPerson(@QueryObject SimpleQueryObject qo);
+
+    List<Person> getPerson(@QueryObject ComparisonTypeQueryObject qo);
+
+    List<Person> getPerson(@QueryObject CompareNullQueryObject qo);
+
+    List<Person> getPerson(@QueryObject IgnoreNullQueryObject qo);
+
+    List<Person> getPersonOrderByNameAsc(@QueryObject ComparisonTypeQueryObject qo);
+
+    List<Person> getPersonOrderByNameDesc(@QueryObject ComparisonTypeQueryObject qo);
 
 }
