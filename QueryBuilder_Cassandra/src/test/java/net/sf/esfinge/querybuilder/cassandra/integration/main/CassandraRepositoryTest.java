@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class CassandraRepositoryIntegrationTest extends CassandraBasicDatabaseTest {
+public class CassandraRepositoryTest extends CassandraBasicDatabaseTest {
 
     CassandraTestQuery testQuery = QueryBuilder.create(CassandraTestQuery.class);
 

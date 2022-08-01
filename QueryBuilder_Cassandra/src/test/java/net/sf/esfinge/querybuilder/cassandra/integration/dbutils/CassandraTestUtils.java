@@ -57,12 +57,13 @@ public class CassandraTestUtils {
     }
 
     public static void dropDB() {
-        Session session = getSession();
+        // TODO: DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
+       /* Session session = getSession();
 
         String query = "DROP KEYSPACE IF EXISTS test";
 
         session.execute(query);
-        session.close();
+        session.close();*/
     }
 
     public static Session getSession() {
