@@ -2,12 +2,11 @@ package net.sf.esfinge.querybuilder.cassandra.testresources;
 
 import net.sf.esfinge.querybuilder.Repository;
 import net.sf.esfinge.querybuilder.annotation.Greater;
-import net.sf.esfinge.querybuilder.annotation.Lesser;
 import net.sf.esfinge.querybuilder.annotation.Starts;
 
 import java.util.List;
 
-public interface CassandraTestQuery extends Repository<Person> {
+public interface CassandraSimpleTestQuery extends Repository<Person> {
 
     /**
      * SIMPLE QUERIES
@@ -27,20 +26,6 @@ public interface CassandraTestQuery extends Repository<Person> {
     List<Person> getPersonByAgeLesser(Integer age);
 
     List<Person> getPersonByIdAndNameAndLastNameAndAge(Integer id, String name, String lastname, Integer age);
-
-    /**
-     * QUERIES WITH ORDERING
-     **/
-
-    List<Person> getPersonOrderByName();
-
-    List<Person> getPersonByAgeOrderByNameDesc(@Greater Integer age);
-
-    List<Person> getPersonOrderByLastNameAndName();
-
-    List<Person> getPersonOrderByLastNameDescAndNameAsc();
-
-    List<Person> getPersonByAgeAndLastNameOrderByAgeAndLastNameDescAndName(@Lesser Integer age, String lastname);
 
     /**
      * QUERIES WITH WRONG NAMING CONVENTION

@@ -9,7 +9,8 @@ import net.sf.esfinge.querybuilder.cassandra.cassandrautils.MappingManagerProvid
 import net.sf.esfinge.querybuilder.cassandra.exceptions.WrongTypeOfExpectedResultException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.OrderByClause;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.OrderingUtils;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.OrderingProcessor;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 import net.sf.esfinge.querybuilder.executor.QueryExecutor;
 import net.sf.esfinge.querybuilder.methodparser.*;
 import net.sf.esfinge.querybuilder.utils.ReflectionUtils;
@@ -42,23 +43,21 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
 
         List<E> results = getQueryResults(query);
 
-        if (queryInfo.getQueryType() == QueryType.RETRIEVE_SINGLE && results.size() > 1)
-            throw new WrongTypeOfExpectedResultException("The query " + query + " resulted in " + results.size() + "results");
-
-        List<OrderByClause> orderByClause = ((CassandraQueryRepresentation) qr).getOrderByClause();
-
-        if (!orderByClause.isEmpty()) {
-            results = OrderingUtils.sortListByOrderingClause(results, orderByClause, clazz);
-        }
-
         if (queryInfo.getQueryType() == QueryType.RETRIEVE_SINGLE) {
+            if (results.size() > 1)
+                throw new WrongTypeOfExpectedResultException("The query " + query + " resulted in " + results.size() + "results instead of one or zero results");
+
             if (results.size() > 0)
                 return results.get(0);
             else
                 return null;
         }
 
-        return results;
+        List<OrderByClause> orderByClauses = ((CassandraQueryRepresentation) qr).getOrderByClause();
+
+        ResultsProcessor processor = new OrderingProcessor(orderByClauses);
+
+        return processor.postProcess(results);
     }
 
     private List<E> getQueryResults(String query) {
