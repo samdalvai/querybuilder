@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class CassandraRepositoryTest extends CassandraBasicDatabaseTest {
 
@@ -44,7 +45,7 @@ public class CassandraRepositoryTest extends CassandraBasicDatabaseTest {
 
         Person actual = mapper.get(2);
 
-        assertEquals("Should not retrieve any person", null, actual);
+        assertNull("Should not retrieve any person", actual);
     }
 
     @Test

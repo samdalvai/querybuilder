@@ -18,7 +18,7 @@ public class CassandraOrderByQueryBuilderTest extends CassandraBasicDatabaseTest
     public void orderByQueryWithOneFieldTest() {
         List<Person> list = testQuery.getPersonOrderByName();
 
-        String[] actualNames = list.stream().map(p -> p.getName()).toArray(String[]::new);
+        String[] actualNames = list.stream().map(Person::getName).toArray(String[]::new);
         String[] expectedNames = {"Antonio", "Marcos", "Maria", "Pedro", "Silvia"};
 
         assertArrayEquals(expectedNames, actualNames);
@@ -28,7 +28,7 @@ public class CassandraOrderByQueryBuilderTest extends CassandraBasicDatabaseTest
     public void orderByQueryWithOneFieldAndParameterDescendentTest() {
         List<Person> list = testQuery.getPersonByAgeOrderByNameDesc(21);
 
-        String[] actualNames = list.stream().map(p -> p.getName()).toArray(String[]::new);
+        String[] actualNames = list.stream().map(Person::getName).toArray(String[]::new);
         String[] expectedNames = {"Maria", "Marcos", "Antonio"};
 
         assertArrayEquals(expectedNames, actualNames);
@@ -38,7 +38,7 @@ public class CassandraOrderByQueryBuilderTest extends CassandraBasicDatabaseTest
     public void orderByQueryWithTwoFieldsTest() {
         List<Person> list = testQuery.getPersonOrderByLastNameAndName();
 
-        String[] actualNames = list.stream().map(p -> p.getName()).toArray(String[]::new);
+        String[] actualNames = list.stream().map(Person::getName).toArray(String[]::new);
         String[] expectedNames = {"Silvia", "Maria", "Antonio", "Marcos", "Pedro"};
 
         assertArrayEquals(expectedNames, actualNames);
@@ -48,7 +48,7 @@ public class CassandraOrderByQueryBuilderTest extends CassandraBasicDatabaseTest
     public void orderByQueryWithTwoFieldsWithOrderingTest() {
         List<Person> list = testQuery.getPersonOrderByLastNameDescAndNameAsc();
 
-        String[] actualNames = list.stream().map(p -> p.getName()).toArray(String[]::new);
+        String[] actualNames = list.stream().map(Person::getName).toArray(String[]::new);
         String[] expectedNames = {"Marcos", "Pedro", "Antonio", "Maria", "Silvia"};
 
         assertArrayEquals(expectedNames, actualNames);
@@ -58,7 +58,7 @@ public class CassandraOrderByQueryBuilderTest extends CassandraBasicDatabaseTest
     public void complexOrderByQueryTest() {
         List<Person> list = testQuery.getPersonByAgeAndLastNameOrderByAgeAndLastNameDescAndName(51, "Silva");
 
-        String[] actualNames = list.stream().map(p -> p.getName()).toArray(String[]::new);
+        String[] actualNames = list.stream().map(Person::getName).toArray(String[]::new);
         String[] expectedNames = {"Pedro", "Marcos"};
 
         assertArrayEquals(expectedNames, actualNames);

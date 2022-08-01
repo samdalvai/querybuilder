@@ -39,7 +39,7 @@ public class CassandraSimpleQueryBuilderTest extends CassandraBasicDatabaseTest 
 
     @Test(expected = WrongTypeOfExpectedResultException.class)
     public void queryWithWrongTypeOfExpectedResultTest() {
-        Person p = testQuery.getPersonByIdGreater(0);
+        testQuery.getPersonByIdGreater(0);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class CassandraSimpleQueryBuilderTest extends CassandraBasicDatabaseTest 
 
     @Test(expected = InvalidConnectorException.class)
     public void queryWithTwoOrParametersTest() {
-        List<Person> list = testQuery.getPersonByNameOrLastName("Pedro", "Silva");
+        testQuery.getPersonByNameOrLastName("Pedro", "Silva");
     }
 
     @Test
@@ -81,12 +81,12 @@ public class CassandraSimpleQueryBuilderTest extends CassandraBasicDatabaseTest 
 
     @Test(expected = UnsupportedCassandraOperationException.class)
     public void queryWithNotEquals() {
-        List<Person> list = testQuery.getPersonByLastNameNotEquals("Whatever");
+        testQuery.getPersonByLastNameNotEquals("Whatever");
     }
 
     @Test(expected = UnsupportedCassandraOperationException.class)
     public void queryWithStringStarted() {
-        List<Person> list = testQuery.getPersonByName("M");
+        testQuery.getPersonByName("M");
     }
 
     @Test
@@ -98,12 +98,12 @@ public class CassandraSimpleQueryBuilderTest extends CassandraBasicDatabaseTest 
 
     @Test(expected = WrongParamNumberException.class)
     public void queryWithLessParametersThanInNamingTest() {
-        List<Person> list = testQuery.getPersonByIdAndNameAndLastName(1, "Homer");
+        testQuery.getPersonByIdAndNameAndLastName(1, "Homer");
     }
 
     @Test(expected = WrongParamNumberException.class)
     public void queryWithMoreParametersThanInNamingTest() {
-        List<Person> list = testQuery.getPersonByIdAndName(1, "Homer", 48);
+        testQuery.getPersonByIdAndName(1, "Homer", 48);
     }
 
 
