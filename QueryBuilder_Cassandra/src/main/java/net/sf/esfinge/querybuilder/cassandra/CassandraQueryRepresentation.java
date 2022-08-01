@@ -2,9 +2,11 @@ package net.sf.esfinge.querybuilder.cassandra;
 
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ConditionStatement;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.OrderByClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
 import net.sf.esfinge.querybuilder.methodparser.conditions.NullOption;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,14 +18,16 @@ public class CassandraQueryRepresentation implements QueryRepresentation {
     private final Map<String, Object> fixParametersMap;
     private final List<ConditionStatement> conditions;
     private final List<OrderByClause> orderByClauses;
-    String entity;
+    private final List<SpecialComparisonClause> specialComparisonClauses;
+    private final String entity;
 
-    public CassandraQueryRepresentation(String query, boolean dynamic, Map<String, Object> fixParametersMap, List<ConditionStatement> conditions, List<OrderByClause> orderByClauses, String entity) {
+    public CassandraQueryRepresentation(String query, boolean dynamic, Map<String, Object> fixParametersMap, List<ConditionStatement> conditions, List<OrderByClause> orderByClauses, List<SpecialComparisonClause> specialComparisonClauses, String entity) {
         this.query = query;
         this.dynamic = dynamic;
         this.fixParametersMap = fixParametersMap;
         this.conditions = conditions;
         this.orderByClauses = orderByClauses;
+        this.specialComparisonClauses = specialComparisonClauses;
         this.entity = entity;
     }
 
@@ -108,5 +112,9 @@ public class CassandraQueryRepresentation implements QueryRepresentation {
 
     public List<OrderByClause> getOrderByClause() {
         return orderByClauses;
+    }
+
+    public List<SpecialComparisonClause> getSpecialComparisonClauses() {
+        return specialComparisonClauses;
     }
 }
