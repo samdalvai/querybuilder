@@ -33,13 +33,10 @@ public class CassandraQueryVisitor implements QueryVisitor {
             throw new InvalidConnectorException("Invalid connector \"" + connector + "\", valid values are: {'AND','and'}");
 
         // If there are no conditions clauses or if the last nextConnector in the previous condition
-        // is already set, then the last condition was a special comparison
-        if (conditions.isEmpty() || conditions.get(conditions.size() - 1).getNextConnector() != null) {
-            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setNextConnector(connector.toUpperCase());
-        }
-        else {
+        // is already set, then the last condition was a SpecialComparison and there is no need to store
+        // the nextConnector (OR statements are computed at the application logic)
+        if (!conditions.isEmpty() && conditions.get(conditions.size() - 1).getNextConnector() == null)
             conditions.get(conditions.size() - 1).setNextConnector(connector.toUpperCase());
-        }
     }
 
     @Override

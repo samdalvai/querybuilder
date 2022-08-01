@@ -40,7 +40,6 @@ public class CassandraSpecialComparisonQueryVisitorTest {
 
         SpecialComparisonClause expected1 = new SpecialComparisonClause("name", SpecialComparisonType.NOT_EQUALS);
         SpecialComparisonClause expected2 = new SpecialComparisonClause("age", SpecialComparisonType.STARTS);
-        expected1.setNextConnector("AND");
 
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();

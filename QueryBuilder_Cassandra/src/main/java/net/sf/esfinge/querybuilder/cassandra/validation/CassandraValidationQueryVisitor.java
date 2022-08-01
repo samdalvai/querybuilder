@@ -25,11 +25,11 @@ public class CassandraValidationQueryVisitor implements QueryVisitor {
         }
     }
 
-    public void visitConector(String conector) {
+    public void visitConector(String connector) {
         if (this.lastCalled != CassandraQueryElement.CONDITION && this.lastCalled != CassandraQueryElement.SPECIAL_COMPARISON) {
             throw new InvalidQuerySequenceException("Connector called in wrong sequence");
         } else {
-            this.visitor.visitConector(conector);
+            this.visitor.visitConector(connector);
             this.lastCalled = CassandraQueryElement.CONNECTOR;
         }
     }
