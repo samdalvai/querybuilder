@@ -18,26 +18,28 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private final List<OrderByClause> orderByClauses = new ArrayList<>();
     private final List<SpecialComparisonClause> specialComparisonClauses = new ArrayList<>();
     private String entity;
-    private QueryElement lastCalled = QueryElement.NONE;
     private String query = "";
 
     @Override
-    public void visitEntity(String s) {
-        lastCalled = QueryElement.ENTITY;
-
-        this.entity = s;
+    public void visitEntity(String entity) {
+        this.entity = entity;
     }
 
     @Override
-    public void visitConector(String s) {
+    public void visitConector(String connector) {
         // Attention! In Cassandra OR statements are not supported as in relational
         // Databases
-        if (!s.equalsIgnoreCase("AND"))
-            throw new InvalidConnectorException("Invalid connector \"" + s + "\", valid values are: {'AND','and'}");
+        if (!connector.equalsIgnoreCase("AND"))
+            throw new InvalidConnectorException("Invalid connector \"" + connector + "\", valid values are: {'AND','and'}");
 
-        conditions.get(conditions.size() - 1).setNextConnector(s.toUpperCase());
-
-        lastCalled = QueryElement.CONECTOR;
+        // If there are no conditions clauses or if the last nextConnector in the previous condition
+        // is already set, then the last condition was a special comparison
+        if (conditions.isEmpty() || conditions.get(conditions.size() - 1).getNextConnector() != null) {
+            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setNextConnector(connector.toUpperCase());
+        }
+        else {
+            conditions.get(conditions.size() - 1).setNextConnector(connector.toUpperCase());
+        }
     }
 
     @Override
@@ -46,8 +48,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
         // IN, =, >, >=, <, or <=, but not all in certain situations.
         // The other comparison types are implemented at the application logic, namely:
         // <> (NOT EQUALS), STARTS, ENDS AND CONTAINS
-        if (comparisonType == ComparisonType.NOT_EQUALS || comparisonType == ComparisonType.STARTS ||
-                comparisonType == ComparisonType.ENDS || comparisonType == ComparisonType.CONTAINS){
+        if (comparisonType == ComparisonType.NOT_EQUALS || comparisonType == ComparisonType.STARTS || comparisonType == ComparisonType.ENDS || comparisonType == ComparisonType.CONTAINS){
             //throw new UnsupportedCassandraOperationException("Comparison type " + comparisonType + " not supported in Cassandra");
             specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
         }
@@ -55,8 +56,6 @@ public class CassandraQueryVisitor implements QueryVisitor {
             conditions.add(new ConditionStatement(parameter, comparisonType));
 
         }
-
-        lastCalled = QueryElement.CONDITION;
     }
 
     @Override
@@ -89,10 +88,6 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitEnd() {
-        if (lastCalled == QueryElement.NONE)
-            throw new InvalidQuerySequenceException(
-                    "Cannot end an empty query sequence.");
-
         StringBuilder builder = new StringBuilder();
         builder.append("SELECT * FROM <#keyspace-name#>.").append(entity);
 

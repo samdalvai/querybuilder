@@ -1,7 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.queryvisitor;
 
 import net.sf.esfinge.querybuilder.cassandra.CassandraQueryRepresentation;
-import net.sf.esfinge.querybuilder.cassandra.CassandraVisitorFactory;
+import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
@@ -30,7 +30,7 @@ public class CassandraSpecialComparisonQueryVisitorTest {
         assertEquals(expected, ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses().get(0));
     }
 
-    /*@Test
+    @Test
     public void multipleSpecialComparisonTest() {
         visitor.visitEntity("Person");
         visitor.visitCondition("name", ComparisonType.NOT_EQUALS);
@@ -40,6 +40,7 @@ public class CassandraSpecialComparisonQueryVisitorTest {
 
         SpecialComparisonClause expected1 = new SpecialComparisonClause("name", SpecialComparisonType.NOT_EQUALS);
         SpecialComparisonClause expected2 = new SpecialComparisonClause("age", SpecialComparisonType.STARTS);
+        expected1.setNextConnector("AND");
 
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
@@ -47,7 +48,7 @@ public class CassandraSpecialComparisonQueryVisitorTest {
         assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person");
         assertEquals(expected1, ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses().get(0));
         assertEquals(expected2, ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses().get(1));
-    }*/
+    }
 
     /*@Test
     public void unsupportedCassandraComparisonTypeNotEqualsTest() {
