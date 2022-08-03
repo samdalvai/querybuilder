@@ -8,9 +8,12 @@ public class SpecialComparisonClause {
 
     SpecialComparisonType specialComparisonType;
 
+    Object value;
+
     public SpecialComparisonClause(String propertyName, SpecialComparisonType specialComparisonType) {
         this.propertyName = propertyName;
         this.specialComparisonType = specialComparisonType;
+        this.value = null;
     }
 
     public String getPropertyName() {
@@ -27,6 +30,14 @@ public class SpecialComparisonClause {
 
     public void setSpecialComparisonType(SpecialComparisonType specialComparisonType) {
         this.specialComparisonType = specialComparisonType;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     @Override

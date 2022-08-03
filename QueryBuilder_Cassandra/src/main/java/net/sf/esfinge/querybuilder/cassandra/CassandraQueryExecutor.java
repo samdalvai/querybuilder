@@ -11,6 +11,8 @@ import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.OrderingProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.SpecialComparisonProcessor;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
 import net.sf.esfinge.querybuilder.executor.QueryExecutor;
 import net.sf.esfinge.querybuilder.methodparser.*;
@@ -46,7 +48,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
 
         if (queryInfo.getQueryType() == QueryType.RETRIEVE_SINGLE) {
             if (results.size() > 1)
-                throw new WrongTypeOfExpectedResultException("The query " + query + " resulted in " + results.size() + "results instead of one or zero results");
+                throw new WrongTypeOfExpectedResultException("The query " + query + " resulted in " + results.size() + " results instead of one or zero results");
 
             if (results.size() > 0)
                 return results.get(0);
@@ -55,8 +57,10 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         }
 
         List<OrderByClause> orderByClauses = ((CassandraQueryRepresentation) qr).getOrderByClause();
+        List<SpecialComparisonClause> specialComparisonClauses = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
 
-        ResultsProcessor processor = new OrderingProcessor(orderByClauses);
+        ResultsProcessor processor = new OrderingProcessor(orderByClauses,
+                new SpecialComparisonProcessor(specialComparisonClauses));
 
         return processor.postProcess(results);
     }
