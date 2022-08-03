@@ -1,8 +1,11 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison;
 
+import net.sf.esfinge.querybuilder.cassandra.CassandraQueryRepresentation;
 import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,5 +43,39 @@ public class SpecialComparisonUtils {
                 throw new RuntimeException(e);
             }
         }).collect(Collectors.toList());
+    }
+
+    public static Object[] getArgumentsNotHavingSpecialClause(Object[] args, List<SpecialComparisonClause> spc){
+        Object[] newArgs = new Object[args.length - spc.size()];
+        System.out.println("Args: ");
+        System.out.println(Arrays.toString(args));
+
+        Integer[] specialArgsPositions = spc.stream().map(clause -> clause.getArgPosition()).toArray(Integer[]::new);
+
+        System.out.println("Special Positions: " + Arrays.toString(specialArgsPositions));
+
+        int currentNewArgs = 0;
+        int currentSpecialArgs = 0;
+
+        for (int i = 0; i < args.length; i++){
+            if (i != specialArgsPositions[currentSpecialArgs]){
+                newArgs[currentNewArgs] = args[i];
+                currentNewArgs++;
+                currentSpecialArgs++;
+            }
+        }
+
+        return newArgs;
+    }
+
+    public static List<SpecialComparisonClause> getSpecialComparisonClauseWithArguments(Object[] args, List<SpecialComparisonClause> spc){
+        List<SpecialComparisonClause> newSpc = new ArrayList<>();
+
+        for (SpecialComparisonClause c : spc){
+            c.setValue(args[c.getArgPosition()]);
+            newSpc.add(c);
+        }
+
+        return newSpc;
     }
 }

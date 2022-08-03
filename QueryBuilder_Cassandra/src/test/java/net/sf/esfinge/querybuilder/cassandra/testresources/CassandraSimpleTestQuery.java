@@ -48,17 +48,4 @@ public interface CassandraSimpleTestQuery extends Repository<Person> {
     // List<Person> getPersonByAddressCity(String city);
     // List<Person> getPersonByLastNameAndAddressState(String lastname, String state);
 
-    /**
-     * QUERIES WITH LIKE, ENDS, CONTAINS, STARTS OPERATORS
-     **/
-
-    // TODO: SEARCH QUERIES WITH 'LIKE' ARE NOT SUPPORTED BY CASSANDRA, IMPLEMENT AT APPLICATION LOGIC OR LEAVE IT FORBIDDEN?
-    List<Person> getPersonByLastNameNotEquals(String name);
-
-    List<Person> getPersonByName(@Starts String name);
-
-    // List<Person> getPersonByNameEnds(String name);
-    // List<Person> getPersonByNameContains(String name);
-    // List<Person> getPersonByNameStartsAndAgeGreater(String name, Integer age);
-
 }

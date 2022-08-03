@@ -13,15 +13,13 @@ import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.Ord
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.SpecialComparisonProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonUtils;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
 import net.sf.esfinge.querybuilder.executor.QueryExecutor;
 import net.sf.esfinge.querybuilder.methodparser.*;
 import net.sf.esfinge.querybuilder.utils.ReflectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CassandraQueryExecutor<E> implements QueryExecutor {
 
@@ -42,7 +40,22 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         queryInfo.visit(visitor);
         QueryRepresentation qr = visitor.getQueryRepresentation();
 
-        String query = getQuery(queryInfo, args, qr);
+        // Remove useless arguments for query substitution
+        List<SpecialComparisonClause> spc = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
+        Object[] newArgs = SpecialComparisonUtils.getArgumentsNotHavingSpecialClause(args,spc);
+
+        System.out.println("New args");
+        System.out.println(Arrays.toString(newArgs));
+
+
+        spc.forEach(e -> System.out.println(e));
+
+        List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClauseWithArguments(args,spc);
+
+        newSpc.forEach(e -> System.out.println(e));
+
+
+        String query = getQuery(queryInfo, newArgs, qr);
 
         List<E> results = getQueryResults(query);
 
@@ -57,10 +70,9 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         }
 
         List<OrderByClause> orderByClauses = ((CassandraQueryRepresentation) qr).getOrderByClause();
-        List<SpecialComparisonClause> specialComparisonClauses = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
 
         ResultsProcessor processor = new OrderingProcessor(orderByClauses,
-                new SpecialComparisonProcessor(specialComparisonClauses));
+                new SpecialComparisonProcessor(spc));
 
         return processor.postProcess(results);
     }
@@ -108,5 +120,6 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
     private String getQueryStringWithKeySpaceName(String query) {
         return query.replace("<#keyspace-name#>", clazz.getDeclaredAnnotation(Table.class).keyspace());
     }
+
 
 }

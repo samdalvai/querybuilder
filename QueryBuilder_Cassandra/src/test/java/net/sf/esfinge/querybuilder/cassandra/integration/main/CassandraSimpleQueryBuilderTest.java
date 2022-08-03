@@ -80,16 +80,6 @@ public class CassandraSimpleQueryBuilderTest extends CassandraBasicDatabaseTest 
         assertEquals("The list should have 4 persons", 4, list.size());
     }
 
-    @Test(expected = UnsupportedCassandraOperationException.class)
-    public void queryWithNotEquals() {
-        testQuery.getPersonByLastNameNotEquals("Whatever");
-    }
-
-    @Test(expected = UnsupportedCassandraOperationException.class)
-    public void queryWithStringStarted() {
-        testQuery.getPersonByName("M");
-    }
-
     @Test
     public void queryWithAllParametersTest() {
         List<Person> list = testQuery.getPersonByIdAndNameAndLastNameAndAge(1, "Pedro", "Silva", 20);

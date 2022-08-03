@@ -4,11 +4,13 @@ import java.util.Objects;
 
 public class SpecialComparisonClause {
 
-    String propertyName;
+    private String propertyName;
 
-    SpecialComparisonType specialComparisonType;
+    private SpecialComparisonType specialComparisonType;
 
-    Object value;
+    private Object value;
+
+    private int argPosition;
 
     public SpecialComparisonClause(String propertyName, SpecialComparisonType specialComparisonType) {
         this.propertyName = propertyName;
@@ -40,11 +42,21 @@ public class SpecialComparisonClause {
         this.value = value;
     }
 
+    public int getArgPosition() {
+        return argPosition;
+    }
+
+    public void setArgPosition(int argPosition) {
+        this.argPosition = argPosition;
+    }
+
     @Override
     public String toString() {
         return "SpecialComparisonClause{" +
                 "propertyName='" + propertyName + '\'' +
                 ", specialComparisonType=" + specialComparisonType +
+                ", value=" + value +
+                ", argPosition=" + argPosition +
                 '}';
     }
 

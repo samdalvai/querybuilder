@@ -48,11 +48,19 @@ public class CassandraQueryVisitor implements QueryVisitor {
         if (comparisonType == ComparisonType.NOT_EQUALS || comparisonType == ComparisonType.STARTS || comparisonType == ComparisonType.ENDS || comparisonType == ComparisonType.CONTAINS){
             //throw new UnsupportedCassandraOperationException("Comparison type " + comparisonType + " not supported in Cassandra");
             specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
+
+            // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
+            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
+
+            System.out.println("conditions " + conditions.size());
+            System.out.println("Special " + specialComparisonClauses.size());
         }
         else {
             conditions.add(new ConditionStatement(parameter, comparisonType));
 
         }
+
+        System.out.println("This visit condition!!");
     }
 
     @Override
@@ -69,6 +77,8 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, Object o) {
+        // TODO TAKE INTO ACCOUNT SPECIAL COMPARISON?
+
         visitCondition(parameter, comparisonType);
 
         conditions.get(conditions.size() - 1).setValue(o);
