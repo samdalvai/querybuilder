@@ -43,17 +43,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         // Remove useless arguments for query substitution
         List<SpecialComparisonClause> spc = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
         Object[] newArgs = SpecialComparisonUtils.getArgumentsNotHavingSpecialClause(args,spc);
-
-        System.out.println("New args");
-        System.out.println(Arrays.toString(newArgs));
-
-
-        spc.forEach(e -> System.out.println(e));
-
         List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClauseWithArguments(args,spc);
-
-        newSpc.forEach(e -> System.out.println(e));
-
 
         String query = getQuery(queryInfo, newArgs, qr);
 
@@ -72,7 +62,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         List<OrderByClause> orderByClauses = ((CassandraQueryRepresentation) qr).getOrderByClause();
 
         ResultsProcessor processor = new OrderingProcessor(orderByClauses,
-                new SpecialComparisonProcessor(spc));
+                new SpecialComparisonProcessor(newSpc));
 
         return processor.postProcess(results);
     }

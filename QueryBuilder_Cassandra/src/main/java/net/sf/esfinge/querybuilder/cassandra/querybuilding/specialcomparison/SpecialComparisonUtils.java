@@ -46,13 +46,11 @@ public class SpecialComparisonUtils {
     }
 
     public static Object[] getArgumentsNotHavingSpecialClause(Object[] args, List<SpecialComparisonClause> spc){
+        if (spc.isEmpty())
+            return args;
+
         Object[] newArgs = new Object[args.length - spc.size()];
-        System.out.println("Args: ");
-        System.out.println(Arrays.toString(args));
-
         Integer[] specialArgsPositions = spc.stream().map(clause -> clause.getArgPosition()).toArray(Integer[]::new);
-
-        System.out.println("Special Positions: " + Arrays.toString(specialArgsPositions));
 
         int currentNewArgs = 0;
         int currentSpecialArgs = 0;

@@ -51,16 +51,11 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
             // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
             specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
-
-            System.out.println("conditions " + conditions.size());
-            System.out.println("Special " + specialComparisonClauses.size());
         }
         else {
             conditions.add(new ConditionStatement(parameter, comparisonType));
 
         }
-
-        System.out.println("This visit condition!!");
     }
 
     @Override
