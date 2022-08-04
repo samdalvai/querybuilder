@@ -1,7 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding;
 
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonType;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonUtils;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

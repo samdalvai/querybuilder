@@ -3,10 +3,9 @@ package net.sf.esfinge.querybuilder.cassandra;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidConnectorException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedCassandraOperationException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ConditionStatement;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.OrderByClause;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonClause;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonType;
-import net.sf.esfinge.querybuilder.exception.InvalidQuerySequenceException;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.*;
 import net.sf.esfinge.querybuilder.methodparser.conditions.NullOption;
 
@@ -62,6 +61,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
     public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
         // Cassandra doesn't support querying based on null values, even for secondary indexes
         // (like you can in a relational database)
+        // TODO: IMPLEMENT COMPARE TO NULL AT THE APPLICATION LOGIC?
         if (nullOption == NullOption.COMPARE_TO_NULL)
             throw new UnsupportedCassandraOperationException("Cassandra doesn't support querying based on null values");
 

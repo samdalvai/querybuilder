@@ -1,13 +1,9 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing;
 
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonClause;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonType;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison.SpecialComparisonUtils;
-import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonUtils;
 
-import java.lang.reflect.Method;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SpecialComparisonProcessor extends BasicResultsProcessor {
 

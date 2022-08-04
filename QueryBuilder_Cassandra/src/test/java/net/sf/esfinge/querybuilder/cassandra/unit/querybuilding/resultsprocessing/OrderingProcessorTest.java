@@ -1,7 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding.resultsprocessing;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.GetterNotFoundInClassException;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.OrderByClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.OrderingProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 import net.sf.esfinge.querybuilder.cassandra.unit.reflection.TestClass;

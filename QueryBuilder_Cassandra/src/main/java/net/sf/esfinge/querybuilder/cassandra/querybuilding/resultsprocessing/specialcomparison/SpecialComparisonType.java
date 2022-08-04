@@ -1,4 +1,4 @@
-package net.sf.esfinge.querybuilder.cassandra.querybuilding.specialcomparison;
+package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.ComparisonTypeNotFoundException;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;

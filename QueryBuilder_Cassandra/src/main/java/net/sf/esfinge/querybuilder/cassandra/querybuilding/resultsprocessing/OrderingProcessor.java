@@ -1,8 +1,8 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing;
 
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.ChainComparator;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.ChainComparatorFactory;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.ordering.OrderByClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.ChainComparator;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.ChainComparatorFactory;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 
 import java.util.List;
 import java.util.stream.Collectors;
