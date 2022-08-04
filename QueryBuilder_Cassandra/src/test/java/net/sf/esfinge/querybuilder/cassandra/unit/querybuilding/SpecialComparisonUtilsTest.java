@@ -16,52 +16,52 @@ public class SpecialComparisonUtilsTest {
 
     @Test
     public void filterBySpecialComparisonNotEqualStringTest() {
-        assertTrue(SpecialComparisonUtils.filterBySpecialComparison("Hello","Hello to all", SpecialComparisonType.NOT_EQUALS));
+        assertTrue(SpecialComparisonUtils.filterBySpecialComparison("Hello", "Hello to all", SpecialComparisonType.NOT_EQUALS));
     }
 
     @Test
     public void filterBySpecialComparisonNotEqualWithEqualStringTest() {
-        assertFalse(SpecialComparisonUtils.filterBySpecialComparison("Hello","Hello", SpecialComparisonType.NOT_EQUALS));
+        assertFalse(SpecialComparisonUtils.filterBySpecialComparison("Hello", "Hello", SpecialComparisonType.NOT_EQUALS));
     }
 
     @Test
     public void filterBySpecialComparisonNotEqualIntTest() {
-        assertTrue(SpecialComparisonUtils.filterBySpecialComparison(1,2, SpecialComparisonType.NOT_EQUALS));
+        assertTrue(SpecialComparisonUtils.filterBySpecialComparison(1, 2, SpecialComparisonType.NOT_EQUALS));
     }
 
     @Test
     public void filterBySpecialComparisonNotEqualWithEqualIntTest() {
-        assertFalse(SpecialComparisonUtils.filterBySpecialComparison(1,1, SpecialComparisonType.NOT_EQUALS));
+        assertFalse(SpecialComparisonUtils.filterBySpecialComparison(1, 1, SpecialComparisonType.NOT_EQUALS));
     }
 
     @Test
     public void filterBySpecialComparisonStartingWithStringTest() {
-        assertTrue(SpecialComparisonUtils.filterBySpecialComparison("Hello","He", SpecialComparisonType.STARTS));
+        assertTrue(SpecialComparisonUtils.filterBySpecialComparison("Hello", "He", SpecialComparisonType.STARTS));
     }
 
     @Test
     public void filterBySpecialComparisonNotStartingWithStringTest() {
-        assertFalse(SpecialComparisonUtils.filterBySpecialComparison("Hello","whatever", SpecialComparisonType.STARTS));
+        assertFalse(SpecialComparisonUtils.filterBySpecialComparison("Hello", "whatever", SpecialComparisonType.STARTS));
     }
 
     @Test
     public void filterBySpecialComparisonEndingWithStringTest() {
-        assertTrue(SpecialComparisonUtils.filterBySpecialComparison("Hello","lo", SpecialComparisonType.ENDS));
+        assertTrue(SpecialComparisonUtils.filterBySpecialComparison("Hello", "lo", SpecialComparisonType.ENDS));
     }
 
     @Test
     public void filterBySpecialComparisonNotEndingWithStringTest() {
-        assertFalse(SpecialComparisonUtils.filterBySpecialComparison("Hello","whatever", SpecialComparisonType.ENDS));
+        assertFalse(SpecialComparisonUtils.filterBySpecialComparison("Hello", "whatever", SpecialComparisonType.ENDS));
     }
 
     @Test
     public void filterBySpecialComparisonContainingStringTest() {
-        assertTrue(SpecialComparisonUtils.filterBySpecialComparison("Hello","el", SpecialComparisonType.CONTAINS));
+        assertTrue(SpecialComparisonUtils.filterBySpecialComparison("Hello", "el", SpecialComparisonType.CONTAINS));
     }
 
     @Test
     public void filterBySpecialComparisonNotContainingStringTest() {
-        assertFalse(SpecialComparisonUtils.filterBySpecialComparison("Hello","whatever", SpecialComparisonType.CONTAINS));
+        assertFalse(SpecialComparisonUtils.filterBySpecialComparison("Hello", "whatever", SpecialComparisonType.CONTAINS));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class SpecialComparisonUtilsTest {
         p.setAge(33);
         list.add(p);
 
-        assertThrows(MethodInvocationException.class, () -> SpecialComparisonUtils.filterListBySpecialComparisonClause(list,clause));
+        assertThrows(MethodInvocationException.class, () -> SpecialComparisonUtils.filterListBySpecialComparisonClause(list, clause));
     }
 
 }

@@ -7,9 +7,9 @@ import net.sf.esfinge.querybuilder.cassandra.exceptions.NotEnoughExamplesExcepti
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseTest;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraTestUtils;
 import net.sf.esfinge.querybuilder.cassandra.testresources.CassandraSimpleTestQuery;
+import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
 import net.sf.esfinge.querybuilder.cassandra.testresources.wrongconfiguration.ClassWithNoGetters;
 import net.sf.esfinge.querybuilder.cassandra.testresources.wrongconfiguration.ClassWithNoGettersTestQuery;
-import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
 import org.junit.Test;
 
 import java.util.List;
