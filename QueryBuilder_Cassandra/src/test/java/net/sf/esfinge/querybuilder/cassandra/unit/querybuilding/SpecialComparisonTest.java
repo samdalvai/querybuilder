@@ -1,12 +1,18 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding;
 
+import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationException;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonUtils;
-import org.junit.jupiter.api.Test;
+import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SpecialComparisonUtilsTest {
+public class SpecialComparisonTest {
 
     @Test
     public void filterBySpecialComparisonNotEqualStringTest() {
@@ -58,7 +64,19 @@ class SpecialComparisonUtilsTest {
         assertFalse(SpecialComparisonUtils.filterBySpecialComparison("Hello","whatever", SpecialComparisonType.CONTAINS));
     }
 
+    @Test
+    public void filterBySpecialComparisonWithNotAvailableValueTest() {
+        SpecialComparisonClause clause = new SpecialComparisonClause("name", SpecialComparisonType.NOT_EQUALS);
+        clause.setValue("whatever");
 
+        List<Person> list = new ArrayList<>();
+        Person p = new Person();
+        p.setId(1);
+        p.setLastName("testlastname");
+        p.setAge(33);
+        list.add(p);
 
+        assertThrows(MethodInvocationException.class, () -> SpecialComparisonUtils.filterListBySpecialComparisonClause(list,clause));
+    }
 
 }

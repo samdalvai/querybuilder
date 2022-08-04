@@ -1,5 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison;
 
+import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationException;
 import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -34,11 +35,13 @@ public class SpecialComparisonUtils {
 
         Method getter = CassandraReflectionUtils.getClassGetterForField(clazz,getters,clause.getPropertyName());
 
+        //List<E> results = list.stream().filter(obj -> filterBySpecialComparisonClause(getter.invoke(obj),clause)).collect(Collectors.toList());
+
         return list.stream().filter(obj -> {
             try {
                 return filterBySpecialComparisonClause(getter.invoke(obj),clause);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new MethodInvocationException("Could not invoke method \"" + getter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e.getMessage());
             }
         }).collect(Collectors.toList());
     }
