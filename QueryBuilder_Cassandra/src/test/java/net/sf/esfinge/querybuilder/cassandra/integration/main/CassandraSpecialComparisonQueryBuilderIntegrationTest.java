@@ -1,7 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra.integration.main;
 
 import net.sf.esfinge.querybuilder.QueryBuilder;
-import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseTest;
+import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseIntegrationTest;
 import net.sf.esfinge.querybuilder.cassandra.testresources.CassandraSpecialComparisonTestQuery;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class CassandraSpecialComparisonQueryBuilderTest extends CassandraBasicDatabaseTest {
+public class CassandraSpecialComparisonQueryBuilderIntegrationTest extends CassandraBasicDatabaseIntegrationTest {
 
     CassandraSpecialComparisonTestQuery testQuery = QueryBuilder.create(CassandraSpecialComparisonTestQuery.class);
 

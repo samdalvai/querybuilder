@@ -7,7 +7,7 @@ import org.junit.BeforeClass;
 
 import java.io.IOException;
 
-public class CassandraBasicDatabaseTest {
+public class CassandraBasicDatabaseIntegrationTest {
 
     @BeforeClass
     public static void initDB() throws TTransportException, IOException, InterruptedException {

@@ -3,7 +3,7 @@ package net.sf.esfinge.querybuilder.cassandra.integration.main;
 import net.sf.esfinge.querybuilder.QueryBuilder;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidConnectorException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.WrongTypeOfExpectedResultException;
-import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseTest;
+import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseIntegrationTest;
 import net.sf.esfinge.querybuilder.cassandra.testresources.CassandraSimpleTestQuery;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
 import net.sf.esfinge.querybuilder.exception.WrongParamNumberException;
@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class CassandraSimpleQueryBuilderTest extends CassandraBasicDatabaseTest {
+public class CassandraSimpleQueryBuilderIntegrationTest extends CassandraBasicDatabaseIntegrationTest {
 
     CassandraSimpleTestQuery testQuery = QueryBuilder.create(CassandraSimpleTestQuery.class);
 
