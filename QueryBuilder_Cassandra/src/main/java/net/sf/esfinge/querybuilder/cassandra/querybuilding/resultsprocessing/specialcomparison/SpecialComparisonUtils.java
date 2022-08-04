@@ -21,7 +21,7 @@ public class SpecialComparisonUtils {
             case CONTAINS:
                 return parameterValue.toString().contains(valueToCompare.toString());
             default:
-                return false;
+                return true;
         }
     }
 
