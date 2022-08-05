@@ -33,13 +33,13 @@ public class CassandraSimpleQueryBuilderIntegrationTest extends CassandraBasicDa
 
     @Test
     public void queryWithSingleParameterGreaterThanTest() {
-        Person p = testQuery.getPersonByIdGreater(4);
-        assertEquals("It should get Silvia", "Silvia", p.getName());
+        List<Person> list = testQuery.getPersonByAgeGreater(30);
+        assertEquals("It should get 2 results", 2, list.size());
     }
 
     @Test(expected = WrongTypeOfExpectedResultException.class)
     public void queryWithWrongTypeOfExpectedResultTest() {
-        testQuery.getPersonByIdGreater(0);
+        testQuery.getPersonByAgeLesserOrEquals(50);
     }
 
     @Test
