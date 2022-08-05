@@ -7,14 +7,13 @@ import java.util.List;
 
 public interface CassandraSimpleTestQuery extends Repository<Person> {
 
-    /**
-     * SIMPLE QUERIES
-     **/
     List<Person> getPerson();
 
     Person getPersonById(Integer id);
 
-    Person getPersonByIdGreater(Integer id);
+    List<Person> getPersonByAgeGreater(Integer age);
+
+    Person getPersonByAgeLesserOrEquals(Integer age);
 
     List<Person> getPersonByLastName(String lastname);
 
