@@ -11,7 +11,9 @@
 
     <name>Esfinge QueryBuilder Cassandra Integration Tests</name>
     <url>http://esfinge.sourceforge.net/</url>
-    <description>The Esfinge QueryBuilder Cassandra Integration Tests is a project to test the integration between the QueryBuilder framework and the persistence layer using Cassandra.</description>
+    <description>The Esfinge QueryBuilder Cassandra Integration Tests is a project to test the integration between the
+        QueryBuilder framework and the persistence layer using Cassandra.
+    </description>
 
     <organization>
         <name>Esfinge Framework</name>
@@ -139,7 +141,6 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/resources/querybuilder-cassandra-1.0.0.jar</systemPath>
         </dependency>
-
 
     </dependencies>
 

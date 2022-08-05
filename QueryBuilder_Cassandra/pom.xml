@@ -11,7 +11,9 @@
 
     <name>Esfinge QueryBuilder Cassandra</name>
     <url>http://esfinge.sourceforge.net/</url>
-    <description>The Esfinge QueryBuilder JPA1 is the persistence framework for Esfinge QueryBuilder using Cassandra.</description>
+    <description>The Esfinge QueryBuilder Cassandra is the persistence framework for Esfinge QueryBuilder using
+        Cassandra.
+    </description>
 
     <organization>
         <name>Esfinge Framework</name>
@@ -123,7 +125,6 @@
             <artifactId>cassandra-driver-mapping</artifactId>
             <version>3.1.0</version>
         </dependency>
-
 
         <!-- https://mvnrepository.com/artifact/org.cassandraunit/cassandra-unit -->
         <dependency>
