@@ -36,8 +36,6 @@ public class SpecialComparisonUtils {
 
         Method getter = CassandraReflectionUtils.getClassGetterForField(clazz, getters, clause.getPropertyName());
 
-        //List<E> results = list.stream().filter(obj -> filterBySpecialComparisonClause(getter.invoke(obj),clause)).collect(Collectors.toList());
-
         return list.stream().filter(obj -> {
             try {
                 return filterBySpecialComparisonClause(getter.invoke(obj), clause);
