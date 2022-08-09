@@ -46,7 +46,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         Object[] newArgs = SpecialComparisonUtils.getArgumentsNotHavingSpecialClause(args, spc);
         List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClauseWithArguments(args, spc);
 
-        String query = getQuery(queryInfo, newArgs, qr);
+        String query = getQuery(queryInfo, newArgs, args, qr);
 
         List<E> results = getQueryResults(query);
 
@@ -79,7 +79,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         return objectsList;
     }
 
-    private String getQuery(QueryInfo queryInfo, Object[] args, QueryRepresentation qr) {
+    private String getQuery(QueryInfo queryInfo, Object[] args, Object[] oldArgs, QueryRepresentation qr) {
         if (!queryInfo.isDynamic() && queryInfo.getQueryStyle() != QueryStyle.QUERY_OBJECT) {
             String query = qr.getQuery().toString();
 
@@ -90,9 +90,15 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         } else {
             Map<String, Object> params = new HashMap<>();
             List<String> namedParameters = queryInfo.getNamedParemeters();
+
             if (queryInfo.getQueryStyle() == QueryStyle.METHOD_SIGNATURE) {
-                for (int i = 0; i < args.length; i++) {
-                    params.put(namedParameters.get(i), args[i]);
+                int argIndex = 0;
+
+                for (int i = 0; i < oldArgs.length; i++) {
+                    if (args[argIndex] == oldArgs[i]) {
+                        params.put(namedParameters.get(i), oldArgs[i]);
+                        argIndex++;
+                    }
                 }
             } else { // Query style is: QueryStyle.QUERY_OBJECT
                 Map<String, Object> paramMap = ReflectionUtils.toParameterMap(args[0]);
