@@ -40,7 +40,7 @@ public class CassandraQueryObjectIntegrationTest extends CassandraBasicDatabaseI
     @Test(expected = UnsupportedCassandraOperationException.class)
     public void queryObjectWithNullComparisonTest() {
         CompareNullQueryObject qo = new CompareNullQueryObject();
-        qo.setLastName("Test");
+        qo.setLastName(null);
         testQuery.getPerson(qo);
     }
 

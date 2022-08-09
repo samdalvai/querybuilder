@@ -4,8 +4,10 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Table;
+import net.sf.esfinge.querybuilder.annotation.CompareToNull;
 import net.sf.esfinge.querybuilder.cassandra.cassandrautils.CassandraUtils;
 import net.sf.esfinge.querybuilder.cassandra.cassandrautils.MappingManagerProvider;
+import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedCassandraOperationException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.WrongTypeOfExpectedResultException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
@@ -17,6 +19,7 @@ import net.sf.esfinge.querybuilder.executor.QueryExecutor;
 import net.sf.esfinge.querybuilder.methodparser.*;
 import net.sf.esfinge.querybuilder.utils.ReflectionUtils;
 
+import java.text.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,13 +97,18 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
             if (queryInfo.getQueryStyle() == QueryStyle.METHOD_SIGNATURE) {
                 int argIndex = 0;
 
-                for (int i = 0; i < oldArgs.length; i++) {
+                for (int i = 0; i < oldArgs.length && argIndex < args.length; i++) {
                     if (args[argIndex] == oldArgs[i]) {
                         params.put(namedParameters.get(i), oldArgs[i]);
                         argIndex++;
                     }
                 }
             } else { // Query style is: QueryStyle.QUERY_OBJECT
+                if (args.length == 0)
+                    throw new UnsupportedCassandraOperationException("@CompareToNull annotation not supported for query objects");
+
+                // TODO: WHY ARE WE HAVING ARGS WITH LENGHT 0 HERE??
+
                 Map<String, Object> paramMap = ReflectionUtils.toParameterMap(args[0]);
                 for (String key : paramMap.keySet()) {
                     params.put(key, paramMap.get(key));
