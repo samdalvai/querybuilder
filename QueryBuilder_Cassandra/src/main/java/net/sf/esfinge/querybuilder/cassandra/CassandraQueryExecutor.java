@@ -8,10 +8,8 @@ import net.sf.esfinge.querybuilder.cassandra.cassandrautils.CassandraUtils;
 import net.sf.esfinge.querybuilder.cassandra.cassandrautils.MappingManagerProvider;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.WrongTypeOfExpectedResultException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.OrderingProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.SpecialComparisonProcessor;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonUtils;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
@@ -62,10 +60,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
                 return null;
         }
 
-        List<OrderByClause> orderByClauses = ((CassandraQueryRepresentation) qr).getOrderByClause();
-
-        ResultsProcessor processor = new OrderingProcessor(orderByClauses,
-                new SpecialComparisonProcessor(newSpc));
+        ResultsProcessor processor = new SpecialComparisonProcessor(newSpc, ((CassandraQueryRepresentation) qr).getProcessor());
 
         return processor.postProcess(results);
     }
