@@ -35,6 +35,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
     public void visitConector(String connector) {
         // Attention! In Cassandra OR statements are not supported as in relational
         // Databases
+        // TODO: IMPLEMENT OR CONNECTOR AT THE APPLICATION LOGIC
         if (!connector.equalsIgnoreCase("AND"))
             throw new InvalidConnectorException("Invalid connector \"" + connector + "\", valid values are: {'AND','and'}");
 
@@ -67,7 +68,6 @@ public class CassandraQueryVisitor implements QueryVisitor {
     public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
         // Cassandra doesn't support querying based on null values, even for secondary indexes
         // (like you can in a relational database)
-        // TODO: IMPLEMENT COMPARE TO NULL AT THE APPLICATION LOGIC?
         if (nullOption == NullOption.COMPARE_TO_NULL) {
             if (comparisonType == ComparisonType.NOT_EQUALS)
                 specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
@@ -87,8 +87,6 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, Object o) {
-        // TODO TAKE INTO ACCOUNT SPECIAL COMPARISON?
-
         visitCondition(parameter, comparisonType);
 
         conditions.get(conditions.size() - 1).setValue(o);
