@@ -1,6 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidConnectorException;
+import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidNumberOfSecondaryQueriesException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedCassandraOperationException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ConditionStatement;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.OrderingProcessor;
@@ -26,6 +27,8 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     private ResultsProcessor processor;
 
+    private QueryVisitor secondaryVisitor;
+
     @Override
     public void visitEntity(String entity) {
         this.entity = entity;
@@ -36,84 +39,113 @@ public class CassandraQueryVisitor implements QueryVisitor {
         // Attention! In Cassandra OR statements are not supported as in relational
         // Databases
         // TODO: IMPLEMENT OR CONNECTOR AT THE APPLICATION LOGIC
-        if (!connector.equalsIgnoreCase("AND"))
-            throw new InvalidConnectorException("Invalid connector \"" + connector + "\", valid values are: {'AND','and'}");
+        //if (!connector.equalsIgnoreCase("AND") || !connector.equalsIgnoreCase("OR"))
+          //  throw new InvalidConnectorException("Invalid connector \"" + connector + "\", valid values are: {'AND','and','OR','or}");
 
-        // If there are no conditions clauses or if the last nextConnector in the previous condition
-        // is already set, then the last condition was a SpecialComparison and there is no need to store
-        // the nextConnector (OR statements are computed at the application logic)
-        if (!conditions.isEmpty() && conditions.get(conditions.size() - 1).getNextConnector() == null)
-            conditions.get(conditions.size() - 1).setNextConnector(connector.toUpperCase());
+        if (connector.equalsIgnoreCase("AND")){
+            // If there are no conditions clauses or if the last nextConnector in the previous condition
+            // is already set, then the last condition was a SpecialComparison and there is no need to store
+            // the nextConnector (OR statements are computed at the application logic)
+            if (!conditions.isEmpty() && conditions.get(conditions.size() - 1).getNextConnector() == null)
+                conditions.get(conditions.size() - 1).setNextConnector(connector.toUpperCase());
+        } else if (connector.equalsIgnoreCase("OR")){
+            if (secondaryVisitor == null){
+                this.visitEnd();
+                secondaryVisitor = new CassandraQueryVisitor();
+                secondaryVisitor.visitEntity(entity);
+            } else
+                throw new InvalidNumberOfSecondaryQueriesException("Error, the maximum number of secondary queries permitted is one");
+        } else
+            throw new InvalidConnectorException("Invalid connector \"" + connector + "\", valid values are: {'AND','and','OR','or}");
     }
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType) {
-        // Cassandra supports only these conditional operators in the WHERE clause:
-        // IN, =, >, >=, <, or <=, but not all in certain situations.
-        // The other comparison types are implemented at the application logic, namely:
-        // <> (NOT EQUALS), STARTS, ENDS AND CONTAINS
-        if (comparisonType == ComparisonType.NOT_EQUALS || comparisonType == ComparisonType.STARTS || comparisonType == ComparisonType.ENDS || comparisonType == ComparisonType.CONTAINS) {
-            //throw new UnsupportedCassandraOperationException("Comparison type " + comparisonType + " not supported in Cassandra");
-            specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
-
-            // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
-            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
+        if (secondaryVisitor != null){
+            secondaryVisitor.visitCondition(parameter, comparisonType);
         } else {
-            conditions.add(new ConditionStatement(parameter, comparisonType));
+            // Cassandra supports only these conditional operators in the WHERE clause:
+            // IN, =, >, >=, <, or <=, but not all in certain situations.
+            // The other comparison types are implemented at the application logic, namely:
+            // <> (NOT EQUALS), STARTS, ENDS AND CONTAINS
+            if (comparisonType == ComparisonType.NOT_EQUALS || comparisonType == ComparisonType.STARTS || comparisonType == ComparisonType.ENDS || comparisonType == ComparisonType.CONTAINS) {
+                //throw new UnsupportedCassandraOperationException("Comparison type " + comparisonType + " not supported in Cassandra");
+                specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
 
+                // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
+                specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
+            } else {
+                conditions.add(new ConditionStatement(parameter, comparisonType));
+
+            }
         }
     }
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
-        // Cassandra doesn't support querying based on null values, even for secondary indexes
-        // (like you can in a relational database)
-        if (nullOption == NullOption.COMPARE_TO_NULL) {
-            if (comparisonType == ComparisonType.NOT_EQUALS)
-                specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
-            else if (comparisonType == ComparisonType.EQUALS)
-                specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.COMPARE_TO_NULL));
-            else
-                throw new UnsupportedCassandraOperationException("Cannot apply comparison type \"" + comparisonType.name() + "\" to null value");
-
-            // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
-            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
+        if (secondaryVisitor != null){
+            secondaryVisitor.visitCondition(parameter, comparisonType, nullOption);
         } else {
-            visitCondition(parameter, comparisonType);
+            // Cassandra doesn't support querying based on null values, even for secondary indexes
+            // (like you can in a relational database)
+            if (nullOption == NullOption.COMPARE_TO_NULL) {
+                if (comparisonType == ComparisonType.NOT_EQUALS)
+                    specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
+                else if (comparisonType == ComparisonType.EQUALS)
+                    specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.COMPARE_TO_NULL));
+                else
+                    throw new UnsupportedCassandraOperationException("Cannot apply comparison type \"" + comparisonType.name() + "\" to null value");
 
-            conditions.get(conditions.size() - 1).setNullOption(nullOption);
+                // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
+                specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
+            } else {
+                visitCondition(parameter, comparisonType);
+
+                conditions.get(conditions.size() - 1).setNullOption(nullOption);
+            }
         }
     }
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, Object o) {
-        visitCondition(parameter, comparisonType);
+        if (secondaryVisitor != null){
+            secondaryVisitor.visitCondition(parameter, comparisonType);
+        } else {
+            visitCondition(parameter, comparisonType);
 
-        conditions.get(conditions.size() - 1).setValue(o);
+            conditions.get(conditions.size() - 1).setValue(o);
+        }
     }
 
     @Override
     public void visitOrderBy(String parameter, OrderingDirection orderingDirection) {
-        // Cassandra only allows ORDER by in the same direction as we
-        // define in the "CLUSTERING ORDER BY" clause of CREATE TABLE.
-        // Thus, it is implemented at the application logic
-
-        orderByClauses.add(new OrderByClause(parameter, orderingDirection));
+        if (secondaryVisitor != null){
+            secondaryVisitor.visitOrderBy(parameter, orderingDirection);
+        } else {
+            // Cassandra only allows ORDER by in the same direction as we
+            // define in the "CLUSTERING ORDER BY" clause of CREATE TABLE.
+            // Thus, it is implemented at the application logic
+            orderByClauses.add(new OrderByClause(parameter, orderingDirection));
+        }
     }
 
     @Override
     public void visitEnd() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("SELECT * FROM <#keyspace-name#>.").append(entity);
+        if (secondaryVisitor != null){
+            secondaryVisitor.visitEnd();
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append("SELECT * FROM <#keyspace-name#>.").append(entity);
 
-        if (!conditions.isEmpty()) {
-            if (hasOneNoIgnorableProperty()) {
-                builder.append(" WHERE ");
-                builder.append(getConditionsQuery());
+            if (!conditions.isEmpty()) {
+                if (hasOneNoIgnorableProperty()) {
+                    builder.append(" WHERE ");
+                    builder.append(getConditionsQuery());
+                }
             }
-        }
 
-        query = builder + (builder.toString().contains("WHERE") ? " ALLOW FILTERING" : "");
+            query = builder + (builder.toString().contains("WHERE") ? " ALLOW FILTERING" : "");
+        }
     }
 
     private boolean hasOneNoIgnorableProperty() {
@@ -201,4 +233,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
         return new CassandraQueryRepresentation(getQuery(), isDynamic(), getFixParametersMap(), conditions, orderByClauses, specialComparisonClauses, entity, processor);
     }
 
+    public QueryVisitor getSecondaryVisitor() {
+        return secondaryVisitor;
+    }
 }
