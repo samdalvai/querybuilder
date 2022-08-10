@@ -46,7 +46,14 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
 
         // Remove useless arguments for query substitution
         List<SpecialComparisonClause> spc = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
-        Object[] newArgs = SpecialComparisonUtils.getArgumentsNotHavingSpecialClause(args, spc);
+
+        Object[] newArgs;
+
+        if (queryInfo.getQueryStyle() == QueryStyle.QUERY_OBJECT)
+            newArgs = args;
+        else
+            newArgs = SpecialComparisonUtils.getArgumentsNotHavingSpecialClause(args, spc);
+
         List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClauseWithArguments(args, spc);
 
         String query = getQuery(queryInfo, newArgs, args, qr);
@@ -104,10 +111,8 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
                     }
                 }
             } else { // Query style is: QueryStyle.QUERY_OBJECT
-                if (args.length == 0)
-                    throw new UnsupportedCassandraOperationException("@CompareToNull annotation not supported for query objects");
 
-                // TODO: WHY ARE WE HAVING ARGS WITH LENGHT 0 HERE??
+                // TODO: WHY ARE WE HAVING ARGS WITH LENGTH 0 HERE??
 
                 Map<String, Object> paramMap = ReflectionUtils.toParameterMap(args[0]);
                 for (String key : paramMap.keySet()) {
