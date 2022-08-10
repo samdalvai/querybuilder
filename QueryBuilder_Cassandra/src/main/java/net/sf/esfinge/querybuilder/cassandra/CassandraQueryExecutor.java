@@ -111,9 +111,6 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
                     }
                 }
             } else { // Query style is: QueryStyle.QUERY_OBJECT
-
-                // TODO: WHY ARE WE HAVING ARGS WITH LENGTH 0 HERE??
-
                 Map<String, Object> paramMap = ReflectionUtils.toParameterMap(args[0]);
                 for (String key : paramMap.keySet()) {
                     params.put(key, paramMap.get(key));

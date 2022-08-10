@@ -51,9 +51,6 @@ public class SpecialComparisonUtils {
         if (spc.isEmpty())
             return args;
 
-        //if (args.length - spc.size() == 0)
-         //   return new Object[0];
-
         Object[] newArgs = new Object[args.length - spc.size()];
         Integer[] specialArgsPositions = spc.stream().map(clause -> clause.getArgPosition()).toArray(Integer[]::new);
 
