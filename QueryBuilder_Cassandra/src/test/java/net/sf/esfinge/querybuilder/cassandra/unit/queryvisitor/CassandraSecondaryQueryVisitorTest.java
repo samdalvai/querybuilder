@@ -1,5 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.queryvisitor;
 
+import net.sf.esfinge.querybuilder.cassandra.exceptions.SecondaryQueryLimitExceededException;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraValidationQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
 import net.sf.esfinge.querybuilder.exception.InvalidQuerySequenceException;
@@ -132,6 +133,17 @@ public class CassandraSecondaryQueryVisitorTest {
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? AND id = ? ALLOW FILTERING",
                 tertiaryQuery);
+    }
+
+    @Test(expected = SecondaryQueryLimitExceededException.class)
+    public void secondaryQueryLimitExceededTest() {
+        visitor.visitEntity("Person");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("or");
     }
 
     @Test(expected = InvalidQuerySequenceException.class)

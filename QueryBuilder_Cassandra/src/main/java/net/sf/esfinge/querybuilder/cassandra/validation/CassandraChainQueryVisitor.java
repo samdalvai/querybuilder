@@ -1,6 +1,8 @@
 package net.sf.esfinge.querybuilder.cassandra.validation;
 
 import net.sf.esfinge.querybuilder.cassandra.CassandraQueryVisitor;
+import net.sf.esfinge.querybuilder.cassandra.config.ConfigReader;
+import net.sf.esfinge.querybuilder.cassandra.exceptions.SecondaryQueryLimitExceededException;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.OrderingDirection;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
@@ -15,10 +17,12 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
     private final CassandraQueryVisitor primaryVisitor;
     private CassandraChainQueryVisitor secondaryVisitor;
 
-    public CassandraChainQueryVisitor() {
-        this.primaryVisitor = new CassandraQueryVisitor();
-    }
+    private int queryDepth;
 
+    public CassandraChainQueryVisitor(int queryDepth) {
+        this.primaryVisitor = new CassandraQueryVisitor();
+        this.queryDepth = queryDepth;
+    }
 
     @Override
     public void visitEntity(String entity) {
@@ -32,7 +36,13 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         if (secondaryVisitor == null) {
             if (connector.equalsIgnoreCase("OR")) {
                 primaryVisitor.visitEnd();
-                secondaryVisitor = new CassandraChainQueryVisitor();
+
+                int queryLimit = ConfigReader.getConfiguration().getSecondaryQueryLimit();
+
+                if (queryDepth >= queryLimit)
+                    throw new SecondaryQueryLimitExceededException("Current query depth is " + queryDepth + ", but the configured limit is " + queryLimit);
+
+                secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1);
                 secondaryVisitor.visitEntity(primaryVisitor.getEntity());
             } else
                 primaryVisitor.visitConector(connector);

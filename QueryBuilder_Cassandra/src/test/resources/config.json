@@ -1,3 +1,4 @@
 {
-  "orderingLimit": 10
+  "orderingLimit": 10,
+  "secondaryQueryLimit": 2
 }
