@@ -1,7 +1,5 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.queryvisitor;
 
-import net.sf.esfinge.querybuilder.cassandra.CassandraQueryVisitor;
-import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidNumberOfSecondaryQueriesException;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraValidationQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
 import net.sf.esfinge.querybuilder.exception.InvalidQuerySequenceException;
@@ -11,7 +9,6 @@ import net.sf.esfinge.querybuilder.methodparser.QueryVisitor;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CassandraSecondaryQueryVisitorTest {
 
@@ -41,12 +38,30 @@ public class CassandraSecondaryQueryVisitorTest {
     }
 
     @Test
-    public void twoOrConnectorsTest() {
+    public void complexOrConnectorTest() {
         visitor.visitEntity("Person");
         visitor.visitCondition("name", ComparisonType.EQUALS);
-        visitor.visitConector("OR");
+        visitor.visitConector("and");
         visitor.visitCondition("lastname", ComparisonType.EQUALS);
-        assertThrows(InvalidNumberOfSecondaryQueriesException.class, () -> visitor.visitConector("OR"));
+        visitor.visitConector("or");
+        visitor.visitCondition("lastname", ComparisonType.EQUALS);
+        visitor.visitConector("and");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? AND lastname = ? ALLOW FILTERING",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = ? AND name = ? ALLOW FILTERING",
+                secondaryQuery);
     }
 
     @Test(expected = InvalidQuerySequenceException.class)

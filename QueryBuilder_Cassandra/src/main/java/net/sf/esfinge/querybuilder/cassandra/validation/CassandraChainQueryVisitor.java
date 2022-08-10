@@ -1,7 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.validation;
 
 import net.sf.esfinge.querybuilder.cassandra.CassandraQueryVisitor;
-import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidNumberOfSecondaryQueriesException;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.OrderingDirection;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
@@ -30,15 +29,17 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitConector(String connector) {
-        if (connector.equalsIgnoreCase("OR")) {
-            if (secondaryVisitor == null) {
+        if (secondaryVisitor == null) {
+            if (connector.equalsIgnoreCase("OR")) {
                 primaryVisitor.visitEnd();
                 secondaryVisitor = new CassandraChainQueryVisitor();
                 secondaryVisitor.visitEntity(primaryVisitor.getEntity());
             } else
-                throw new InvalidNumberOfSecondaryQueriesException("Error, the maximum number of secondary queries permitted is one");
-        } else
-            primaryVisitor.visitConector(connector);
+                primaryVisitor.visitConector(connector);
+
+        } else {
+            secondaryVisitor.visitConector(connector);
+        }
     }
 
     @Override

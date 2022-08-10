@@ -23,10 +23,8 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private final List<SpecialComparisonClause> specialComparisonClauses = new ArrayList<>();
     private String entity;
     private String query = "";
-
     private ResultsProcessor processor;
 
-    private QueryVisitor secondaryVisitor;
 
     @Override
     public void visitEntity(String entity) {
@@ -44,7 +42,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
             if (!conditions.isEmpty() && conditions.get(conditions.size() - 1).getNextConnector() == null)
                 conditions.get(conditions.size() - 1).setNextConnector(connector.toUpperCase());
         } else
-            throw new InvalidConnectorException("Invalid connector \"" + connector + "\", valid values are: {'AND','and','OR','or}");
+            throw new InvalidConnectorException("Invalid connector for primary visitor \"" + connector + "\", valid values are: {'AND','and'}");
     }
 
     @Override
@@ -199,10 +197,6 @@ public class CassandraQueryVisitor implements QueryVisitor {
         processor = new OrderingProcessor(orderByClauses);
 
         return new CassandraQueryRepresentation(getQuery(), isDynamic(), getFixParametersMap(), conditions, orderByClauses, specialComparisonClauses, entity, processor);
-    }
-
-    public QueryVisitor getSecondaryVisitor() {
-        return secondaryVisitor;
     }
 
     public String getEntity() {
