@@ -31,7 +31,7 @@ public class OrderingProcessor extends BasicResultsProcessor {
         if (orderByClauses.isEmpty() || list.isEmpty())
             return list;
 
-        if (list.size() > orderingLimit){
+        if (list.size() > orderingLimit) {
             throw new OrderingLimitExceededException("Ordering limit has been set to " + orderingLimit + ", but the query returned " + list.size() + " results.");
         }
 

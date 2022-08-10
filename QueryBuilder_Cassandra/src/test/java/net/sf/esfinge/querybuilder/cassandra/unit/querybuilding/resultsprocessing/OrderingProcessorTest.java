@@ -136,7 +136,7 @@ public class OrderingProcessorTest {
         ResultsProcessor processor = new OrderingProcessor(orderByClauseList);
 
         for (int i = 0; i < 6; i++)
-            objectList.add(new TestClass(1,"test","test"));
+            objectList.add(new TestClass(1, "test", "test"));
 
         assertThrows(OrderingLimitExceededException.class, () -> processor.postProcess(objectList));
     }

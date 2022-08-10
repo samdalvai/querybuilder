@@ -21,7 +21,7 @@ public class CassandraQueryRepresentation implements QueryRepresentation {
     private final List<SpecialComparisonClause> specialComparisonClauses;
     private final String entity;
 
-    private ResultsProcessor processor;
+    private final ResultsProcessor processor;
 
 
     public CassandraQueryRepresentation(String query, boolean dynamic, Map<String, Object> fixParametersMap, List<ConditionStatement> conditions, List<OrderByClause> orderByClauses, List<SpecialComparisonClause> specialComparisonClauses, String entity, ResultsProcessor processor) {

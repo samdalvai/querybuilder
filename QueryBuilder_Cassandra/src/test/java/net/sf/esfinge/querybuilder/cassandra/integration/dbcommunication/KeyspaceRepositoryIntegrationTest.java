@@ -2,7 +2,6 @@ package net.sf.esfinge.querybuilder.cassandra.integration.dbcommunication;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.exceptions.InvalidQueryException;
 import net.sf.esfinge.querybuilder.cassandra.cassandrautils.KeyspaceRepository;
 import net.sf.esfinge.querybuilder.cassandra.cassandrautils.ReplicationStrategy;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidNumberOfReplicasException;
@@ -11,7 +10,6 @@ import org.apache.thrift.transport.TTransportException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.IOException;
 import java.util.List;

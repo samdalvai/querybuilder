@@ -34,7 +34,7 @@ public class ConfigReader {
 
         try {
             config = objectMapper.readValue(json, CassandraConfig.class);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new WrongConfigurationException(e.getMessage());
         }
 

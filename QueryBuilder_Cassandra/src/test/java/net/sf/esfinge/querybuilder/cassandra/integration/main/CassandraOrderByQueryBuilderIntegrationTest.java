@@ -3,16 +3,10 @@ package net.sf.esfinge.querybuilder.cassandra.integration.main;
 import net.sf.esfinge.querybuilder.QueryBuilder;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.OrderingLimitExceededException;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseIntegrationTest;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.OrderingProcessor;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.cassandra.testresources.CassandraOrderByTestQuery;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
-import net.sf.esfinge.querybuilder.cassandra.unit.reflection.TestClass;
-import net.sf.esfinge.querybuilder.methodparser.OrderingDirection;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -82,7 +76,7 @@ public class CassandraOrderByQueryBuilderIntegrationTest extends CassandraBasicD
 
     @Test
     public void orderByQueryWithOrderingLimitExceededTest() {
-        for (int i = 0; i < 11; i++){
+        for (int i = 0; i < 11; i++) {
             Person p = new Person();
             p.setId(i);
             p.setName("test");

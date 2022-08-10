@@ -2,7 +2,6 @@ package net.sf.esfinge.querybuilder.cassandra.integration.nullvalues;
 
 import com.datastax.driver.core.Session;
 import net.sf.esfinge.querybuilder.QueryBuilder;
-import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedCassandraOperationException;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseIntegrationTest;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraTestUtils;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
@@ -39,7 +38,7 @@ public class CassandraQueryBuilderNullValuesIntegrationTest extends CassandraBas
         session.execute(query);
         session.close();
 
-        List<Person> list = testQuery.getPersonByLastNameAndName(null,null);
+        List<Person> list = testQuery.getPersonByLastNameAndName(null, null);
 
         assertEquals(new Integer(20), list.get(0).getAge());
     }
@@ -53,7 +52,7 @@ public class CassandraQueryBuilderNullValuesIntegrationTest extends CassandraBas
         session.execute(query);
         session.close();
 
-        List<Person> list = testQuery.getPersonByLastNameAndAge(null,20);
+        List<Person> list = testQuery.getPersonByLastNameAndAge(null, 20);
 
         assertEquals(new Integer(20), list.get(0).getAge());
     }
