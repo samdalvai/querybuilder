@@ -64,6 +64,76 @@ public class CassandraSecondaryQueryVisitorTest {
                 secondaryQuery);
     }
 
+    @Test
+    public void twoOrConnectorsTest() {
+        visitor.visitEntity("Person");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitCondition("lastname", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitCondition("age", ComparisonType.EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getSecondaryVisitor().getQueryRepresentation();
+        String tertiaryQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? ALLOW FILTERING",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = ? ALLOW FILTERING",
+                secondaryQuery);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING",
+                tertiaryQuery);
+    }
+
+    @Test
+    public void twoOrConnectorsComplexQueryTest() {
+        visitor.visitEntity("Person");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("and");
+        visitor.visitCondition("id", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitCondition("lastname", ComparisonType.EQUALS);
+        visitor.visitConector("and");
+        visitor.visitCondition("id", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitCondition("age", ComparisonType.EQUALS);
+        visitor.visitConector("and");
+        visitor.visitCondition("id", ComparisonType.EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getSecondaryVisitor().getQueryRepresentation();
+        String tertiaryQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? AND id = ? ALLOW FILTERING",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = ? AND id = ? ALLOW FILTERING",
+                secondaryQuery);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? AND id = ? ALLOW FILTERING",
+                tertiaryQuery);
+    }
+
     @Test(expected = InvalidQuerySequenceException.class)
     public void connectorBeforeConditionTest() {
         visitor.visitEntity("Person");
@@ -81,6 +151,16 @@ public class CassandraSecondaryQueryVisitorTest {
     public void connectorAsLastVisitTest() {
         visitor.visitEntity("Person");
         visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitEnd();
+    }
+
+    @Test(expected = InvalidQuerySequenceException.class)
+    public void connectorAsLastVisitWithDoubleOrConnectorTest() {
+        visitor.visitEntity("Person");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitCondition("lastname", ComparisonType.EQUALS);
         visitor.visitConector("or");
         visitor.visitEnd();
     }

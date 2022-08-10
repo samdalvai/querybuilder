@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class CassandraChainQueryVisitor implements QueryVisitor {
 
-    private CassandraQueryVisitor primaryVisitor;
+    private final CassandraQueryVisitor primaryVisitor;
     private CassandraChainQueryVisitor secondaryVisitor;
 
     public CassandraChainQueryVisitor() {
@@ -117,7 +117,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         return primaryVisitor.getQueryRepresentation();
     }
 
-    public QueryVisitor getSecondaryVisitor() {
+    public CassandraChainQueryVisitor getSecondaryVisitor() {
         return secondaryVisitor;
     }
 }
