@@ -41,7 +41,7 @@ public class CassandraSecondaryQueryVisitorTest {
     }
 
     @Test
-    public void twoOrsConnectorTest() {
+    public void twoOrConnectorsTest() {
         visitor.visitEntity("Person");
         visitor.visitCondition("name", ComparisonType.EQUALS);
         visitor.visitConector("OR");

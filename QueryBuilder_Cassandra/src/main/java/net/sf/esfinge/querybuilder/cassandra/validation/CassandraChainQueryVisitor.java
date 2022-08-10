@@ -16,12 +16,10 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
     private CassandraQueryVisitor primaryVisitor;
     private CassandraChainQueryVisitor secondaryVisitor;
 
-    public CassandraChainQueryVisitor(CassandraQueryVisitor primaryVisitor) {
-        this.primaryVisitor = primaryVisitor;
+    public CassandraChainQueryVisitor() {
+        this.primaryVisitor = new CassandraQueryVisitor();
     }
 
-    public CassandraChainQueryVisitor() {
-    }
 
     @Override
     public void visitEntity(String entity) {

@@ -5,6 +5,6 @@ import net.sf.esfinge.querybuilder.methodparser.QueryVisitor;
 
 public class CassandraVisitorFactory {
     public static QueryVisitor createQueryVisitor() {
-        return new CassandraValidationQueryVisitor(new CassandraChainQueryVisitor(new CassandraQueryVisitor()));
+        return new CassandraValidationQueryVisitor(new CassandraChainQueryVisitor());
     }
 }
