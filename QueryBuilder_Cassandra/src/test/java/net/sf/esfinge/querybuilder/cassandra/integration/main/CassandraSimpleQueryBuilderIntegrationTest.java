@@ -62,10 +62,12 @@ public class CassandraSimpleQueryBuilderIntegrationTest extends CassandraBasicDa
         assertEquals("It should get Pedro Silva", new Integer(1), p.getId());
     }
 
+    /*
+    // TODO: REMOVE THIS TESTS IF OR CONNECTOR HAS BEEN IMPLEMENTED
     @Test(expected = InvalidConnectorException.class)
     public void queryWithTwoOrParametersTest() {
         testQuery.getPersonByNameOrLastName("Pedro", "Silva");
-    }
+    }*/
 
     @Test
     public void queryWithGreaterThanTest() {
