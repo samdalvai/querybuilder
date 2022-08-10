@@ -12,10 +12,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class CassandraValidationQueryVisitor implements QueryVisitor {
-    private final CassandraQueryVisitor visitor;
+    private final CassandraChainQueryVisitor visitor;
     private CassandraQueryElement lastCalled;
 
-    public CassandraValidationQueryVisitor(CassandraQueryVisitor visitor) {
+    public CassandraValidationQueryVisitor(CassandraChainQueryVisitor visitor) {
         this.lastCalled = CassandraQueryElement.NONE;
         this.visitor = visitor;
     }
@@ -111,7 +111,7 @@ public class CassandraValidationQueryVisitor implements QueryVisitor {
         return this.visitor.getQueryRepresentation();
     }
 
-    public QueryVisitor getSecondaryVisitor() {
+    public CassandraChainQueryVisitor getSecondaryVisitor() {
         return this.visitor.getSecondaryVisitor();
     }
 }

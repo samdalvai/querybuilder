@@ -12,46 +12,79 @@ import java.util.Set;
 
 public class CassandraChainQueryVisitor implements QueryVisitor {
 
-    private CassandraQueryVisitor primaryVisitor;
-    private CassandraQueryVisitor secondaryVisitor;
+    private final CassandraQueryVisitor primaryVisitor;
+    private CassandraChainQueryVisitor secondaryVisitor;
 
-    public CassandraChainQueryVisitor(CassandraQueryVisitor primaryVisitor) {
-        this.primaryVisitor = primaryVisitor;
+    public CassandraChainQueryVisitor() {
+        this.primaryVisitor = new CassandraQueryVisitor();
+    }
+
+
+    @Override
+    public void visitEntity(String entity) {
+        if (secondaryVisitor == null) {
+            primaryVisitor.visitEntity(entity);
+        }
     }
 
     @Override
-    public void visitEntity(String s) {
+    public void visitConector(String connector) {
+        if (secondaryVisitor == null) {
+            if (connector.equalsIgnoreCase("OR")) {
+                primaryVisitor.visitEnd();
+                secondaryVisitor = new CassandraChainQueryVisitor();
+                secondaryVisitor.visitEntity(primaryVisitor.getEntity());
+            } else
+                primaryVisitor.visitConector(connector);
 
+        } else {
+            secondaryVisitor.visitConector(connector);
+        }
     }
 
     @Override
-    public void visitConector(String s) {
-
+    public void visitCondition(String parameter, ComparisonType comparisonType) {
+        if (secondaryVisitor == null) {
+            primaryVisitor.visitCondition(parameter, comparisonType);
+        } else {
+            secondaryVisitor.visitCondition(parameter, comparisonType);
+        }
     }
 
     @Override
-    public void visitCondition(String s, ComparisonType comparisonType) {
-
+    public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
+        if (secondaryVisitor == null) {
+            primaryVisitor.visitCondition(parameter, comparisonType, nullOption);
+        } else {
+            secondaryVisitor.visitCondition(parameter, comparisonType, nullOption);
+        }
     }
 
     @Override
-    public void visitCondition(String s, ComparisonType comparisonType, NullOption nullOption) {
-
+    public void visitCondition(String parameter, ComparisonType comparisonType, Object value) {
+        if (secondaryVisitor == null) {
+            primaryVisitor.visitCondition(parameter, comparisonType, value);
+        } else {
+            secondaryVisitor.visitCondition(parameter, comparisonType, value);
+        }
     }
 
     @Override
-    public void visitCondition(String s, ComparisonType comparisonType, Object o) {
-
-    }
-
-    @Override
-    public void visitOrderBy(String s, OrderingDirection orderingDirection) {
-
+    public void visitOrderBy(String parameter, OrderingDirection orderingDirection) {
+        if (secondaryVisitor == null) {
+            primaryVisitor.visitOrderBy(parameter, orderingDirection);
+        } else {
+            secondaryVisitor.visitOrderBy(parameter, orderingDirection);
+        }
     }
 
     @Override
     public void visitEnd() {
-
+        if (secondaryVisitor == null) {
+            primaryVisitor.visitEnd();
+        } else {
+            secondaryVisitor.visitEnd();
+        }
     }
 
     @Override
@@ -84,7 +117,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         return primaryVisitor.getQueryRepresentation();
     }
 
-    public QueryVisitor getSecondaryVisitor() {
+    public CassandraChainQueryVisitor getSecondaryVisitor() {
         return secondaryVisitor;
     }
 }
