@@ -10,18 +10,18 @@ import java.util.stream.Collectors;
 
 public class SpecialComparisonUtils {
 
-    public static boolean filterBySpecialComparison(Object parameterValue, Object valueToCompare, SpecialComparisonType comparisonType) {
+    public static boolean filterBySpecialComparison(Object objectAttributeValue, Object queryParameterValue, SpecialComparisonType comparisonType) {
         switch (comparisonType) {
             case NOT_EQUALS:
-                return !parameterValue.equals(valueToCompare);
+                return !objectAttributeValue.equals(queryParameterValue);
             case STARTS:
-                return parameterValue.toString().startsWith(valueToCompare.toString());
+                return objectAttributeValue.toString().startsWith(queryParameterValue.toString());
             case ENDS:
-                return parameterValue.toString().endsWith(valueToCompare.toString());
+                return objectAttributeValue.toString().endsWith(queryParameterValue.toString());
             case CONTAINS:
-                return parameterValue.toString().contains(valueToCompare.toString());
+                return objectAttributeValue.toString().contains(queryParameterValue.toString());
             case COMPARE_TO_NULL:
-                return parameterValue == null;
+                return queryParameterValue == null ? objectAttributeValue == null : objectAttributeValue.equals(queryParameterValue);
             default:
                 return true;
         }
@@ -40,7 +40,10 @@ public class SpecialComparisonUtils {
 
         return list.stream().filter(obj -> {
             try {
-                return filterBySpecialComparisonClause(getter.invoke(obj), clause);
+                if (getter.invoke(obj) != null)
+                    return filterBySpecialComparisonClause(getter.invoke(obj), clause);
+                else
+                    return false;
             } catch (Exception e) {
                 throw new MethodInvocationException("Could not invoke method \"" + getter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e.getMessage());
             }
