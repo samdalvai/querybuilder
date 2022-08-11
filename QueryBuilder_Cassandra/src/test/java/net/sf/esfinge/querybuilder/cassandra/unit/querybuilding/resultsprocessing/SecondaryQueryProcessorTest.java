@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SecondaryQueryProcessorTest extends BasicProcessorTest {
 
     @Test
-    public void mergeTwoSecondaryQueriesWithDifferentElementsTest() {
+    public void mergeTwoQueriesResultWithDifferentElementsTest() {
         List<TestClass> secondList = new ArrayList<>();
         TestClass obj1 = new TestClass(1, "Pedro", "Silva");
         secondList.add(obj1);
