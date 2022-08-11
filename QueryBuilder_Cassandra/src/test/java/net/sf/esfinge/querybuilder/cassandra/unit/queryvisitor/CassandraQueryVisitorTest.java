@@ -184,6 +184,8 @@ public class CassandraQueryVisitorTest {
         assertFalse(qr.getFixParameters().contains("age"));
     }
 
+
+    // TODO: PROBLEM WITH COMPLEX QUERIES AND CASSANDRA: JOINS DO NOT EXIST, IMPLEMENT THEM AT APPLICATION LEVEL??
     /*@Test
     public void mixedWithfixParameterQueryFromOtherClass(){
         visitor.visitEntity("Person");
@@ -216,7 +218,6 @@ public class CassandraQueryVisitorTest {
     }*/
 
     /*
-    TODO: PROBLEM WITH COMPLEX QUERIES AND CASSANDRA: JOINS DO NOT EXIST, IMPLEMENT THEM AT APPLICATION LEVEL??
     @Test
 	public void compositeCondition(){
 		visitor.visitEntity("Person");

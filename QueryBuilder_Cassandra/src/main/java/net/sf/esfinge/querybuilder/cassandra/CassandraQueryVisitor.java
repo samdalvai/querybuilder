@@ -85,10 +85,10 @@ public class CassandraQueryVisitor implements QueryVisitor {
     }
 
     @Override
-    public void visitCondition(String parameter, ComparisonType comparisonType, Object o) {
+    public void visitCondition(String parameter, ComparisonType comparisonType, Object value) {
         visitCondition(parameter, comparisonType);
 
-        conditions.get(conditions.size() - 1).setValue(o);
+        conditions.get(conditions.size() - 1).setValue(value);
     }
 
     @Override
@@ -156,6 +156,12 @@ public class CassandraQueryVisitor implements QueryVisitor {
                 return true;
             }
         }
+
+        for (SpecialComparisonClause c : specialComparisonClauses){
+            if (c.getSpecialComparisonType() == SpecialComparisonType.COMPARE_TO_NULL)
+                return true;
+        }
+
         return false;
     }
 
