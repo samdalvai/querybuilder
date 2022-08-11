@@ -356,13 +356,13 @@ public class CassandraDynamicQueriesTest {
         params.put("name", "James");
 
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person", query2); // todo: ????
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person", query2);
     }
-/*
+
     @Test
-    public void ignoreWhenNullWithTwoConditionsTest() {
+    public void compareToNullWithTwoConditionsTest() {
         visitor.visitEntity("Person");
-        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitConector("AND");
         visitor.visitCondition("age", ComparisonType.EQUALS, NullOption.NONE);
         visitor.visitEnd();
@@ -378,17 +378,17 @@ public class CassandraDynamicQueriesTest {
 
         params.put("name", "James");
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age = ? ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING", query2);
     }
 
     @Test
-    public void ignoreWhenNullWithComplexConditionsTest() {
+    public void compareToNullWithComplexConditionsTest() {
         visitor.visitEntity("Person");
-        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitConector("AND");
         visitor.visitCondition("age", ComparisonType.EQUALS, NullOption.NONE);
         visitor.visitConector("AND");
-        visitor.visitCondition("city", ComparisonType.EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("city", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitConector("AND");
         visitor.visitCondition("city", ComparisonType.EQUALS, NullOption.NONE);
         visitor.visitEnd();
@@ -405,17 +405,17 @@ public class CassandraDynamicQueriesTest {
         params.put("name", "James");
         params.put("age", 30);
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age = 30 AND city = ? ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 30 AND city = ? ALLOW FILTERING", query2);
     }
 
     @Test
-    public void ignoreWhenNullWithComparisonTypeNamingOfParametersTest() {
+    public void compareToNullWithComparisonTypeNamingOfParametersTest() {
         visitor.visitEntity("Person");
-        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitConector("AND");
         visitor.visitCondition("age", ComparisonType.LESSER_OR_EQUALS, NullOption.NONE);
         visitor.visitConector("AND");
-        visitor.visitCondition("city", ComparisonType.EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("city", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitConector("AND");
         visitor.visitCondition("city", ComparisonType.EQUALS, NullOption.NONE);
         visitor.visitEnd();
@@ -432,24 +432,17 @@ public class CassandraDynamicQueriesTest {
         params.put("nameEquals", "James");
         params.put("ageLesserOrEquals", 30);
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age <= 30 AND city = ? ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age <= 30 AND city = ? ALLOW FILTERING", query2);
     }
-
-    @Test(expected = UnsupportedCassandraOperationException.class)
-    public void invalidCompareToNullQueryTest() {
-        visitor.visitEntity("Person");
-        visitor.visitCondition("name", ComparisonType.GREATER_OR_EQUALS, NullOption.COMPARE_TO_NULL);
-    }
-
 
     @Test
-    public void twoIgnoreWhenNullQueryPlusOtherTest() {
+    public void twoCompareToNullQueryPlusOtherTest() {
         visitor.visitEntity("Person");
-        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitConector("and");
         visitor.visitCondition("age", ComparisonType.GREATER_OR_EQUALS);
         visitor.visitConector("and");
-        visitor.visitCondition("lastname", ComparisonType.EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("lastname", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitEnd();
         QueryRepresentation qr = visitor.getQueryRepresentation();
 
@@ -464,27 +457,27 @@ public class CassandraDynamicQueriesTest {
         params.put("name", "James");
 
         String query2 = qr.getQuery(params).toString();
-        assertEquals(query2, "SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age >= 18 ALLOW FILTERING");
+        assertEquals(query2, "SELECT * FROM <#keyspace-name#>.Person WHERE age >= 18 ALLOW FILTERING");
 
         params.put("lastname", "McLoud");
 
         String query3 = qr.getQuery(params).toString();
-        assertEquals(query3, "SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age >= 18 AND lastname = 'McLoud' ALLOW FILTERING");
+        assertEquals(query3, "SELECT * FROM <#keyspace-name#>.Person WHERE age >= 18 ALLOW FILTERING");
 
         params.put("name", null);
 
         String query4 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age >= 18 AND lastname = 'McLoud' ALLOW FILTERING", query4);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age >= 18 ALLOW FILTERING", query4);
     }
 
     @Test
-    public void threeIgnoreWhenNullQueryTest() {
+    public void threeCompareToNullQueryTest() {
         visitor.visitEntity("Person");
-        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("name", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitConector("and");
-        visitor.visitCondition("age", ComparisonType.GREATER_OR_EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("age", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitConector("and");
-        visitor.visitCondition("lastName", ComparisonType.EQUALS, NullOption.IGNORE_WHEN_NULL);
+        visitor.visitCondition("lastName", ComparisonType.EQUALS, NullOption.COMPARE_TO_NULL);
         visitor.visitEnd();
         QueryRepresentation qr = visitor.getQueryRepresentation();
 
@@ -499,17 +492,17 @@ public class CassandraDynamicQueriesTest {
         params.put("lastName", "McLoud");
 
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE lastName = 'McLoud' ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person", query2);
 
         params.put("age", 18);
 
         String query3 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age >= 18 AND lastName = 'McLoud' ALLOW FILTERING", query3);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person", query3);
 
         params.put("name", "James");
 
         String query4 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age >= 18 AND lastName = 'McLoud' ALLOW FILTERING", query4);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person", query4);
     }
-     */
+
 }

@@ -5,9 +5,6 @@ public class CassandraConfig {
     private int orderingLimit;
     private int secondaryQueryLimit;
 
-    // TODO: IMPLEMENT LIMIT FOR SECONDARY QUERIES
-
-
     public int getOrderingLimit() {
         return orderingLimit;
     }

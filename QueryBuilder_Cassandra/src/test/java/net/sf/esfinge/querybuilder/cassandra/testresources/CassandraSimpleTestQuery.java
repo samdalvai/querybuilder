@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface CassandraSimpleTestQuery extends Repository<Person> {
 
+    /**
+     * BASIC QUERIES
+     **/
     List<Person> getPerson();
 
     Person getPersonById(Integer id);
