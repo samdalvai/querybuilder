@@ -40,10 +40,13 @@ public class SpecialComparisonUtils {
 
         return list.stream().filter(obj -> {
             try {
-                //if (getter.invoke(obj) != null)
+                // If we have the @CompareToNull annotation on the parameter of the query method
+                // but we pass a non null value to the method, then we should skip attributes
+                // in the results which are not null
+                if (getter.invoke(obj) == null && clause.getValue() != null)
+                    return false;
+                else
                     return filterBySpecialComparisonClause(getter.invoke(obj), clause);
-                //else
-                  //  return false;
             } catch (Exception e) {
                 throw new MethodInvocationException("Could not invoke method \"" + getter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e.getMessage());
             }

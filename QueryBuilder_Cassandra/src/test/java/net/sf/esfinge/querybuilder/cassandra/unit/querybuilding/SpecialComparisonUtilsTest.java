@@ -1,5 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding;
 
+import net.sf.esfinge.querybuilder.cassandra.exceptions.GetterNotFoundInClassException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
@@ -65,8 +66,8 @@ public class SpecialComparisonUtilsTest {
     }
 
     @Test
-    public void filterBySpecialComparisonWithNotAvailableValueTest() {
-        SpecialComparisonClause clause = new SpecialComparisonClause("name", SpecialComparisonType.NOT_EQUALS);
+    public void filterBySpecialComparisonWithNotAvailableAttributeTest() {
+        SpecialComparisonClause clause = new SpecialComparisonClause("whatever", SpecialComparisonType.NOT_EQUALS);
         clause.setValue("whatever");
 
         List<Person> list = new ArrayList<>();
@@ -76,7 +77,7 @@ public class SpecialComparisonUtilsTest {
         p.setAge(33);
         list.add(p);
 
-        assertThrows(MethodInvocationException.class, () -> SpecialComparisonUtils.filterListBySpecialComparisonClause(list, clause));
+        assertThrows(GetterNotFoundInClassException.class, () -> SpecialComparisonUtils.filterListBySpecialComparisonClause(list, clause));
     }
 
 }

@@ -66,7 +66,6 @@ public class CassandraQueryBuilderNullValuesIntegrationTest extends CassandraBas
         session.execute(query);
         session.close();
 
-        // TODO: MAKE THIS TEST WORK
         List<Person> list = testQuery.getPersonByLastNameAndName(null, "NonNullName");
 
         assertEquals(new Integer(20), list.get(0).getAge());
