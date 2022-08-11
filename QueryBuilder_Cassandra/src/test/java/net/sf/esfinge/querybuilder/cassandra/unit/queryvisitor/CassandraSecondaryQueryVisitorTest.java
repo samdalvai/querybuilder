@@ -176,4 +176,21 @@ public class CassandraSecondaryQueryVisitorTest {
         visitor.visitConector("or");
         visitor.visitEnd();
     }
+
+    @Test
+    public void lastSecondaryVisitorShouldBeNullWithOneOrConnectorTest() {
+        visitor.visitEntity("Person");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitCondition("lastname", ComparisonType.EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
+
+        assertEquals(null, ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getSecondaryVisitor());
+    }
 }
