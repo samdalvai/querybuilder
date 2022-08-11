@@ -24,8 +24,14 @@ public class SpecialComparisonProcessor extends BasicResultsProcessor {
         if (specialComparisonClauses.isEmpty() || list.isEmpty())
             return list;
 
+        list.forEach(e -> System.out.println(e));
+
         for (SpecialComparisonClause c : specialComparisonClauses) {
+            System.out.println("passing: " + c);
             list = SpecialComparisonUtils.filterListBySpecialComparisonClause(list, c);
+
+            System.out.println("result: ");
+            list.forEach(e -> System.out.println(e));
         }
 
         return list;

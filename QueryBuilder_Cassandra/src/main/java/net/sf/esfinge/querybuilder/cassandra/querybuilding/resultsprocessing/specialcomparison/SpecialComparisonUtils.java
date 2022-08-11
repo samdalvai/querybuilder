@@ -40,10 +40,10 @@ public class SpecialComparisonUtils {
 
         return list.stream().filter(obj -> {
             try {
-                if (getter.invoke(obj) != null)
+                //if (getter.invoke(obj) != null)
                     return filterBySpecialComparisonClause(getter.invoke(obj), clause);
-                else
-                    return false;
+                //else
+                  //  return false;
             } catch (Exception e) {
                 throw new MethodInvocationException("Could not invoke method \"" + getter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e.getMessage());
             }
