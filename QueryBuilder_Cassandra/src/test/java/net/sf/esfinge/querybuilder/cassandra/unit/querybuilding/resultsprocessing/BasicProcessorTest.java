@@ -2,6 +2,7 @@ package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding.resultsprocessi
 
 import net.sf.esfinge.querybuilder.cassandra.unit.reflection.TestClass;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,4 +26,5 @@ public class BasicProcessorTest {
         objectList.add(obj4);
         objectList.add(obj5);
     }
+
 }
