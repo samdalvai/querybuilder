@@ -4,6 +4,8 @@ import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationExceptio
 import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SecondaryQueryUtils {
 
@@ -25,5 +27,25 @@ public class SecondaryQueryUtils {
         }
 
         return true;
+    }
+
+    public static <E> List removeCopyElementsFromList(List<E> list){
+        List<E> result = new ArrayList<>();
+
+        for (E e : list){
+            if (!isObjectInList(e,result))
+                result.add(e);
+        }
+
+        return result;
+    }
+
+    private static <E> boolean isObjectInList(E object, List<E> list) {
+        for (E e : list) {
+            if (SecondaryQueryUtils.reflectiveEquals(e, object))
+                return true;
+        }
+
+        return false;
     }
 }
