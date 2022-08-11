@@ -45,12 +45,13 @@ public class SpecialComparisonUtils {
                 // If we have the @CompareToNull annotation on the parameter of the query method
                 // but we pass a non null value to the method, then we should skip attributes
                 // in the results which are not null
-                if (getter.invoke(obj) == null && clause.getValue() != null)
+                if (getter.invoke(obj) == null && clause.getValue() != null) {
                     return false;
-                else
+                } else {
                     return filterBySpecialComparisonClause(getter.invoke(obj), clause);
+                }
             } catch (Exception e) {
-                throw new MethodInvocationException("Could not invoke method \"" + getter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e.getMessage());
+                throw new MethodInvocationException("Could not invoke method \"" + getter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e);
             }
         }).collect(Collectors.toList());
     }
@@ -87,10 +88,12 @@ public class SpecialComparisonUtils {
         return newSpc;
     }
 
-    public static boolean hasCompareToNullAnnotation(Object obj) {
-        for (Field f : obj.getClass().getDeclaredFields()) {
-            if (f.isAnnotationPresent(CompareToNull.class))
-                return true;
+    public static boolean hasCompareToNullAnnotationOnFields(Object obj) {
+        if (obj != null) {
+            for (Field f : obj.getClass().getDeclaredFields()) {
+                if (f.isAnnotationPresent(CompareToNull.class))
+                    return true;
+            }
         }
 
         return false;

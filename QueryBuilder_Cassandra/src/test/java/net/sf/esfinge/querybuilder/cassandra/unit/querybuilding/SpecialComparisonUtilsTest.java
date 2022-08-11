@@ -83,12 +83,12 @@ public class SpecialComparisonUtilsTest {
 
     @Test
     public void hasCompareToNullAnnotationWithAnnotationPresentTest(){
-        assertTrue(SpecialComparisonUtils.hasCompareToNullAnnotation(new CompareNullQueryObject()));
+        assertTrue(SpecialComparisonUtils.hasCompareToNullAnnotationOnFields(new CompareNullQueryObject()));
     }
 
     @Test
     public void hasCompareToNullAnnotationWithAnnotationNotPresentTest(){
-        assertFalse(SpecialComparisonUtils.hasCompareToNullAnnotation(new Person()));
+        assertFalse(SpecialComparisonUtils.hasCompareToNullAnnotationOnFields(new Person()));
     }
 
 }
