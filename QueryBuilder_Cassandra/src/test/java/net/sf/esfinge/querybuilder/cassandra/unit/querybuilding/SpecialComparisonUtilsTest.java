@@ -2,6 +2,7 @@ package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.GetterNotFoundInClassException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationException;
+import net.sf.esfinge.querybuilder.cassandra.integration.queryobjects.CompareNullQueryObject;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonUtils;
@@ -78,6 +79,16 @@ public class SpecialComparisonUtilsTest {
         list.add(p);
 
         assertThrows(GetterNotFoundInClassException.class, () -> SpecialComparisonUtils.filterListBySpecialComparisonClause(list, clause));
+    }
+
+    @Test
+    public void hasCompareToNullAnnotationWithAnnotationPresentTest(){
+        assertTrue(SpecialComparisonUtils.hasCompareToNullAnnotation(new CompareNullQueryObject()));
+    }
+
+    @Test
+    public void hasCompareToNullAnnotationWithAnnotationNotPresentTest(){
+        assertFalse(SpecialComparisonUtils.hasCompareToNullAnnotation(new Person()));
     }
 
 }

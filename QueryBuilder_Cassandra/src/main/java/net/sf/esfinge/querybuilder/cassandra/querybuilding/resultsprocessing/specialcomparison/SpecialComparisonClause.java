@@ -1,5 +1,10 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison;
 
+import net.sf.esfinge.querybuilder.annotation.CompareToNull;
+import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Objects;
 
 public class SpecialComparisonClause {

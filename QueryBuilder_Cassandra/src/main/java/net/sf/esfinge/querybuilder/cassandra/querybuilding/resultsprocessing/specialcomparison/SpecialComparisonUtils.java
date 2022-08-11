@@ -1,8 +1,10 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison;
 
+import net.sf.esfinge.querybuilder.annotation.CompareToNull;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationException;
 import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,5 +85,14 @@ public class SpecialComparisonUtils {
         }
 
         return newSpc;
+    }
+
+    public static boolean hasCompareToNullAnnotation(Object obj) {
+        for (Field f : obj.getClass().getDeclaredFields()) {
+            if (f.isAnnotationPresent(CompareToNull.class))
+                return true;
+        }
+
+        return false;
     }
 }
