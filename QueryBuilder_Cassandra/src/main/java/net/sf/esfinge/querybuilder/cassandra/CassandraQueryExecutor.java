@@ -45,6 +45,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         List<SpecialComparisonClause> spc = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
         List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClauseWithArguments(args, spc);
 
+        // TODO: RUN ALL THE QUERIES + SECONDARY??
         Object[] newArgs;
 
         if (queryInfo.getQueryStyle() == QueryStyle.QUERY_OBJECT)

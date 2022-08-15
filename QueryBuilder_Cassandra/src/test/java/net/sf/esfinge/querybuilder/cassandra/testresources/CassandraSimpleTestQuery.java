@@ -35,14 +35,6 @@ public interface CassandraSimpleTestQuery extends Repository<Person> {
 
     List<Person> getPersonByIdAndName(Integer id, String name, Integer age);
 
-    /**
-     * QUERIES WITH OR CONNECTOR
-     **/
-
-    // TODO: METHODS WITH OR CONNECTORS DON'T WORK IN CASSANDRA, IMPLEMENT AT APPLICATION LOGIC OR LEAVE IT FORBIDDEN?
-    List<Person> getPersonByNameOrLastName(String name, String lastname);
-    // List<Person> getPersonByAgeOrLastNameOrderByNameDesc(@Greater Integer age, String lastname);
-
     /** QUERIES WITH JOINS, (CLASSES MADE OF OTHER CLASSES) **/
 
     // TODO: METHODS WITH CUSTOM CLASS ATTRIBUTE DON'T WORK IN CASSANDRA, BECAUSE THERE IS NO SUCH THIS AS JOINS, IMPLEMENT AT APPLICATION LOGIC OR LEAVE IT FORBIDDEN?
