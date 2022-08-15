@@ -15,9 +15,9 @@ public class QueryBuildingUtils {
 
         // Skip substituting values equal to null. Arguments that have no placeholder are used in
         // SpecialComparison clauses and do not need to be substituted
-        for (int i = 0; i < args.length; i++){
-            if (args[i] != null && newQuery.contains(i + "?")){
-                newQuery = newQuery.replace(i + "?",getValueRepresentationByType(args[i]));
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] != null && newQuery.contains(i + "?")) {
+                newQuery = newQuery.replace(i + "?", getValueRepresentationByType(args[i]));
                 substituted++;
             }
         }

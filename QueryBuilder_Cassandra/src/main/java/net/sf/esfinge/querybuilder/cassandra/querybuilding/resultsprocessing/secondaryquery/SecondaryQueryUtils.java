@@ -18,10 +18,18 @@ public class SecondaryQueryUtils {
         Method[] obj1Getters = CassandraReflectionUtils.getClassGetters(obj1.getClass());
         Method[] obj2Getters = CassandraReflectionUtils.getClassGetters(obj2.getClass());
 
-        for (int i = 0; i < obj1Getters.length; i++){
+        for (int i = 0; i < obj1Getters.length; i++) {
             try {
-                if (!obj1Getters[i].invoke(obj1).equals(obj2Getters[i].invoke(obj2)))
+                Object result1 = obj1Getters[i].invoke(obj1);
+                Object result2 = obj2Getters[i].invoke(obj2);
+
+                if (result1 == null) {
+                    return result2 == null;
+                }
+
+                if (!result1.equals(result2))
                     return false;
+
             } catch (Exception e) {
                 throw new MethodInvocationException(e.getMessage());
             }
@@ -30,11 +38,11 @@ public class SecondaryQueryUtils {
         return true;
     }
 
-    public static <E> List removeDuplicateElementsFromList(List<E> list){
+    public static <E> List removeDuplicateElementsFromList(List<E> list) {
         List<E> result = new ArrayList<>();
 
-        for (E e : list){
-            if (!isObjectInList(e,result))
+        for (E e : list) {
+            if (!isObjectInList(e, result))
                 result.add(e);
         }
 

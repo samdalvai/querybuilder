@@ -17,7 +17,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
     private final CassandraQueryVisitor primaryVisitor;
     private CassandraChainQueryVisitor secondaryVisitor;
 
-    private int queryDepth;
+    private final int queryDepth;
 
     public CassandraChainQueryVisitor(int queryDepth) {
         this.primaryVisitor = new CassandraQueryVisitor();

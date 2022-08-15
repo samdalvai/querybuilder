@@ -4,9 +4,8 @@ import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.Bas
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class SecondaryQueryProcessor<E> extends BasicResultsProcessor {
+public class SecondaryQueryProcessor extends BasicResultsProcessor {
 
     public SecondaryQueryProcessor() {
     }
@@ -21,12 +20,6 @@ public class SecondaryQueryProcessor<E> extends BasicResultsProcessor {
             return list;
 
         return SecondaryQueryUtils.removeDuplicateElementsFromList(list);
-    }
-
-    public static <E> List fromListOfLists(List<List<E>> result) {
-        return result.stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
     }
 
 }

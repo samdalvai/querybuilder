@@ -271,7 +271,6 @@ public class CassandraDynamicQueriesTest {
     }
 
 
-
     @Test
     public void compareToNullTest() {
         visitor.visitEntity("Person");

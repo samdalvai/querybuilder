@@ -29,7 +29,7 @@ public class CassandraSecondaryQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
         String secondaryQuery = qr.getQuery().toString();
 
         assertEquals(
@@ -56,7 +56,7 @@ public class CassandraSecondaryQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
         String secondaryQuery = qr.getQuery().toString();
 
         assertEquals(
@@ -81,10 +81,10 @@ public class CassandraSecondaryQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
         String secondaryQuery = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getSecondaryVisitor().getQueryRepresentation();
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getSecondaryVisitor().getQueryRepresentation();
         String tertiaryQuery = qr.getQuery().toString();
 
         assertEquals(
@@ -119,10 +119,10 @@ public class CassandraSecondaryQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
         String secondaryQuery = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getSecondaryVisitor().getQueryRepresentation();
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getSecondaryVisitor().getQueryRepresentation();
         String tertiaryQuery = qr.getQuery().toString();
 
         assertEquals(
@@ -191,10 +191,10 @@ public class CassandraSecondaryQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
         String secondaryQuery = qr.getQuery().toString();
 
-        assertEquals(null, ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getSecondaryVisitor());
+        assertEquals(null, ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getSecondaryVisitor());
     }
 
     @Test
@@ -208,7 +208,7 @@ public class CassandraSecondaryQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
         String secondaryQuery = qr.getQuery().toString();
 
         assertEquals(
@@ -221,6 +221,6 @@ public class CassandraSecondaryQueryVisitorTest {
 
         SpecialComparisonClause expected = new SpecialComparisonClause("lastname", SpecialComparisonType.STARTS);
 
-        assertEquals(expected, ((CassandraQueryRepresentation)qr).getSpecialComparisonClauses().get(0));
+        assertEquals(expected, ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses().get(0));
     }
 }

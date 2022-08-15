@@ -2,6 +2,7 @@ package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding.resultsprocessi
 
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.secondaryquery.SecondaryQueryProcessor;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.secondaryquery.SecondaryQueryUtils;
 import net.sf.esfinge.querybuilder.cassandra.unit.reflection.TestClass;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class SecondaryQueryProcessorTest extends BasicProcessorTest {
         listOfLists.add(secondList);
 
         ResultsProcessor processor = new SecondaryQueryProcessor();
-        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromListOfLists(listOfLists));
+        List<TestClass> result = processor.postProcess(SecondaryQueryUtils.fromListOfLists(listOfLists));
 
         assertEquals(expected, result);
     }
@@ -47,7 +48,7 @@ public class SecondaryQueryProcessorTest extends BasicProcessorTest {
         listOfLists.add(secondList);
 
         ResultsProcessor processor = new SecondaryQueryProcessor();
-        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromListOfLists(listOfLists));
+        List<TestClass> result = processor.postProcess(SecondaryQueryUtils.fromListOfLists(listOfLists));
 
         assertEquals(expected, result);
     }
@@ -73,7 +74,7 @@ public class SecondaryQueryProcessorTest extends BasicProcessorTest {
         listOfLists.add(thirdList);
 
         ResultsProcessor processor = new SecondaryQueryProcessor();
-        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromListOfLists(listOfLists));
+        List<TestClass> result = processor.postProcess(SecondaryQueryUtils.fromListOfLists(listOfLists));
 
         assertEquals(expected, result);
     }
@@ -86,7 +87,7 @@ public class SecondaryQueryProcessorTest extends BasicProcessorTest {
         listOfLists.add(secondList);
 
         ResultsProcessor processor = new SecondaryQueryProcessor();
-        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromListOfLists(listOfLists));
+        List<TestClass> result = processor.postProcess(SecondaryQueryUtils.fromListOfLists(listOfLists));
 
         assertEquals(0, result.size());
     }

@@ -15,9 +15,10 @@ public class TestClass {
         this.lastName = lastName;
     }
 
-    public void getWhatever(){
+    public void getWhatever() {
 
     }
+
     public int getId() {
         return id;
     }

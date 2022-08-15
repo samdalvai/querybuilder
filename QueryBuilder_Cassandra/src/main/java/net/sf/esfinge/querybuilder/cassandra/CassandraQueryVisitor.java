@@ -3,9 +3,9 @@ package net.sf.esfinge.querybuilder.cassandra;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidConnectorException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedCassandraOperationException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ConditionStatement;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderingProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderingProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
@@ -21,10 +21,10 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private final List<ConditionStatement> conditions = new ArrayList<>();
     private final List<OrderByClause> orderByClauses = new ArrayList<>();
     private final List<SpecialComparisonClause> specialComparisonClauses = new ArrayList<>();
+    private final int argumentPositionOffset;
     private String entity;
     private String query = "";
     private int numberOfFixedValues = 0;
-    private final int argumentPositionOffset;
 
     public CassandraQueryVisitor() {
         argumentPositionOffset = 0;
@@ -174,7 +174,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
             }
         }
 
-        for (SpecialComparisonClause c : specialComparisonClauses){
+        for (SpecialComparisonClause c : specialComparisonClauses) {
             if (c.getSpecialComparisonType() == SpecialComparisonType.COMPARE_TO_NULL)
                 return true;
         }

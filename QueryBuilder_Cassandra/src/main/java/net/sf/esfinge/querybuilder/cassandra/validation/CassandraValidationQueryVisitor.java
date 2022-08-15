@@ -124,7 +124,7 @@ public class CassandraValidationQueryVisitor implements QueryVisitor {
         if (current != null)
             visitors.add(current);
 
-        while (current.getSecondaryVisitor() != null){
+        while (current.getSecondaryVisitor() != null) {
             current = current.getSecondaryVisitor();
             visitors.add(current);
         }

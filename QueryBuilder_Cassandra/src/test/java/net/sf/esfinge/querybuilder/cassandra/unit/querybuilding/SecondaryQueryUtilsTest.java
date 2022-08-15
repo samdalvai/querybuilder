@@ -15,7 +15,7 @@ public class SecondaryQueryUtilsTest {
         TestClass obj1 = new TestClass(1, "Pedro", "Silva");
         TestClass obj2 = new TestClass(1, "Pedro", "Silva");
 
-        assertTrue(SecondaryQueryUtils.reflectiveEquals(obj1,obj2));
+        assertTrue(SecondaryQueryUtils.reflectiveEquals(obj1, obj2));
     }
 
     @Test
@@ -23,7 +23,7 @@ public class SecondaryQueryUtilsTest {
         TestClass obj1 = new TestClass(1, "Pedro", "Silva");
         TestClass obj2 = new TestClass(1, "Pedros", "Silva");
 
-        assertFalse(SecondaryQueryUtils.reflectiveEquals(obj1,obj2));
+        assertFalse(SecondaryQueryUtils.reflectiveEquals(obj1, obj2));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class SecondaryQueryUtilsTest {
         TestClass obj1 = new TestClass(1, "Pedro", "Silva");
         TestClass1 obj2 = new TestClass1(1, "Pedro", "Silva");
 
-        assertFalse(SecondaryQueryUtils.reflectiveEquals(obj1,obj2));
+        assertFalse(SecondaryQueryUtils.reflectiveEquals(obj1, obj2));
     }
 
 }

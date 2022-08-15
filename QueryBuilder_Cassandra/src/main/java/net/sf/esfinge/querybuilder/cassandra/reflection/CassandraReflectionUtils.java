@@ -2,7 +2,6 @@ package net.sf.esfinge.querybuilder.cassandra.reflection;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.GetterNotFoundInClassException;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +11,7 @@ public class CassandraReflectionUtils {
 
     public static <E> Method[] getClassGetters(Class<E> clazz) {
         List<String> fieldNames = Arrays.stream(clazz.getDeclaredFields())
-                .map(field -> field.getName().substring(0,1).toUpperCase() + field.getName().substring(1))
+                .map(field -> field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1))
                 .collect(Collectors.toList());
 
         return Arrays.stream(clazz.getMethods())

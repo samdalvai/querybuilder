@@ -1,11 +1,8 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison;
 
-import net.sf.esfinge.querybuilder.annotation.CompareToNull;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationException;
 import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -42,7 +39,7 @@ public class SpecialComparisonClause {
     }
 
     public Object getValue() {
-        if (SpecialComparisonUtils.hasCompareToNullAnnotationOnFields(this.value)){
+        if (SpecialComparisonUtils.hasCompareToNullAnnotationOnFields(this.value)) {
             Method[] getters = CassandraReflectionUtils.getClassGetters(this.value.getClass());
             Method getter = CassandraReflectionUtils.getClassGetterForField(this.value.getClass(), getters, propertyName);
 

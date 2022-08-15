@@ -4,9 +4,6 @@ import net.sf.esfinge.querybuilder.cassandra.config.ConfigReader;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.OrderingLimitExceededException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.BasicResultsProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.ChainComparator;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.ChainComparatorFactory;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 
 import java.util.List;
 import java.util.stream.Collectors;

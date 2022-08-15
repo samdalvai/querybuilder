@@ -86,7 +86,7 @@ public class ConditionStatement {
     }
 
     private String getValueRepresentation() {
-        return value != null ? QueryBuildingUtils.getValueRepresentationByType(value) :  conditionIndex + "?";
+        return value != null ? QueryBuildingUtils.getValueRepresentationByType(value) : conditionIndex + "?";
     }
 
     @Override

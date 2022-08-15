@@ -1,12 +1,5 @@
 package net.sf.esfinge.querybuilder.cassandra;
 
-import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
-import org.junit.Test;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-
 public class Backup {
 
     /*@Test

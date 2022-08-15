@@ -9,9 +9,10 @@ import net.sf.esfinge.querybuilder.cassandra.cassandrautils.MappingManagerProvid
 import net.sf.esfinge.querybuilder.cassandra.exceptions.WrongTypeOfExpectedResultException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.secondaryquery.SecondaryQueryProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.secondaryquery.SecondaryQueryUtils;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonUtils;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraChainQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraValidationQueryVisitor;
@@ -20,7 +21,10 @@ import net.sf.esfinge.querybuilder.executor.QueryExecutor;
 import net.sf.esfinge.querybuilder.methodparser.*;
 import net.sf.esfinge.querybuilder.utils.ReflectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CassandraQueryExecutor<E> implements QueryExecutor {
@@ -31,37 +35,6 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
     public CassandraQueryExecutor() {
         provider = new MappingManagerProvider();
     }
-    /*
-    @Override
-    public Object executeQuery(QueryInfo queryInfo, Object[] args) {
-
-
-        //String query = getQuery(queryInfo, args, qr);
-
-        List<E> results = new ArrayList<>();
-
-        for (String query : queries) {
-            results.addAll(getQueryResults(query));
-        }
-
-        //List<E> results = getQueryResults(query);
-
-        if (queryInfo.getQueryType() == QueryType.RETRIEVE_SINGLE) {
-            if (results.size() > 1)
-                //throw new WrongTypeOfExpectedResultException("The query " + query + " resulted in " + results.size() + " results instead of one or zero results");
-                throw new WrongTypeOfExpectedResultException("The query " + queries.get(0) + " resulted in " + results.size() + " results instead of one or zero results");
-
-            if (results.size() > 0)
-                return results.get(0);
-            else
-                return null;
-        }
-
-        ResultsProcessor processor = new SecondaryQueryProcessor<E>(new SpecialComparisonProcessor(newSpc, ((CassandraQueryRepresentation) qr).getProcessor()));
-
-        return processor.postProcess(results);
-    }
-     */
 
     @Override
     public Object executeQuery(QueryInfo queryInfo, Object[] args) {
@@ -73,10 +46,10 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         queryInfo.visit(visitor);
         QueryRepresentation qr = visitor.getQueryRepresentation();
 
-        List<CassandraChainQueryVisitor> visitors = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitorsList();
+        List<CassandraChainQueryVisitor> visitors = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitorsList();
         List<QueryRepresentation> qrList = visitors.stream().map(v -> v.getQueryRepresentation())
                 .collect(Collectors.toList());
-        List<String> queries = qrList.stream().map(representation -> getQuery(queryInfo,args,representation))
+        List<String> queries = qrList.stream().map(representation -> getQuery(queryInfo, args, representation))
                 .collect(Collectors.toList());
         List<SpecialComparisonClause> specialComparisonClauses = SecondaryQueryUtils.fromListOfLists(qrList.stream().map(representation -> ((CassandraQueryRepresentation) representation).getSpecialComparisonClauses())
                 .collect(Collectors.toList()));
@@ -98,7 +71,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
                 return null;
         }
 
-        ResultsProcessor processor = new SpecialComparisonProcessor(newSpc, ((CassandraQueryRepresentation) qr).getProcessor());
+        ResultsProcessor processor = new SecondaryQueryProcessor(new SpecialComparisonProcessor(newSpc, ((CassandraQueryRepresentation) qr).getProcessor()));
 
         return processor.postProcess(results);
     }
@@ -117,7 +90,6 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         return objectsList;
     }
 
-    //private String getQuery(QueryInfo queryInfo, Object[] args, Object[] oldArgs, QueryRepresentation qr) {
     private String getQuery(QueryInfo queryInfo, Object[] args, QueryRepresentation qr) {
         if (!queryInfo.isDynamic() && queryInfo.getQueryStyle() != QueryStyle.QUERY_OBJECT) {
             String query = qr.getQuery().toString();
@@ -133,12 +105,6 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
             if (queryInfo.getQueryStyle() == QueryStyle.METHOD_SIGNATURE) {
                 int argIndex = 0;
 
-                /*for (int i = 0; i < oldArgs.length && argIndex < args.length; i++) {
-                    if (args[argIndex] == oldArgs[i]) {
-                        params.put(namedParameters.get(i), oldArgs[i]);
-                        argIndex++;
-                    }
-                }*/
                 for (int i = 0; i < args.length && argIndex < args.length; i++) {
                     if (args[argIndex] == args[i]) {
                         params.put(namedParameters.get(i), args[i]);
