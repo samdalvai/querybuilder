@@ -11,6 +11,8 @@ public class QueryBuildingUtils {
     public static String replaceQueryArgs(String query, Object[] args) {
         int paramOccurrence = countOccurrenceOfCharacterInString(query, '?');
 
+        System.out.println(query);
+
         if (paramOccurrence != countNotNullArguments(args))
             throw new QueryParametersMismatchException("Number of parameters in the query different from the number of arguments");
 

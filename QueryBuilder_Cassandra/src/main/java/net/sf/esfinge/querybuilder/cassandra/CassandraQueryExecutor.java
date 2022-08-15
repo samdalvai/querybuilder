@@ -12,6 +12,8 @@ import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.Res
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonUtils;
+import net.sf.esfinge.querybuilder.cassandra.validation.CassandraChainQueryVisitor;
+import net.sf.esfinge.querybuilder.cassandra.validation.CassandraValidationQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
 import net.sf.esfinge.querybuilder.executor.QueryExecutor;
 import net.sf.esfinge.querybuilder.methodparser.*;
@@ -40,6 +42,9 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         QueryVisitor visitor = CassandraVisitorFactory.createQueryVisitor();
         queryInfo.visit(visitor);
         QueryRepresentation qr = visitor.getQueryRepresentation();
+
+        List<CassandraChainQueryVisitor> visitors = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitorsList();
+        System.out.println(visitors.size());
 
         // Remove useless arguments for query substitution
         List<SpecialComparisonClause> spc = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
