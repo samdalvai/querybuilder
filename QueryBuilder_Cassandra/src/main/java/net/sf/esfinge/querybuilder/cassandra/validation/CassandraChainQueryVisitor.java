@@ -3,12 +3,14 @@ package net.sf.esfinge.querybuilder.cassandra.validation;
 import net.sf.esfinge.querybuilder.cassandra.CassandraQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.config.ConfigReader;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.SecondaryQueryLimitExceededException;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.OrderingDirection;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
 import net.sf.esfinge.querybuilder.methodparser.QueryVisitor;
 import net.sf.esfinge.querybuilder.methodparser.conditions.NullOption;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -134,5 +136,9 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     public CassandraChainQueryVisitor getSecondaryVisitor() {
         return secondaryVisitor;
+    }
+
+    public List<SpecialComparisonClause> getSpecialComparisonClauses() {
+        return primaryVisitor.getSpecialComparisonClauses();
     }
 }

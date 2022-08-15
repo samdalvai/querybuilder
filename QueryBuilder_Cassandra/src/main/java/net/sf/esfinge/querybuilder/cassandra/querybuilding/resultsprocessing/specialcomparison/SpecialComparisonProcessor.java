@@ -25,6 +25,7 @@ public class SpecialComparisonProcessor extends BasicResultsProcessor {
             return list;
 
         for (SpecialComparisonClause c : specialComparisonClauses) {
+            System.out.println("Processing results for: " + c);
             list = SpecialComparisonUtils.filterListBySpecialComparisonClause(list, c);
         }
 

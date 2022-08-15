@@ -57,9 +57,21 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
 
         List<E> results = new ArrayList<>();
 
+        for (CassandraChainQueryVisitor cassandraChainQueryVisitor : visitors) {
+
+
+        }
+
         for (String query : queries) {
+            List<E> tempResults = getQueryResults(query);
+            System.out.println("Results for query: " + query);
+            for (E result : tempResults) {
+                System.out.println(result);
+            }
+
             results.addAll(getQueryResults(query));
         }
+
 
         if (queryInfo.getQueryType() == QueryType.RETRIEVE_SINGLE) {
             if (results.size() > 1)

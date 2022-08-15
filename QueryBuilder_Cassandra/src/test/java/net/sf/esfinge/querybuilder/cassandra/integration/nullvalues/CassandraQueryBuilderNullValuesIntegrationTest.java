@@ -58,7 +58,7 @@ public class CassandraQueryBuilderNullValuesIntegrationTest extends CassandraBas
     }
 
     @Test
-    public void compareToNullWithOneNullAnOneNonNullQueryTest() {
+    public void compareToNullWithFirstNullAnSecondNonNullQueryTest() {
         Session session = CassandraTestUtils.getSession();
 
         String query = "INSERT INTO test.person(id, name, lastname, age) VALUES (6, 'NonNullName', null, 20)";
@@ -67,6 +67,20 @@ public class CassandraQueryBuilderNullValuesIntegrationTest extends CassandraBas
         session.close();
 
         List<Person> list = testQuery.getPersonByLastNameAndName(null, "NonNullName");
+
+        assertEquals(new Integer(20), list.get(0).getAge());
+    }
+
+    @Test
+    public void compareToNullWithSecondNullAnFirstNonNullQueryTest() {
+        Session session = CassandraTestUtils.getSession();
+
+        String query = "INSERT INTO test.person(id, name, lastname, age) VALUES (6, null, 'NonNullLastName', 20)";
+
+        session.execute(query);
+        session.close();
+
+        List<Person> list = testQuery.getPersonByLastNameAndName("NonNullLastName", null);
 
         assertEquals(new Integer(20), list.get(0).getAge());
     }

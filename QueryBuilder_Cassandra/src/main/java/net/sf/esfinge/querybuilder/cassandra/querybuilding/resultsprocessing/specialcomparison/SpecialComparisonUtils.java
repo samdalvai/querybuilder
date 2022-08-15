@@ -34,6 +34,9 @@ public class SpecialComparisonUtils {
     }
 
     public static <E> List filterListBySpecialComparisonClause(List<E> list, SpecialComparisonClause clause) {
+        if (list.size() == 0)
+            return list;
+
         Class clazz = list.get(0).getClass();
 
         Method[] getters = CassandraReflectionUtils.getClassGetters(clazz);
