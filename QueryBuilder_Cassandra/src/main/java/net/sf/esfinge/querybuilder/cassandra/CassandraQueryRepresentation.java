@@ -20,7 +20,6 @@ public class CassandraQueryRepresentation implements QueryRepresentation {
     private final List<OrderByClause> orderByClauses;
     private final List<SpecialComparisonClause> specialComparisonClauses;
     private final String entity;
-
     private final ResultsProcessor processor;
 
 
@@ -123,6 +122,12 @@ public class CassandraQueryRepresentation implements QueryRepresentation {
     }
 
     public ResultsProcessor getProcessor() {
+        return processor;
+    }
+
+    public ResultsProcessor getSpecialComparisonProcessor() {
+
+
         return processor;
     }
 }

@@ -7,6 +7,7 @@ import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.Res
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderingProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.OrderingDirection;
@@ -217,7 +218,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public QueryRepresentation getQueryRepresentation() {
-        ResultsProcessor processor = new OrderingProcessor(orderByClauses);
+        ResultsProcessor processor = new SpecialComparisonProcessor(specialComparisonClauses);
 
         return new CassandraQueryRepresentation(getQuery(), isDynamic(), getFixParametersMap(), conditions, orderByClauses, specialComparisonClauses, entity, processor);
     }
