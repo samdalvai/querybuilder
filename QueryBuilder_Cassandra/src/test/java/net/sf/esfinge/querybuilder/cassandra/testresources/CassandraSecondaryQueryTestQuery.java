@@ -3,15 +3,12 @@ package net.sf.esfinge.querybuilder.cassandra.testresources;
 import net.sf.esfinge.querybuilder.Repository;
 import net.sf.esfinge.querybuilder.annotation.CompareToNull;
 import net.sf.esfinge.querybuilder.annotation.Greater;
+import net.sf.esfinge.querybuilder.annotation.GreaterOrEquals;
 import net.sf.esfinge.querybuilder.annotation.Lesser;
 
 import java.util.List;
 
 public interface CassandraSecondaryQueryTestQuery extends Repository<Person> {
-
-    /**
-     * QUERIES WITH OR CONNECTOR
-     **/
 
     List<Person> getPersonByNameOrLastName(String name, String lastname);
 
@@ -28,4 +25,6 @@ public interface CassandraSecondaryQueryTestQuery extends Repository<Person> {
     List<Person> getPersonByAgeOrNameStarts(@Greater Integer age, String name);
 
     List<Person> getPersonByNameOrAge(String name,@CompareToNull Integer age);
+
+    List<Person> getPersonByNameStartsOrAgeAndLastNameNotEqualsOrIdOrderById(String name, @CompareToNull Integer age, String lastName, @GreaterOrEquals Integer id);
 }

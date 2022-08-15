@@ -110,4 +110,13 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
         assertEquals("Marcos", list.get(0).getName());
         assertEquals("NullPerson", list.get(1).getName());
     }
+
+    @Test
+    public void queryWithComplexOrConnectorTest() {
+        List<Person> list = testQuery.getPersonByNameStartsOrAgeAndLastNameNotEqualsOrIdOrderById("Ma", 25, "Whatever", 3);
+
+        assertEquals(4, list.size());
+        assertEquals(new Integer(2), list.get(0).getId());
+        assertEquals(new Integer(5), list.get(3).getId());
+    }
 }
