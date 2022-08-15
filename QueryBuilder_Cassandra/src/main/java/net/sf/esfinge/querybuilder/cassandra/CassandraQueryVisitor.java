@@ -23,9 +23,8 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private final List<SpecialComparisonClause> specialComparisonClauses = new ArrayList<>();
     private String entity;
     private String query = "";
-    private ResultsProcessor processor;
     private int numberOfFixedValues = 0;
-    private int argumentPositionOffset;
+    private final int argumentPositionOffset;
 
     public CassandraQueryVisitor() {
         argumentPositionOffset = 0;
@@ -35,12 +34,11 @@ public class CassandraQueryVisitor implements QueryVisitor {
         // When call this constructor when we have a secondary query, in that case
         // we need to pass the previous visitor in order to update the offset for
         // the position of the arguments of the secondary queries
-        int newOffset = previousVisitor.getConditions().size() +
+
+        this.argumentPositionOffset = previousVisitor.getConditions().size() +
                 previousVisitor.getSpecialComparisonClauses().size() -
                 previousVisitor.getNumberOfFixedValues() +
                 previousVisitor.getArgumentPositionOffset();
-
-        this.argumentPositionOffset = newOffset;
     }
 
     @Override
@@ -104,7 +102,6 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, Object value) {
-        System.out.println("Has value");
         visitCondition(parameter, comparisonType);
 
         conditions.get(conditions.size() - 1).setValue(value);
@@ -220,7 +217,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public QueryRepresentation getQueryRepresentation() {
-        processor = new OrderingProcessor(orderByClauses);
+        ResultsProcessor processor = new OrderingProcessor(orderByClauses);
 
         return new CassandraQueryRepresentation(getQuery(), isDynamic(), getFixParametersMap(), conditions, orderByClauses, specialComparisonClauses, entity, processor);
     }

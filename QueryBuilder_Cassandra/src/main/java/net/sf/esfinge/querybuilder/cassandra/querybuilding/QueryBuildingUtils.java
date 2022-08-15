@@ -32,10 +32,6 @@ public class QueryBuildingUtils {
         return newQuery;
     }
 
-    private static int countNotNullArguments(Object[] args) {
-        return Arrays.stream(args).filter(Objects::nonNull).toArray(Object[]::new).length;
-    }
-
     private static int countOccurrenceOfCharacterInString(String string, Character character) {
         return string.chars()
                 .filter(c -> c == character)
