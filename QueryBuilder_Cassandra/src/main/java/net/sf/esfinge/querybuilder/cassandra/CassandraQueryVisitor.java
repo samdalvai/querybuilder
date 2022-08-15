@@ -59,7 +59,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
             specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
         } else {
             conditions.add(new ConditionStatement(parameter, comparisonType));
-
+            conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() - 1);
         }
     }
 

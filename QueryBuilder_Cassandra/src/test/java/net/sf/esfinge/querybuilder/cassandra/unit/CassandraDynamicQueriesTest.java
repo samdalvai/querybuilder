@@ -27,7 +27,7 @@ public class CassandraDynamicQueriesTest {
         assertFalse("Query should not be dynamic", qr.isDynamic());
 
         String query = qr.getQuery().toString();
-        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? ALLOW FILTERING");
+        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? ALLOW FILTERING");
     }
 
     @Test
@@ -68,7 +68,7 @@ public class CassandraDynamicQueriesTest {
         assertTrue("Query should be dynamic", qr.isDynamic());
         String query = qr.getQuery().toString();
 
-        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING");
+        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE age = 1? ALLOW FILTERING");
     }
 
     @Test
@@ -83,7 +83,7 @@ public class CassandraDynamicQueriesTest {
         assertTrue("Query should be dynamic", qr.isDynamic());
         String query = qr.getQuery().toString();
 
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING", query);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 0? ALLOW FILTERING", query);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class CassandraDynamicQueriesTest {
         assertTrue("Query should be dynamic", qr.isDynamic());
         String query = qr.getQuery().toString();
 
-        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? AND name = ? ALLOW FILTERING");
+        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE age = 0? AND name = 2? ALLOW FILTERING");
     }
 
     @Test
@@ -139,11 +139,11 @@ public class CassandraDynamicQueriesTest {
 
         params.put("name", null);
         String query1 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING", query1);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 1? ALLOW FILTERING", query1);
 
         params.put("name", "James");
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age = ? ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age = 1? ALLOW FILTERING", query2);
     }
 
     @Test
@@ -165,12 +165,12 @@ public class CassandraDynamicQueriesTest {
 
         params.put("name", null);
         String query1 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = ? AND city = ? ALLOW FILTERING", query1);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 1? AND city = 3? ALLOW FILTERING", query1);
 
         params.put("name", "James");
         params.put("age", 30);
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age = 30 AND city = ? ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age = 30 AND city = 3? ALLOW FILTERING", query2);
     }
 
     @Test
@@ -192,12 +192,12 @@ public class CassandraDynamicQueriesTest {
 
         params.put("nameEquals", null);
         String query1 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age <= ? AND city = ? ALLOW FILTERING", query1);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age <= 1? AND city = 3? ALLOW FILTERING", query1);
 
         params.put("nameEquals", "James");
         params.put("ageLesserOrEquals", 30);
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age <= 30 AND city = ? ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'James' AND age <= 30 AND city = 3? ALLOW FILTERING", query2);
     }
 
     @Test
@@ -303,7 +303,7 @@ public class CassandraDynamicQueriesTest {
         assertTrue("Query should be dynamic", qr.isDynamic());
         String query = qr.getQuery().toString();
 
-        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING");
+        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE age = 1? ALLOW FILTERING");
     }
 
     @Test
@@ -318,7 +318,7 @@ public class CassandraDynamicQueriesTest {
         assertTrue("Query should be dynamic", qr.isDynamic());
         String query = qr.getQuery().toString();
 
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING", query);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 0? ALLOW FILTERING", query);
     }
 
     @Test
@@ -335,7 +335,7 @@ public class CassandraDynamicQueriesTest {
         assertTrue("Query should be dynamic", qr.isDynamic());
         String query = qr.getQuery().toString();
 
-        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? AND name = ? ALLOW FILTERING");
+        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE age = 0? AND name = 2? ALLOW FILTERING");
     }
 
     @Test
@@ -374,11 +374,11 @@ public class CassandraDynamicQueriesTest {
 
         params.put("name", null);
         String query1 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING", query1);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 1? ALLOW FILTERING", query1);
 
         params.put("name", "James");
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 1? ALLOW FILTERING", query2);
     }
 
     @Test
@@ -400,12 +400,12 @@ public class CassandraDynamicQueriesTest {
 
         params.put("name", null);
         String query1 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = ? AND city = ? ALLOW FILTERING", query1);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 1? AND city = 3? ALLOW FILTERING", query1);
 
         params.put("name", "James");
         params.put("age", 30);
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 30 AND city = ? ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age = 30 AND city = 3? ALLOW FILTERING", query2);
     }
 
     @Test
@@ -427,12 +427,12 @@ public class CassandraDynamicQueriesTest {
 
         params.put("nameEquals", null);
         String query1 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age <= ? AND city = ? ALLOW FILTERING", query1);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age <= 1? AND city = 3? ALLOW FILTERING", query1);
 
         params.put("nameEquals", "James");
         params.put("ageLesserOrEquals", 30);
         String query2 = qr.getQuery(params).toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age <= 30 AND city = ? ALLOW FILTERING", query2);
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE age <= 30 AND city = 3? ALLOW FILTERING", query2);
     }
 
     @Test

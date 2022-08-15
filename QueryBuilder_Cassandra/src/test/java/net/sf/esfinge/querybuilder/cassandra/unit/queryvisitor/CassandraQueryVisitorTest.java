@@ -41,7 +41,7 @@ public class CassandraQueryVisitorTest {
         String query = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? ALLOW FILTERING",
                 query);
     }
 
@@ -57,7 +57,7 @@ public class CassandraQueryVisitorTest {
         String query = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? AND city = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? AND city = 1? ALLOW FILTERING",
                 query);
     }
 
@@ -75,7 +75,7 @@ public class CassandraQueryVisitorTest {
         String query = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? AND city = ? AND age >= ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? AND city = 1? AND age >= 2? ALLOW FILTERING",
                 query);
     }
 
@@ -178,7 +178,7 @@ public class CassandraQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
 
         String query = qr.getQuery().toString();
-        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE name = 'Maria' AND age > ? ALLOW FILTERING");
+        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE name = 'Maria' AND age > 1? ALLOW FILTERING");
         assertEquals("Maria", qr.getFixParameterValue("name"));
         assertTrue(qr.getFixParameters().contains("name"));
         assertFalse(qr.getFixParameters().contains("age"));
