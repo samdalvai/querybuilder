@@ -103,7 +103,12 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
         session.execute(query);
         session.close();
 
+
+        // TODO: SPECIAL COMPARISON PROCESSING IS APPLIED TO ALL THE RESULTS
         List<Person> list = testQuery.getPersonByNameOrAge("Marcos",null);
+        for (Person person : list) {
+            System.out.println(person);
+        }
 
         /*assertEquals("Marcos", list.get(0).getName());
         assertEquals("NullPerson", list.get(1).getName());*/
