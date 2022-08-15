@@ -46,28 +46,23 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         List<CassandraChainQueryVisitor> visitors = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitorsList();
         List<QueryRepresentation> qrList = visitors.stream().map(v -> v.getQueryRepresentation()).collect(Collectors.toList());
         List<String> queries = new ArrayList<>();
+        List<SpecialComparisonClause> spc = new ArrayList<>();
 
         for (QueryRepresentation queryRepresentation : qrList) {
-            System.out.println(queryRepresentation.getQuery());
+            System.out.println("Before: " + queryRepresentation.getQuery());
+            queries.add(getQuery(queryInfo,args,queryRepresentation));
+            System.out.println("After: " + getQuery(queryInfo,args,queryRepresentation));
+            List<SpecialComparisonClause> comparisonClauses = ((CassandraQueryRepresentation) queryRepresentation).getSpecialComparisonClauses();
+            spc.addAll(comparisonClauses);
 
             System.out.println(((CassandraQueryRepresentation) queryRepresentation).getSpecialComparisonClauses());
         }
 
         /************************************************************************/
 
-        // Remove useless arguments for query substitution
-        List<SpecialComparisonClause> spc = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
-        List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClauseWithArguments(args, spc);
+        //spc = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
+        List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClausesWithValues(args, spc);
 
-        // TODO: RUN ALL THE QUERIES + SECONDARY??
-        /*Object[] newArgs;
-
-        if (queryInfo.getQueryStyle() == QueryStyle.QUERY_OBJECT)
-            newArgs = args;
-        else
-            newArgs = SpecialComparisonUtils.getArgumentsNotHavingSpecialClause(args, spc);*/
-
-        //String query = getQuery(queryInfo, newArgs, args, qr);
         String query = getQuery(queryInfo, args, qr);
 
         List<E> results = getQueryResults(query);

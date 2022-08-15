@@ -77,7 +77,7 @@ public class SpecialComparisonUtils {
         return newArgs;
     }
 
-    public static List<SpecialComparisonClause> getSpecialComparisonClauseWithArguments(Object[] args, List<SpecialComparisonClause> spc) {
+    public static List<SpecialComparisonClause> getSpecialComparisonClausesWithValues(Object[] args, List<SpecialComparisonClause> spc) {
         List<SpecialComparisonClause> newSpc = new ArrayList<>();
 
         for (SpecialComparisonClause c : spc) {
