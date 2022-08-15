@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CassandraQueryExecutor<E> implements QueryExecutor {
 
@@ -43,8 +44,19 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         queryInfo.visit(visitor);
         QueryRepresentation qr = visitor.getQueryRepresentation();
 
+        /************************************************************************/
+
         List<CassandraChainQueryVisitor> visitors = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitorsList();
         System.out.println(visitors.size());
+
+        List<QueryRepresentation> qrList = visitors.stream().map(v -> v.getQueryRepresentation()).collect(Collectors.toList());
+        System.out.println(qrList.size());
+
+        for (QueryRepresentation queryRepresentation : qrList) {
+            System.out.println(queryRepresentation.getQuery());
+        }
+
+        /************************************************************************/
 
         // Remove useless arguments for query substitution
         List<SpecialComparisonClause> spc = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
