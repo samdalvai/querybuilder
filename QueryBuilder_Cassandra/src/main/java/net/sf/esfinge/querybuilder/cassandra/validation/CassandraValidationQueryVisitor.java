@@ -135,16 +135,6 @@ public class CassandraValidationQueryVisitor implements QueryVisitor {
         return visitors;
     }
 
-    public ResultsProcessor getProcessor() {
-        CassandraChainQueryVisitor current = this.visitor;
-
-        while (current.getSecondaryVisitor() != null){
-            current =  current.getSecondaryVisitor();
-        }
-
-        return ((CassandraQueryRepresentation)current.getQueryRepresentation()).getProcessor();
-    }
-
     public List<OrderByClause> getOrderByClauses() {
         CassandraChainQueryVisitor current = this.visitor;
 

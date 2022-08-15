@@ -138,7 +138,4 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         return secondaryVisitor;
     }
 
-    public List<SpecialComparisonClause> getSpecialComparisonClauses() {
-        return primaryVisitor.getSpecialComparisonClauses();
-    }
 }

@@ -218,9 +218,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public QueryRepresentation getQueryRepresentation() {
-        ResultsProcessor processor = new SpecialComparisonProcessor(specialComparisonClauses);
-
-        return new CassandraQueryRepresentation(getQuery(), isDynamic(), getFixParametersMap(), conditions, orderByClauses, specialComparisonClauses, entity, processor);
+        return new CassandraQueryRepresentation(getQuery(), isDynamic(), getFixParametersMap(), conditions, orderByClauses, specialComparisonClauses, entity);
     }
 
     public String getEntity() {
