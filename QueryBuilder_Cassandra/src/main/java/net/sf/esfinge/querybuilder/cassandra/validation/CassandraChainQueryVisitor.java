@@ -24,6 +24,11 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         this.queryDepth = queryDepth;
     }
 
+    public CassandraChainQueryVisitor(int queryDepth, CassandraQueryVisitor previousVisitor) {
+        this.primaryVisitor = new CassandraQueryVisitor(previousVisitor);
+        this.queryDepth = queryDepth;
+    }
+
     @Override
     public void visitEntity(String entity) {
         if (secondaryVisitor == null) {
@@ -42,7 +47,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
                 if (queryDepth >= queryLimit)
                     throw new SecondaryQueryLimitExceededException("Current query depth is " + queryDepth + ", but the configured limit is " + queryLimit);
 
-                secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1);
+                secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
                 secondaryVisitor.visitEntity(primaryVisitor.getEntity());
             } else
                 primaryVisitor.visitConector(connector);
