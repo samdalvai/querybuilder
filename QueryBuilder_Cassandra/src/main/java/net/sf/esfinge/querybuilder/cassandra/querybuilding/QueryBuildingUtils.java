@@ -1,34 +1,35 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.QueryParametersMismatchException;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class QueryBuildingUtils {
 
     public static String replaceQueryArgs(String query, Object[] args) {
         int paramOccurrence = countOccurrenceOfCharacterInString(query, '?');
-
-        System.out.println(query);
-
-        if (paramOccurrence != countNotNullArguments(args))
-            throw new QueryParametersMismatchException("Number of parameters in the query different from the number of arguments");
+        int substituted = 0;
 
         String newQuery = query;
 
-        // Skip substituting values equal to null
-        for (Object arg : args) {
-            if (arg != null)
-                newQuery = newQuery.substring(0, newQuery.indexOf('?')) + getValueRepresentationByType(arg) + newQuery.substring(newQuery.indexOf('?') + 1);
+        // Skip substituting values equal to null. Arguments that have no placeholder are used in
+        // SpecialComparison clauses and do not need to be substituted
+        for (int i = 0; i < args.length; i++){
+            if (args[i] != null && newQuery.contains(i + "?")){
+                newQuery = newQuery.replace(i + "?",getValueRepresentationByType(args[i]));
+                substituted++;
+            }
         }
 
-        return newQuery;
-    }
+        if (paramOccurrence != substituted)
+            throw new QueryParametersMismatchException("Too many placeholders in the query \"" + query + "\" for arguments \"" + Arrays.toString(args) + "\"");
 
-    private static int countNotNullArguments(Object[] args) {
-        return Arrays.stream(args).filter(Objects::nonNull).toArray(Object[]::new).length;
+        return newQuery;
     }
 
     private static int countOccurrenceOfCharacterInString(String string, Character character) {

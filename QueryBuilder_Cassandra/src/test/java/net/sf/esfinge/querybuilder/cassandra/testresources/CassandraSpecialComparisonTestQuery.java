@@ -8,7 +8,7 @@ import java.util.List;
 public interface CassandraSpecialComparisonTestQuery extends Repository<Person> {
 
     List<Person> getPersonByLastNameNotEquals(String name);
-
+    List<Person> getPersonByNameStarts(String name);
     List<Person> getPersonByName(@Starts String name);
 
     List<Person> getPersonByNameEnds(String name);

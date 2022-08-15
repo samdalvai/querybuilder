@@ -30,11 +30,11 @@ public class CassandraSecondaryQueryVisitorTest {
         String secondaryQuery = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? ALLOW FILTERING",
                 query);
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = 1? ALLOW FILTERING",
                 secondaryQuery);
     }
 
@@ -57,11 +57,11 @@ public class CassandraSecondaryQueryVisitorTest {
         String secondaryQuery = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? AND lastname = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? AND lastname = 1? ALLOW FILTERING",
                 query);
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = ? AND name = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = 2? AND name = 3? ALLOW FILTERING",
                 secondaryQuery);
     }
 
@@ -85,15 +85,15 @@ public class CassandraSecondaryQueryVisitorTest {
         String tertiaryQuery = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? ALLOW FILTERING",
                 query);
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = 1? ALLOW FILTERING",
                 secondaryQuery);
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE age = 2? ALLOW FILTERING",
                 tertiaryQuery);
     }
 
@@ -123,15 +123,15 @@ public class CassandraSecondaryQueryVisitorTest {
         String tertiaryQuery = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? AND id = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? AND id = 1? ALLOW FILTERING",
                 query);
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = ? AND id = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = 2? AND id = 3? ALLOW FILTERING",
                 secondaryQuery);
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? AND id = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE age = 4? AND id = 5? ALLOW FILTERING",
                 tertiaryQuery);
     }
 

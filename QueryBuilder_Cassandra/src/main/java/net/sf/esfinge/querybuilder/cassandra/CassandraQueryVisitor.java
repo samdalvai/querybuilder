@@ -23,8 +23,23 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private final List<SpecialComparisonClause> specialComparisonClauses = new ArrayList<>();
     private String entity;
     private String query = "";
-    private ResultsProcessor processor;
+    private int numberOfFixedValues = 0;
+    private final int argumentPositionOffset;
 
+    public CassandraQueryVisitor() {
+        argumentPositionOffset = 0;
+    }
+
+    public CassandraQueryVisitor(CassandraQueryVisitor previousVisitor) {
+        // When call this constructor when we have a secondary query, in that case
+        // we need to pass the previous visitor in order to update the offset for
+        // the position of the arguments of the secondary queries
+
+        this.argumentPositionOffset = previousVisitor.getConditions().size() +
+                previousVisitor.getSpecialComparisonClauses().size() -
+                previousVisitor.getNumberOfFixedValues() +
+                previousVisitor.getArgumentPositionOffset();
+    }
 
     @Override
     public void visitEntity(String entity) {
@@ -56,10 +71,11 @@ public class CassandraQueryVisitor implements QueryVisitor {
             specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
 
             // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
-            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
+            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
         } else {
             conditions.add(new ConditionStatement(parameter, comparisonType));
-
+            //conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() - 1 - numberOfFixedValues);
+            conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
         }
     }
 
@@ -89,6 +105,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
         visitCondition(parameter, comparisonType);
 
         conditions.get(conditions.size() - 1).setValue(value);
+        numberOfFixedValues++;
     }
 
     @Override
@@ -200,12 +217,29 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public QueryRepresentation getQueryRepresentation() {
-        processor = new OrderingProcessor(orderByClauses);
+        ResultsProcessor processor = new OrderingProcessor(orderByClauses);
 
         return new CassandraQueryRepresentation(getQuery(), isDynamic(), getFixParametersMap(), conditions, orderByClauses, specialComparisonClauses, entity, processor);
     }
 
     public String getEntity() {
         return this.entity;
+    }
+
+
+    public List<ConditionStatement> getConditions() {
+        return conditions;
+    }
+
+    public List<SpecialComparisonClause> getSpecialComparisonClauses() {
+        return specialComparisonClauses;
+    }
+
+    public int getNumberOfFixedValues() {
+        return numberOfFixedValues;
+    }
+
+    public int getArgumentPositionOffset() {
+        return argumentPositionOffset;
     }
 }
