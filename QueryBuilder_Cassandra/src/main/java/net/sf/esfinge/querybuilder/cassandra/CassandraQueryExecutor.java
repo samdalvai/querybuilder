@@ -71,7 +71,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
                 return null;
         }
 
-        ResultsProcessor processor = new SecondaryQueryProcessor(new SpecialComparisonProcessor(newSpc, ((CassandraQueryRepresentation) qr).getProcessor()));
+        ResultsProcessor processor = new SecondaryQueryProcessor(new SpecialComparisonProcessor(newSpc, ((CassandraValidationQueryVisitor) visitor).getProcessor()));
 
         return processor.postProcess(results);
     }
