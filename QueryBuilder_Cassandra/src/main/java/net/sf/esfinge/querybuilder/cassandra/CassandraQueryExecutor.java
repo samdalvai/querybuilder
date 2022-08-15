@@ -47,15 +47,15 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         /************************************************************************/
 
         List<CassandraChainQueryVisitor> visitors = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitorsList();
-        System.out.println(visitors.size());
+       // System.out.println(visitors.size());
 
         List<QueryRepresentation> qrList = visitors.stream().map(v -> v.getQueryRepresentation()).collect(Collectors.toList());
-        System.out.println(qrList.size());
+        //System.out.println(qrList.size());
 
         for (QueryRepresentation queryRepresentation : qrList) {
-            System.out.println(queryRepresentation.getQuery());
-            
-            System.out.println(((CassandraQueryRepresentation) queryRepresentation).getSpecialComparisonClauses());
+            //System.out.println(queryRepresentation.getQuery());
+
+            //System.out.println(((CassandraQueryRepresentation) queryRepresentation).getSpecialComparisonClauses());
         }
 
         /************************************************************************/

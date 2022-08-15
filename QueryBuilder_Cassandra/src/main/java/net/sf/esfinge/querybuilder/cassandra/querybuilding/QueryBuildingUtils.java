@@ -1,8 +1,10 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.QueryParametersMismatchException;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -11,9 +13,7 @@ public class QueryBuildingUtils {
     public static String replaceQueryArgs(String query, Object[] args) {
         int paramOccurrence = countOccurrenceOfCharacterInString(query, '?');
 
-        System.out.println(query);
-
-        if (paramOccurrence != countNotNullArguments(args))
+        /*if (paramOccurrence != countNotNullArguments(args))
             throw new QueryParametersMismatchException("Number of parameters in the query different from the number of arguments");
 
         String newQuery = query;
@@ -22,7 +22,24 @@ public class QueryBuildingUtils {
         for (Object arg : args) {
             if (arg != null)
                 newQuery = newQuery.substring(0, newQuery.indexOf('?')) + getValueRepresentationByType(arg) + newQuery.substring(newQuery.indexOf('?') + 1);
+        }*/
+
+        System.out.println(Arrays.toString(args));;
+        System.out.println(query);
+
+        String newQuery = query;
+
+        // Skip substituting values equal to null
+        for (int i = 0; i < args.length; i++){
+            if (args[i] != null){
+                if (!newQuery.contains(i + "?"))
+                    throw new QueryParametersMismatchException("No placeholder for argument: " + args[i]);
+
+                newQuery = newQuery.replace(i + "?",getValueRepresentationByType(args[i]));
+            }
         }
+
+        System.out.println(newQuery);
 
         return newQuery;
     }
