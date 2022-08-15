@@ -25,6 +25,8 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private String query = "";
     private ResultsProcessor processor;
 
+    private int numberOfFixedValues = 0;
+
 
     @Override
     public void visitEntity(String entity) {
@@ -59,7 +61,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
             specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
         } else {
             conditions.add(new ConditionStatement(parameter, comparisonType));
-            conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() - 1);
+            conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() - 1 - numberOfFixedValues);
         }
     }
 
@@ -86,9 +88,11 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, Object value) {
+        System.out.println("Has value");
         visitCondition(parameter, comparisonType);
 
         conditions.get(conditions.size() - 1).setValue(value);
+        numberOfFixedValues++;
     }
 
     @Override
