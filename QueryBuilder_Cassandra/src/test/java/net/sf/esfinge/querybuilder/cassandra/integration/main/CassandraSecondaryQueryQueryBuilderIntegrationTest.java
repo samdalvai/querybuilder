@@ -58,12 +58,12 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
 
     @Test
     public void queryWithOrConnectorsGreaterThanSecondaryQueryLimitTest() {
-        assertThrows(SecondaryQueryLimitExceededException.class,() -> testQuery.getPersonByIdOrNameOrLastNameOrAge(1,"Pedro", "Silva",20));
+        assertThrows(SecondaryQueryLimitExceededException.class, () -> testQuery.getPersonByIdOrNameOrLastNameOrAge(1, "Pedro", "Silva", 20));
     }
 
     @Test
     public void queryWithOrFollowedByAndConnectorTest() {
-        List<Person> list = testQuery.getPersonByNameOrLastNameAndAgeGreater("Pedro", "Ferreira",22);
+        List<Person> list = testQuery.getPersonByNameOrLastNameAndAgeGreater("Pedro", "Ferreira", 22);
 
         assertEquals(2, list.size());
         assertEquals("Pedro", list.get(0).getName());
@@ -72,7 +72,7 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
 
     @Test
     public void queryWithAndFollowedByOrConnectorTest() {
-        List<Person> list = testQuery.getPersonByNameAndLastNameOrAge("Pedro", "Ferreira",23);
+        List<Person> list = testQuery.getPersonByNameAndLastNameOrAge("Pedro", "Ferreira", 23);
 
         assertEquals("Silvia", list.get(0).getName());
         assertEquals("Pedro", list.get(1).getName());
@@ -80,7 +80,7 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
 
     @Test
     public void queryWithOrConnectorAndOrderByClauseTest() {
-        List<Person> list = testQuery.getPersonByAgeOrLastNameOrderByNameDesc(23,"Marques");
+        List<Person> list = testQuery.getPersonByAgeOrLastNameOrderByNameDesc(23, "Marques");
 
         assertEquals("Maria", list.get(0).getName());
         assertEquals("Antonio", list.get(1).getName());
@@ -88,7 +88,7 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
 
     @Test
     public void queryWithOrConnectorAndSpecialComparisonClauseTest() {
-        List<Person> list = testQuery.getPersonByAgeOrNameStarts(25,"Ma");
+        List<Person> list = testQuery.getPersonByAgeOrNameStarts(25, "Ma");
 
         assertEquals(3, list.size());
         assertEquals("Antonio", list.get(0).getName());
@@ -105,7 +105,7 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
         session.execute(query);
         session.close();
 
-        List<Person> list = testQuery.getPersonByNameOrAge("Marcos",null);
+        List<Person> list = testQuery.getPersonByNameOrAge("Marcos", null);
 
         assertEquals("Marcos", list.get(0).getName());
         assertEquals("NullPerson", list.get(1).getName());
@@ -119,4 +119,13 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
         assertEquals(new Integer(2), list.get(0).getId());
         assertEquals(new Integer(5), list.get(3).getId());
     }
+
+    /*@Test
+    public void queryWithComplexOrConnectorTest() {
+        List<Person> list = testQuery.getPersonByNameStartsOrAgeAndLastNameNotEqualsOrIdOrderById("Ma", 25, "Whatever", 3);
+
+        assertEquals(4, list.size());
+        assertEquals(new Integer(2), list.get(0).getId());
+        assertEquals(new Integer(5), list.get(3).getId());
+    }*/
 }
