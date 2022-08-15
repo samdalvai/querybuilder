@@ -85,15 +85,15 @@ public class CassandraSecondaryQueryVisitorTest {
         String tertiaryQuery = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE name = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? ALLOW FILTERING",
                 query);
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE lastname = 1? ALLOW FILTERING",
                 secondaryQuery);
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Person WHERE age = ? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Person WHERE age = 2? ALLOW FILTERING",
                 tertiaryQuery);
     }
 

@@ -24,7 +24,6 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private String entity;
     private String query = "";
     private ResultsProcessor processor;
-
     private int numberOfFixedValues = 0;
 
 
@@ -57,10 +56,12 @@ public class CassandraQueryVisitor implements QueryVisitor {
             //throw new UnsupportedCassandraOperationException("Comparison type " + comparisonType + " not supported in Cassandra");
             specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
 
+            System.out.println("It's a special comparison: " + comparisonType);
             // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
             specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1);
         } else {
             conditions.add(new ConditionStatement(parameter, comparisonType));
+            //conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() - 1 - numberOfFixedValues);
             conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() - 1 - numberOfFixedValues);
         }
     }

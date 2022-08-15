@@ -19,10 +19,7 @@ import net.sf.esfinge.querybuilder.executor.QueryExecutor;
 import net.sf.esfinge.querybuilder.methodparser.*;
 import net.sf.esfinge.querybuilder.utils.ReflectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CassandraQueryExecutor<E> implements QueryExecutor {
@@ -65,14 +62,15 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClauseWithArguments(args, spc);
 
         // TODO: RUN ALL THE QUERIES + SECONDARY??
-        Object[] newArgs;
+        /*Object[] newArgs;
 
         if (queryInfo.getQueryStyle() == QueryStyle.QUERY_OBJECT)
             newArgs = args;
         else
-            newArgs = SpecialComparisonUtils.getArgumentsNotHavingSpecialClause(args, spc);
+            newArgs = SpecialComparisonUtils.getArgumentsNotHavingSpecialClause(args, spc);*/
 
-        String query = getQuery(queryInfo, newArgs, args, qr);
+        //String query = getQuery(queryInfo, newArgs, args, qr);
+        String query = getQuery(queryInfo, args, qr);
 
         List<E> results = getQueryResults(query);
 
@@ -105,7 +103,8 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         return objectsList;
     }
 
-    private String getQuery(QueryInfo queryInfo, Object[] args, Object[] oldArgs, QueryRepresentation qr) {
+    //private String getQuery(QueryInfo queryInfo, Object[] args, Object[] oldArgs, QueryRepresentation qr) {
+    private String getQuery(QueryInfo queryInfo, Object[] args, QueryRepresentation qr) {
         if (!queryInfo.isDynamic() && queryInfo.getQueryStyle() != QueryStyle.QUERY_OBJECT) {
             String query = qr.getQuery().toString();
 
@@ -120,9 +119,15 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
             if (queryInfo.getQueryStyle() == QueryStyle.METHOD_SIGNATURE) {
                 int argIndex = 0;
 
-                for (int i = 0; i < oldArgs.length && argIndex < args.length; i++) {
+                /*for (int i = 0; i < oldArgs.length && argIndex < args.length; i++) {
                     if (args[argIndex] == oldArgs[i]) {
                         params.put(namedParameters.get(i), oldArgs[i]);
+                        argIndex++;
+                    }
+                }*/
+                for (int i = 0; i < args.length && argIndex < args.length; i++) {
+                    if (args[argIndex] == args[i]) {
+                        params.put(namedParameters.get(i), args[i]);
                         argIndex++;
                     }
                 }

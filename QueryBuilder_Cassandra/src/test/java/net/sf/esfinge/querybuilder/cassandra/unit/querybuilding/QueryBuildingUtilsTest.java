@@ -71,21 +71,23 @@ public class QueryBuildingUtilsTest {
         assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'Max'", newQuery);
     }
 
-    @Test(expected = QueryParametersMismatchException.class)
+    @Test
     public void replaceQueryArgsWithMoreArgsInArrayTest() {
-        String query = "SELECT * FROM <#keyspace-name#>.Person WHERE id = 0? AND lastName = 1?";
+        String query = "SELECT * FROM <#keyspace-name#>.Person WHERE id = 0? AND name = 1?";
         Object[] args = {1, "Max", "Additional"};
 
-        QueryBuildingUtils.replaceQueryArgs(query, args);
+        String newQuery = QueryBuildingUtils.replaceQueryArgs(query, args);
+
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE id = 1 AND name = 'Max'", newQuery);
     }
 
-    /*@Test(expected = QueryParametersMismatchException.class)
+    @Test(expected = QueryParametersMismatchException.class)
     public void replaceQueryArgsWithMoreArgsInQueryTest() {
         String query = "SELECT * FROM <#keyspace-name#>.Person WHERE id = 0? AND lastName = 1? OR city = 2?";
         Object[] args = {1, "Max"};
 
         QueryBuildingUtils.replaceQueryArgs(query, args);
-    }*/
+    }
 
 
     @Test

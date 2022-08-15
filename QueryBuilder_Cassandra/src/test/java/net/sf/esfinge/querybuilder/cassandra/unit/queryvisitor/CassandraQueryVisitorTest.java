@@ -178,7 +178,7 @@ public class CassandraQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
 
         String query = qr.getQuery().toString();
-        assertEquals(query, "SELECT * FROM <#keyspace-name#>.Person WHERE name = 'Maria' AND age > 1? ALLOW FILTERING");
+        assertEquals("SELECT * FROM <#keyspace-name#>.Person WHERE name = 'Maria' AND age > 0? ALLOW FILTERING", query);
         assertEquals("Maria", qr.getFixParameterValue("name"));
         assertTrue(qr.getFixParameters().contains("name"));
         assertFalse(qr.getFixParameters().contains("age"));
