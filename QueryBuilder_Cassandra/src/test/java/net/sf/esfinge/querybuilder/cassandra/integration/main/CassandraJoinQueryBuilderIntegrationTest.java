@@ -3,9 +3,7 @@ package net.sf.esfinge.querybuilder.cassandra.integration.main;
 import net.sf.esfinge.querybuilder.QueryBuilder;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseIntegrationTest;
 import net.sf.esfinge.querybuilder.cassandra.testresources.CassandraJoinTestQuery;
-import net.sf.esfinge.querybuilder.cassandra.testresources.CassandraSimpleTestQuery;
-import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
-import net.sf.esfinge.querybuilder.cassandra.testresources.PersonWithAddress;
+import net.sf.esfinge.querybuilder.cassandra.testresources.Worker;
 import org.junit.Test;
 
 import java.util.List;
@@ -18,7 +16,7 @@ public class CassandraJoinQueryBuilderIntegrationTest extends CassandraBasicData
 
 
     @Test
-    public void selectAllQueryTest() {
-        List<PersonWithAddress> list = testQuery.getPersonByAddressCity("Bolzano");
+    public void queryWithOneParameterForJoinTest() {
+        List<Worker> list = testQuery.getWorkerByAddressCity("Bolzano");
     }
 }

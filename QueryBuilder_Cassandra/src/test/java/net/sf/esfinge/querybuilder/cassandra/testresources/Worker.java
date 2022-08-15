@@ -3,6 +3,7 @@ package net.sf.esfinge.querybuilder.cassandra.testresources;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import net.sf.esfinge.querybuilder.cassandra.annotations.JoinColumn;
+import net.sf.esfinge.querybuilder.cassandra.entity.CassandraEntity;
 
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ import java.util.Objects;
         writeConsistency = "QUORUM",
         caseSensitiveKeyspace = false,
         caseSensitiveTable = false)
-public class PersonWithAddress {
+public class Worker implements CassandraEntity {
     @PartitionKey
     private Integer id;
     private String name;
@@ -76,7 +77,7 @@ public class PersonWithAddress {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PersonWithAddress that = (PersonWithAddress) o;
+        Worker that = (Worker) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(lastName, that.lastName) && Objects.equals(age, that.age) && Objects.equals(address, that.address);
     }
 
