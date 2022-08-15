@@ -22,8 +22,12 @@ public class SecondaryQueryProcessorTest extends BasicProcessorTest {
         expected.addAll(objectList);
         expected.addAll(secondList);
 
+        List<List<TestClass>> listOfLists = new ArrayList<>();
+        listOfLists.add(objectList);
+        listOfLists.add(secondList);
+
         ResultsProcessor processor = new SecondaryQueryProcessor();
-        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromVariableNumberOfLists(objectList, secondList));
+        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromListOfLists(listOfLists));
 
         assertEquals(expected, result);
     }
@@ -38,8 +42,12 @@ public class SecondaryQueryProcessorTest extends BasicProcessorTest {
 
         List<TestClass> expected = new ArrayList<>(objectList);
 
+        List<List<TestClass>> listOfLists = new ArrayList<>();
+        listOfLists.add(objectList);
+        listOfLists.add(secondList);
+
         ResultsProcessor processor = new SecondaryQueryProcessor();
-        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromVariableNumberOfLists(objectList, secondList));
+        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromListOfLists(listOfLists));
 
         assertEquals(expected, result);
     }
@@ -59,8 +67,13 @@ public class SecondaryQueryProcessorTest extends BasicProcessorTest {
         expected.addAll(secondList);
         expected.addAll(thirdList);
 
+        List<List<TestClass>> listOfLists = new ArrayList<>();
+        listOfLists.add(objectList);
+        listOfLists.add(secondList);
+        listOfLists.add(thirdList);
+
         ResultsProcessor processor = new SecondaryQueryProcessor();
-        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromVariableNumberOfLists(objectList, secondList, thirdList));
+        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromListOfLists(listOfLists));
 
         assertEquals(expected, result);
     }
@@ -69,8 +82,11 @@ public class SecondaryQueryProcessorTest extends BasicProcessorTest {
     public void mergeQueriesResultWithNoResultsTest() {
         List<TestClass> secondList = new ArrayList<>();
 
+        List<List<TestClass>> listOfLists = new ArrayList<>();
+        listOfLists.add(secondList);
+
         ResultsProcessor processor = new SecondaryQueryProcessor();
-        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromVariableNumberOfLists(secondList));
+        List<TestClass> result = processor.postProcess(SecondaryQueryProcessor.fromListOfLists(listOfLists));
 
         assertEquals(0, result.size());
     }

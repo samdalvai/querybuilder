@@ -54,6 +54,8 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
 
         for (QueryRepresentation queryRepresentation : qrList) {
             System.out.println(queryRepresentation.getQuery());
+            
+            System.out.println(((CassandraQueryRepresentation) queryRepresentation).getSpecialComparisonClauses());
         }
 
         /************************************************************************/

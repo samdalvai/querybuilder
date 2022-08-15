@@ -3,8 +3,8 @@ package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.se
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.BasicResultsProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SecondaryQueryProcessor<E> extends BasicResultsProcessor {
 
@@ -23,13 +23,10 @@ public class SecondaryQueryProcessor<E> extends BasicResultsProcessor {
         return SecondaryQueryUtils.removeCopyElementsFromList(list);
     }
 
-    public static <E> List fromVariableNumberOfLists(List<E>... result) {
-        List<E> resultsList = new ArrayList<>();
-
-        for (List<E> l : result)
-            resultsList.addAll(l);
-
-        return resultsList;
+    public static <E> List fromListOfLists(List<List<E>> result) {
+        return result.stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
 }
