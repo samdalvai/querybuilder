@@ -6,6 +6,7 @@ import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SecondaryQueryUtils {
 
@@ -47,5 +48,11 @@ public class SecondaryQueryUtils {
         }
 
         return false;
+    }
+
+    public static <E> List fromListOfLists(List<List<E>> result) {
+        return result.stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 }

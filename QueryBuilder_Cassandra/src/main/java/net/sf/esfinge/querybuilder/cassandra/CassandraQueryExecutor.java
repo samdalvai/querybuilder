@@ -9,6 +9,7 @@ import net.sf.esfinge.querybuilder.cassandra.cassandrautils.MappingManagerProvid
 import net.sf.esfinge.querybuilder.cassandra.exceptions.WrongTypeOfExpectedResultException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.secondaryquery.SecondaryQueryUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonUtils;
@@ -30,6 +31,56 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
     public CassandraQueryExecutor() {
         provider = new MappingManagerProvider();
     }
+    /*
+    @Override
+    public Object executeQuery(QueryInfo queryInfo, Object[] args) {
+        CassandraEntityClassProvider provider = new CassandraEntityClassProvider();
+        this.clazz = (Class<E>) provider.getEntityClass(queryInfo.getEntityName());
+        CassandraUtils.checkValidClassConfiguration(clazz);
+
+        QueryVisitor visitor = CassandraVisitorFactory.createQueryVisitor();
+        queryInfo.visit(visitor);
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+
+        List<CassandraChainQueryVisitor> visitors = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitorsList();
+        List<QueryRepresentation> qrList = visitors.stream().map(v -> v.getQueryRepresentation())
+                .collect(Collectors.toList());
+
+        List<String> queries = qrList.stream().map(representation -> getQuery(queryInfo,args,representation))
+                .collect(Collectors.toList());
+
+        List<SpecialComparisonClause> specialComparisonClauses = SecondaryQueryUtils.fromListOfLists(qrList.stream().map(representation -> ((CassandraQueryRepresentation) representation).getSpecialComparisonClauses())
+                .collect(Collectors.toList()));
+
+        List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClausesWithValues(args, specialComparisonClauses);
+
+        //String query = getQuery(queryInfo, args, qr);
+
+        List<E> results = new ArrayList<>();
+
+        for (String query : queries) {
+            results.addAll(getQueryResults(query));
+        }
+
+        //List<E> results = getQueryResults(query);
+
+        if (queryInfo.getQueryType() == QueryType.RETRIEVE_SINGLE) {
+            if (results.size() > 1)
+                //throw new WrongTypeOfExpectedResultException("The query " + query + " resulted in " + results.size() + " results instead of one or zero results");
+                throw new WrongTypeOfExpectedResultException("The query " + queries.get(0) + " resulted in " + results.size() + " results instead of one or zero results");
+
+            if (results.size() > 0)
+                return results.get(0);
+            else
+                return null;
+        }
+
+        ResultsProcessor processor = new SecondaryQueryProcessor<E>(new SpecialComparisonProcessor(newSpc, ((CassandraQueryRepresentation) qr).getProcessor()));
+
+        return processor.postProcess(results);
+    }
+     */
 
     @Override
     public Object executeQuery(QueryInfo queryInfo, Object[] args) {
@@ -41,27 +92,18 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
         queryInfo.visit(visitor);
         QueryRepresentation qr = visitor.getQueryRepresentation();
 
-        /************************************************************************/
-
         List<CassandraChainQueryVisitor> visitors = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitorsList();
-        List<QueryRepresentation> qrList = visitors.stream().map(v -> v.getQueryRepresentation()).collect(Collectors.toList());
-        List<String> queries = new ArrayList<>();
-        List<SpecialComparisonClause> spc = new ArrayList<>();
+        List<QueryRepresentation> qrList = visitors.stream().map(v -> v.getQueryRepresentation())
+                .collect(Collectors.toList());
 
-        for (QueryRepresentation queryRepresentation : qrList) {
-            System.out.println("Before: " + queryRepresentation.getQuery());
-            queries.add(getQuery(queryInfo,args,queryRepresentation));
-            System.out.println("After: " + getQuery(queryInfo,args,queryRepresentation));
-            List<SpecialComparisonClause> comparisonClauses = ((CassandraQueryRepresentation) queryRepresentation).getSpecialComparisonClauses();
-            spc.addAll(comparisonClauses);
+        List<String> queries = qrList.stream().map(representation -> getQuery(queryInfo,args,representation))
+                .collect(Collectors.toList());
 
-            System.out.println(((CassandraQueryRepresentation) queryRepresentation).getSpecialComparisonClauses());
-        }
-
-        /************************************************************************/
+        List<SpecialComparisonClause> specialComparisonClauses = SecondaryQueryUtils.fromListOfLists(qrList.stream().map(representation -> ((CassandraQueryRepresentation) representation).getSpecialComparisonClauses())
+                .collect(Collectors.toList()));
 
         //spc = ((CassandraQueryRepresentation) qr).getSpecialComparisonClauses();
-        List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClausesWithValues(args, spc);
+        List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClausesWithValues(args, specialComparisonClauses);
 
         String query = getQuery(queryInfo, args, qr);
 

@@ -29,13 +29,18 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
         List<Person> list = testQuery.getPersonByNameOrLastName("Pedro", "Ferreira");
 
         assertEquals(2, list.size());
+        assertEquals("Pedro", list.get(0).getName());
+        assertEquals("Ferreira", list.get(1).getLastName());
     }
 
     @Test
     public void queryWithTwoOrConnectorsTest() {
-        List<Person> list = testQuery.getPersonByNameOrLastNameOrAge("Pedro", "Ferreira", 30);
+        List<Person> list = testQuery.getPersonByNameOrLastNameOrAge("Pedro", "Ferreira", 50);
 
-        assertEquals(2, list.size());
+        assertEquals(3, list.size());
+        assertEquals("Pedro", list.get(0).getName());
+        assertEquals("Ferreira", list.get(1).getLastName());
+        assertEquals(new Integer(50), list.get(2).getAge());
     }
 
 }
