@@ -61,19 +61,19 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
 
     @Test
     public void queryWithOrFollowedByAndConnectorTest() {
-        List<Person> list = testQuery.getPersonByNameOrLastNameAndAge("Pedro", "Ferreira",23);
+        List<Person> list = testQuery.getPersonByNameOrLastNameAndAgeGreater("Pedro", "Ferreira",22);
 
         assertEquals(2, list.size());
         assertEquals("Pedro", list.get(0).getName());
-        assertEquals("Ferreira", list.get(1).getLastName());
+        assertEquals("Maria", list.get(1).getName());
     }
 
     @Test
     public void queryWithAndFollowedByOrConnectorTest() {
         List<Person> list = testQuery.getPersonByNameAndLastNameOrAge("Pedro", "Ferreira",23);
 
-        assertEquals(1, list.size());
-        assertEquals("Ferreira", list.get(0).getLastName());
+        assertEquals("Silvia", list.get(0).getName());
+        assertEquals("Pedro", list.get(1).getName());
     }
 
 
