@@ -1,6 +1,9 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.queryvisitor;
 
+import net.sf.esfinge.querybuilder.cassandra.CassandraQueryRepresentation;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.SecondaryQueryLimitExceededException;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraValidationQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
 import net.sf.esfinge.querybuilder.exception.InvalidQuerySequenceException;
@@ -192,5 +195,32 @@ public class CassandraSecondaryQueryVisitorTest {
         String secondaryQuery = qr.getQuery().toString();
 
         assertEquals(null, ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getSecondaryVisitor());
+    }
+
+    @Test
+    public void oneOrConnectorAndSpecialComparisonTest() {
+        visitor.visitEntity("Person");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("or");
+        visitor.visitCondition("lastname", ComparisonType.STARTS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor)visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person WHERE name = 0? ALLOW FILTERING",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Person",
+                secondaryQuery);
+
+        SpecialComparisonClause expected = new SpecialComparisonClause("lastname", SpecialComparisonType.STARTS);
+
+        assertEquals(expected, ((CassandraQueryRepresentation)qr).getSpecialComparisonClauses().get(0));
     }
 }

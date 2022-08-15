@@ -1,13 +1,9 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding;
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.QueryParametersMismatchException;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.regex.Pattern;
 
 public class QueryBuildingUtils {
 

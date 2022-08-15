@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class CassandraSecondaryQueryIntegrationTest extends CassandraBasicDatabaseIntegrationTest {
+public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends CassandraBasicDatabaseIntegrationTest {
 
     CassandraSecondaryQueryTestQuery testQuery = QueryBuilder.create(CassandraSecondaryQueryTestQuery.class);
 
@@ -27,6 +27,13 @@ public class CassandraSecondaryQueryIntegrationTest extends CassandraBasicDataba
     @Test
     public void queryWithOneOrConnectorTest() {
         List<Person> list = testQuery.getPersonByNameOrLastName("Pedro", "Ferreira");
+
+        assertEquals(2, list.size());
+    }
+
+    @Test
+    public void queryWithTwoOrConnectorsTest() {
+        List<Person> list = testQuery.getPersonByNameOrLastNameOrAge("Pedro", "Ferreira", 30);
 
         assertEquals(2, list.size());
     }

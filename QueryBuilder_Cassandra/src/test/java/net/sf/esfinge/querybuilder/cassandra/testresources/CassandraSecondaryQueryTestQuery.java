@@ -13,5 +13,7 @@ public interface CassandraSecondaryQueryTestQuery extends Repository<Person> {
 
     List<Person> getPersonByNameOrLastName(String name, String lastname);
 
+    List<Person> getPersonByNameOrLastNameOrAge(String name, String lastname, Integer age);
+
     List<Person> getPersonByAgeOrLastNameOrderByNameDesc(@Greater Integer age, String lastname);
 }

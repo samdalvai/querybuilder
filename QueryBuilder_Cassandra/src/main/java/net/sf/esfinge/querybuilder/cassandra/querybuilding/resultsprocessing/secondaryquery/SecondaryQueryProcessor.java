@@ -20,7 +20,7 @@ public class SecondaryQueryProcessor<E> extends BasicResultsProcessor {
         if (list.isEmpty())
             return list;
 
-        return SecondaryQueryUtils.removeCopyElementsFromList(list);
+        return SecondaryQueryUtils.removeDuplicateElementsFromList(list);
     }
 
     public static <E> List fromListOfLists(List<List<E>> result) {

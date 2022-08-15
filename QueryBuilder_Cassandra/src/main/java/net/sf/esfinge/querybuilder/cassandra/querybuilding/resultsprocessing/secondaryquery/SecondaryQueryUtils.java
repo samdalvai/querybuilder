@@ -29,7 +29,7 @@ public class SecondaryQueryUtils {
         return true;
     }
 
-    public static <E> List removeCopyElementsFromList(List<E> list){
+    public static <E> List removeDuplicateElementsFromList(List<E> list){
         List<E> result = new ArrayList<>();
 
         for (E e : list){
