@@ -9,6 +9,7 @@ import net.sf.esfinge.querybuilder.cassandra.cassandrautils.MappingManagerProvid
 import net.sf.esfinge.querybuilder.cassandra.exceptions.WrongTypeOfExpectedResultException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderingProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.secondaryquery.SecondaryQueryProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.secondaryquery.SecondaryQueryUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
@@ -72,7 +73,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
                 return null;
         }
 
-        ResultsProcessor processor = new SecondaryQueryProcessor(new SpecialComparisonProcessor(newSpc, ((CassandraValidationQueryVisitor) visitor).getProcessor()));
+        ResultsProcessor processor = new SecondaryQueryProcessor(new SpecialComparisonProcessor(newSpc, new OrderingProcessor(((CassandraValidationQueryVisitor) visitor).getOrderByClauses())));
 
         return processor.postProcess(results);
     }

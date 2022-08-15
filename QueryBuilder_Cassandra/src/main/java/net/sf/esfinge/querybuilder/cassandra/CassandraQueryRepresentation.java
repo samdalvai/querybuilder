@@ -114,7 +114,7 @@ public class CassandraQueryRepresentation implements QueryRepresentation {
         return fixParametersMap.get(paramName);
     }
 
-    public List<OrderByClause> getOrderByClause() {
+    public List<OrderByClause> getOrderByClauses() {
         return orderByClauses;
     }
 
