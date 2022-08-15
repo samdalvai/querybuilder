@@ -1,6 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra.testresources;
 
 import net.sf.esfinge.querybuilder.Repository;
+import net.sf.esfinge.querybuilder.annotation.CompareToNull;
 import net.sf.esfinge.querybuilder.annotation.Greater;
 import net.sf.esfinge.querybuilder.annotation.Lesser;
 
@@ -22,5 +23,9 @@ public interface CassandraSecondaryQueryTestQuery extends Repository<Person> {
 
     List<Person> getPersonByNameAndLastNameOrAge(String name, String lastname,@Lesser Integer age);
 
-    List<Person> getPersonByAgeOrLastNameOrderByNameDesc(@Greater Integer age, String lastname);
+    List<Person> getPersonByAgeOrLastNameOrderByNameDesc(Integer age, String lastname);
+
+    List<Person> getPersonByAgeOrNameStarts(@Greater Integer age, String name);
+
+    List<Person> getPersonByNameOrAge(String name,@CompareToNull Integer age);
 }

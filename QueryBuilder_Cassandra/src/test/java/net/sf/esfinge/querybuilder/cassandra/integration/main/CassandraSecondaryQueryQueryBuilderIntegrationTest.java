@@ -1,8 +1,10 @@
 package net.sf.esfinge.querybuilder.cassandra.integration.main;
 
+import com.datastax.driver.core.Session;
 import net.sf.esfinge.querybuilder.QueryBuilder;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.SecondaryQueryLimitExceededException;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseIntegrationTest;
+import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraTestUtils;
 import net.sf.esfinge.querybuilder.cassandra.testresources.CassandraSecondaryQueryTestQuery;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
 import org.junit.Test;
@@ -76,6 +78,34 @@ public class CassandraSecondaryQueryQueryBuilderIntegrationTest extends Cassandr
         assertEquals("Pedro", list.get(1).getName());
     }
 
+    @Test
+    public void queryWithOrConnectorAndOrderByClauseTest() {
+        List<Person> list = testQuery.getPersonByAgeOrLastNameOrderByNameDesc(23,"Marques");
 
+        assertEquals("Maria", list.get(0).getName());
+        assertEquals("Antonio", list.get(1).getName());
+    }
 
+    @Test
+    public void queryWithOrConnectorAndSpecialComparisonClauseTest() {
+        List<Person> list = testQuery.getPersonByAgeOrNameStarts(25,"Ma");
+
+        assertEquals("Marcos", list.get(0).getName());
+        assertEquals("Maria", list.get(1).getName());
+    }
+
+    @Test
+    public void queryWithOrConnectorAndCompareToNullTest() {
+        Session session = CassandraTestUtils.getSession();
+
+        String query = "INSERT INTO test.person(id, name, lastname, age) VALUES (6, 'NullPerson', 'NullPerson', null)";
+
+        session.execute(query);
+        session.close();
+
+        List<Person> list = testQuery.getPersonByNameOrAge("Marcos",null);
+
+        assertEquals("Marcos", list.get(0).getName());
+        assertEquals("NullPerson", list.get(1).getName());
+    }
 }
