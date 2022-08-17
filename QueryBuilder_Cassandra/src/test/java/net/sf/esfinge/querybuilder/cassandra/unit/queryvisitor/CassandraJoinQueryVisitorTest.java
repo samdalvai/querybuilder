@@ -8,7 +8,6 @@ import net.sf.esfinge.querybuilder.methodparser.QueryVisitor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class CassandraJoinQueryVisitorTest {
 
@@ -35,6 +34,29 @@ public class CassandraJoinQueryVisitorTest {
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
+                secondaryQuery);
+    }
+
+    @Test
+    public void twoJoinConditionsTest(){
+        visitor.visitEntity("Worker");
+        visitor.visitCondition("address.state", ComparisonType.EQUALS);
+        visitor.visitConector("AND");
+        visitor.visitCondition("address.city", ComparisonType.EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Worker",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? AND city = 1? ALLOW FILTERING",
                 secondaryQuery);
     }
 
