@@ -1,7 +1,13 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.queryvisitor;
 
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
+import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
+import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
 import net.sf.esfinge.querybuilder.methodparser.QueryVisitor;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CassandraJoinQueryVisitorTest {
 
@@ -9,6 +15,18 @@ public class CassandraJoinQueryVisitorTest {
 
     // TODO: // TODO: JOIN QUERY VISITOR TESTS
     // TODO: PROBLEM WITH COMPLEX QUERIES AND CASSANDRA: JOINS DO NOT EXIST, IMPLEMENT THEM AT APPLICATION LEVEL??
+
+    @Test
+    public void oneJoinConditionTest(){
+        visitor.visitEntity("Worker");
+        visitor.visitCondition("address.state", ComparisonType.EQUALS, "SP");
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+
+        String query = qr.getQuery().toString();
+        assertEquals("SELECT * FROM <#keyspace-name#>.Worker", query);
+    }
 
     /*@Test
     public void mixedWithfixParameterQueryFromOtherClass(){
