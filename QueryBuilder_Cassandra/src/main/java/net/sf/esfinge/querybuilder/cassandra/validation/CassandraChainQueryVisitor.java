@@ -64,37 +64,42 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType) {
-        if (parameter.contains(".")) {
-            visitJoinCondition(parameter, comparisonType);
-        } else {
-            if (secondaryVisitor == null) {
-                primaryVisitor.visitCondition(parameter, comparisonType);
+        if (secondaryVisitor == null) {
+            if (parameter.contains(".")) {
+                visitJoinCondition(parameter, comparisonType);
             } else {
-                secondaryVisitor.visitCondition(parameter, comparisonType);
+                primaryVisitor.visitCondition(parameter, comparisonType);
             }
+        } else {
+            secondaryVisitor.visitCondition(parameter, comparisonType);
         }
+
     }
 
     public void visitJoinCondition(String parameter, ComparisonType comparisonType) {
         if (queryDepth > 1)
             throw new JoinDepthLimitExceededException("Join depth exceeded, the maximum depth is 1");
 
-        primaryVisitor.visitEnd();
-        secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor, VisitorType.JOIN);
-
         String joinEntity = parameter.substring(0, 1).toUpperCase() + parameter.substring(1, parameter.indexOf('.')).toLowerCase();
-        secondaryVisitor.visitEntity(joinEntity);
-
         String joinParameter = parameter.substring(parameter.indexOf('.') + 1);
 
-        secondaryVisitor.visitCondition(joinParameter,comparisonType);
+        if (this.visitorType != VisitorType.JOIN){
+            primaryVisitor.visitEnd();
+            secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor, VisitorType.JOIN);
+
+            secondaryVisitor.visitEntity(joinEntity);
+
+            secondaryVisitor.visitCondition(joinParameter, comparisonType);
+        } else {
+            primaryVisitor.visitCondition(joinParameter, comparisonType);
+        }
     }
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
         if (parameter.contains(".")) {
             visitJoinCondition(parameter, comparisonType, nullOption);
-        }  else {
+        } else {
             if (secondaryVisitor == null) {
                 primaryVisitor.visitCondition(parameter, comparisonType, nullOption);
             } else {
