@@ -61,7 +61,7 @@ public class CassandraJoinQueryVisitorTest {
     }
 
     @Test
-    public void oneJoinAndOneConditionForMainEntityTest(){
+    public void oneConditionForMainEntityAndOneJoinTest(){
         visitor.visitEntity("Worker");
         visitor.visitCondition("name", ComparisonType.EQUALS);
         visitor.visitConector("AND");
@@ -84,7 +84,7 @@ public class CassandraJoinQueryVisitorTest {
     }
 
     @Test
-    public void oneConditionForMainEntityAndOneJoinTest(){
+    public void oneJoinAndOneConditionForMainEntityTest(){
         visitor.visitEntity("Worker");
         visitor.visitCondition("address.state", ComparisonType.EQUALS);
         visitor.visitConector("AND");
