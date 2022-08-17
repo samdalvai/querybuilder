@@ -60,6 +60,53 @@ public class CassandraJoinQueryVisitorTest {
                 secondaryQuery);
     }
 
+    @Test
+    public void oneJoinAndOneConditionForMainEntityTest(){
+        visitor.visitEntity("Worker");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("AND");
+        visitor.visitCondition("address.state", ComparisonType.EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 0? ALLOW FILTERING",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 1? ALLOW FILTERING",
+                secondaryQuery);
+    }
+
+    @Test
+    public void oneConditionForMainEntityAndOneJoinTest(){
+        visitor.visitEntity("Worker");
+        visitor.visitCondition("address.state", ComparisonType.EQUALS);
+        visitor.visitConector("AND");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Worker",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 1? ALLOW FILTERING",
+                secondaryQuery);
+
+    }
+
     /*@Test
     public void mixedWithfixParameterQueryFromOtherClass(){
         visitor.visitEntity("Person");
