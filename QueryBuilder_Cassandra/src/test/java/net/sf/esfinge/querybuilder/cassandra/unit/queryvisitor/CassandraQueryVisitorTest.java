@@ -138,6 +138,13 @@ public class CassandraQueryVisitorTest {
         visitor.visitEnd();
     }
 
+    @Test(expected = InvalidQuerySequenceException.class)
+    public void endAfterEndTest() {
+        visitor.visitEntity("Person");
+        visitor.visitEnd();
+        visitor.visitEnd();
+    }
+
     @Test
     public void fixParameterQueryWithStringValueTest() {
         visitor.visitEntity("Person");

@@ -80,6 +80,10 @@ public class CassandraValidationQueryVisitor implements QueryVisitor {
     }
 
     public void visitEnd() {
+        if (lastCalled == CassandraQueryElement.END)
+            throw new InvalidQuerySequenceException(
+                    "Cannot end an already ended query sequence.");
+
         if (lastCalled == CassandraQueryElement.NONE)
             throw new InvalidQuerySequenceException(
                     "Cannot end an empty query sequence.");
@@ -89,6 +93,8 @@ public class CassandraValidationQueryVisitor implements QueryVisitor {
         } else {
             this.visitor.visitEnd();
         }
+
+        lastCalled = CassandraQueryElement.END;
     }
 
     public boolean isDynamic() {
