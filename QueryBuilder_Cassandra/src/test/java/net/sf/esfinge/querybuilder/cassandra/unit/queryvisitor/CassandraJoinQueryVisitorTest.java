@@ -1,5 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.queryvisitor;
 
+import net.sf.esfinge.querybuilder.cassandra.validation.CassandraValidationQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
@@ -19,13 +20,22 @@ public class CassandraJoinQueryVisitorTest {
     @Test
     public void oneJoinConditionTest(){
         visitor.visitEntity("Worker");
-        visitor.visitCondition("address.state", ComparisonType.EQUALS, "SP");
+        visitor.visitCondition("address.state", ComparisonType.EQUALS);
         visitor.visitEnd();
 
         QueryRepresentation qr = visitor.getQueryRepresentation();
-
         String query = qr.getQuery().toString();
-        assertEquals("SELECT * FROM <#keyspace-name#>.Worker", query);
+
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Worker",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
+                secondaryQuery);
     }
 
     /*@Test
