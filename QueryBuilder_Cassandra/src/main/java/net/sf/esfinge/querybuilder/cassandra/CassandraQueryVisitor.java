@@ -24,6 +24,8 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private String query = "";
     private int numberOfFixedValues = 0;
 
+    CassandraQueryVisitor previousVisitor;
+
     public CassandraQueryVisitor() {
         argumentPositionOffset = 0;
     }
@@ -37,6 +39,8 @@ public class CassandraQueryVisitor implements QueryVisitor {
                 previousVisitor.getSpecialComparisonClauses().size() -
                 previousVisitor.getNumberOfFixedValues() +
                 previousVisitor.getArgumentPositionOffset();
+
+        this.previousVisitor = previousVisitor;
     }
 
     @Override
@@ -236,5 +240,9 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     public int getArgumentPositionOffset() {
         return argumentPositionOffset;
+    }
+
+    public CassandraQueryVisitor getPreviousVisitor() {
+        return previousVisitor;
     }
 }
