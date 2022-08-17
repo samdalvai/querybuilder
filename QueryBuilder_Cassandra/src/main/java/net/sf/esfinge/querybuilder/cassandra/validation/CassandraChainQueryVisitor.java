@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class CassandraChainQueryVisitor implements QueryVisitor {
 
-    VisitorType type;
+    VisitorType visitorType;
 
     private final CassandraQueryVisitor primaryVisitor;
     private CassandraChainQueryVisitor secondaryVisitor;
@@ -25,13 +25,13 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
     public CassandraChainQueryVisitor(int queryDepth, VisitorType type) {
         this.primaryVisitor = new CassandraQueryVisitor();
         this.queryDepth = queryDepth;
-        this.type = type;
+        this.visitorType = type;
     }
 
     public CassandraChainQueryVisitor(int queryDepth, CassandraQueryVisitor previousVisitor, VisitorType type) {
         this.primaryVisitor = new CassandraQueryVisitor(previousVisitor);
         this.queryDepth = queryDepth;
-        this.type = type;
+        this.visitorType = type;
     }
 
     @Override
@@ -62,29 +62,10 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         }
     }
 
-    private boolean isSecondaryJoinQuery(String parameter){
-        if (parameter.contains(".")) {
-            if (queryDepth > 1)
-                throw new JoinDepthLimitExceededException("Join depth exceeded, the maximum depth is 1");
-
-            primaryVisitor.visitEnd();
-            secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor, VisitorType.JOIN);
-
-            String joinEntity = parameter.substring(0, 1).toUpperCase() + parameter.substring(1, parameter.indexOf('.')).toLowerCase();
-            secondaryVisitor.visitEntity(joinEntity);
-
-            return true;
-        }
-
-        return false;
-    }
-
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType) {
-        if (isSecondaryJoinQuery(parameter)) {
-
-            String joinParameter = parameter.substring(parameter.indexOf('.') + 1);
-            secondaryVisitor.visitCondition(joinParameter, comparisonType);
+        if (parameter.contains(".")) {
+            visitJoinCondition(parameter, comparisonType);
         } else {
             if (secondaryVisitor == null) {
                 primaryVisitor.visitCondition(parameter, comparisonType);
@@ -94,13 +75,26 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         }
     }
 
+    public void visitJoinCondition(String parameter, ComparisonType comparisonType) {
+        if (queryDepth > 1)
+            throw new JoinDepthLimitExceededException("Join depth exceeded, the maximum depth is 1");
+
+        primaryVisitor.visitEnd();
+        secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor, VisitorType.JOIN);
+
+        String joinEntity = parameter.substring(0, 1).toUpperCase() + parameter.substring(1, parameter.indexOf('.')).toLowerCase();
+        secondaryVisitor.visitEntity(joinEntity);
+
+        String joinParameter = parameter.substring(parameter.indexOf('.') + 1);
+
+        secondaryVisitor.visitCondition(joinParameter,comparisonType);
+    }
+
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
-        if (isSecondaryJoinQuery(parameter)) {
-
-            String joinParameter = parameter.substring(parameter.indexOf('.') + 1);
-            secondaryVisitor.visitCondition(joinParameter, comparisonType, nullOption);
-        } else {
+        if (parameter.contains(".")) {
+            visitJoinCondition(parameter, comparisonType, nullOption);
+        }  else {
             if (secondaryVisitor == null) {
                 primaryVisitor.visitCondition(parameter, comparisonType, nullOption);
             } else {
@@ -109,12 +103,14 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         }
     }
 
+    public void visitJoinCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
+
+    }
+
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, Object value) {
-        if (isSecondaryJoinQuery(parameter)) {
-
-            String joinParameter = parameter.substring(parameter.indexOf('.') + 1);
-            secondaryVisitor.visitCondition(joinParameter, comparisonType, value);
+        if (parameter.contains(".")) {
+            visitJoinCondition(parameter, comparisonType, value);
         } else {
             if (secondaryVisitor == null) {
                 primaryVisitor.visitCondition(parameter, comparisonType, value);
@@ -122,6 +118,10 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
                 secondaryVisitor.visitCondition(parameter, comparisonType, value);
             }
         }
+    }
+
+    public void visitJoinCondition(String parameter, ComparisonType comparisonType, Object value) {
+
     }
 
     @Override

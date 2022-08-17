@@ -42,7 +42,6 @@ public class CassandraQueryVisitor implements QueryVisitor {
     @Override
     public void visitEntity(String entity) {
         this.entity = entity;
-        System.out.println("entity: " + entity);
     }
 
     @Override
@@ -61,8 +60,6 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType) {
-        System.out.println("parameter: " + parameter);
-
         // Cassandra supports only these conditional operators in the WHERE clause:
         // IN, =, >, >=, <, or <=, but not all in certain situations.
         // The other comparison types are implemented at the application logic, namely:
