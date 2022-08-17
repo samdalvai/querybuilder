@@ -7,7 +7,7 @@ import net.sf.esfinge.querybuilder.cassandra.entity.CassandraEntity;
 
 import java.util.Objects;
 
-@Table(keyspace = "test", name = "person",
+@Table(keyspace = "test", name = "worker",
         readConsistency = "QUORUM",
         writeConsistency = "QUORUM",
         caseSensitiveKeyspace = false,
@@ -19,7 +19,7 @@ public class Worker implements CassandraEntity {
     private String lastName;
     private Integer age;
 
-    @JoinColumn(name = "address-id", referencedColumnName = "id")
+    @JoinColumn(referencedColumnName = "id")
     private Address address;
 
     public Integer getId() {

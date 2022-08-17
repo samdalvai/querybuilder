@@ -24,7 +24,7 @@ public class CassandraTestUtils {
         // EmbeddedCassandraServerHelper.startEmbeddedCassandra(20000L);
     }
 
-    public static void createTables() {
+    public static void createTablesPerson() {
         Session session = getSession();
 
         String query = "CREATE TABLE IF NOT EXISTS test.person(id int PRIMARY KEY, name text,lastname text, age int);";
@@ -33,7 +33,7 @@ public class CassandraTestUtils {
         session.close();
     }
 
-    public static void populateTables() {
+    public static void populateTablesPerson() {
         Session session = getSession();
 
         String query = "BEGIN BATCH\n" +
@@ -48,10 +48,43 @@ public class CassandraTestUtils {
         session.close();
     }
 
-    public static void cleanTables() {
+    public static void cleanTablesPerson() {
         Session session = getSession();
 
         String query = "TRUNCATE test.person";
+
+        session.execute(query);
+        session.close();
+    }
+
+    public static void createTablesWorker() {
+        Session session = getSession();
+
+        String query = "CREATE TABLE IF NOT EXISTS test.worker(id int PRIMARY KEY, name text,lastname text, age int, address int);";
+
+        session.execute(query);
+        session.close();
+    }
+
+    public static void populateTablesWorker() {
+        Session session = getSession();
+
+        String query = "BEGIN BATCH\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (1, 'Pedro', 'Silva', 20, 1);\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (2, 'Maria', 'Ferreira', 23, 2);\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (3, 'Marcos', 'Silva', 50, 3);\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (4, 'Antonio', 'Marques', 33, 4);\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (5, 'Silvia', 'Bressan', 11, 5);\n" +
+                "        APPLY BATCH";
+
+        session.execute(query);
+        session.close();
+    }
+
+    public static void cleanTablesWorker() {
+        Session session = getSession();
+
+        String query = "TRUNCATE test.worker";
 
         session.execute(query);
         session.close();

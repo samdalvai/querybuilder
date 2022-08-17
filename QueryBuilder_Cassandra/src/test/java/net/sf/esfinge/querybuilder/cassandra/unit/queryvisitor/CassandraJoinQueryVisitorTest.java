@@ -7,5 +7,5 @@ public class CassandraJoinQueryVisitorTest {
 
     private final QueryVisitor visitor = CassandraVisitorFactory.createQueryVisitor();
 
-    // TODO: TESTS FOR QUERY VISITOR AND JOINS
+    // TODO: // TODO: JOIN QUERY VISITOR TESTS
 }
