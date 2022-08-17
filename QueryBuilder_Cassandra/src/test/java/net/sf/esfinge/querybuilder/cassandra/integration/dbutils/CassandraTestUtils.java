@@ -63,6 +63,10 @@ public class CassandraTestUtils {
         String query = "CREATE TABLE IF NOT EXISTS test.worker(id int PRIMARY KEY, name text,lastname text, age int, address int);";
 
         session.execute(query);
+
+        query = "CREATE TABLE IF NOT EXISTS test.address(id int PRIMARY KEY, city text, state text);";
+
+        session.execute(query);
         session.close();
     }
 
@@ -70,14 +74,23 @@ public class CassandraTestUtils {
         Session session = getSession();
 
         String query = "BEGIN BATCH\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (1, 'Pedro', 'Silva', 20, 1);\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (2, 'Maria', 'Ferreira', 23, 2);\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (3, 'Marcos', 'Silva', 50, 3);\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (4, 'Antonio', 'Marques', 33, 4);\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (5, 'Silvia', 'Bressan', 11, 5);\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (1, 'Pedro', 'Silva', 20, 3);\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (2, 'Maria', 'Ferreira', 23, 1);\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (3, 'Marcos', 'Silva', 50, 2);\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (4, 'Antonio', 'Marques', 33, 3);\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (5, 'Silvia', 'Bressan', 11, 3);\n" +
                 "        APPLY BATCH";
 
         session.execute(query);
+
+        query = "BEGIN BATCH\n" +
+                "        INSERT INTO test.address(id, city, state) VALUES (1, 'SJCampos', 'SP');\n" +
+                "        INSERT INTO test.address(id, city, state) VALUES (2, 'Campinas', 'SP');\n" +
+                "        INSERT INTO test.address(id, city, state) VALUES (3, 'Juiz de Fora', 'MG');\n" +
+                "        APPLY BATCH";
+
+        session.execute(query);
+
         session.close();
     }
 
@@ -85,6 +98,10 @@ public class CassandraTestUtils {
         Session session = getSession();
 
         String query = "TRUNCATE test.worker";
+
+        session.execute(query);
+
+        query = "TRUNCATE test.address";
 
         session.execute(query);
         session.close();

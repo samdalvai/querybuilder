@@ -10,26 +10,5 @@ import java.io.IOException;
 
 public class CassandraBasicDatabaseWorkerIntegrationTest {
 
-    @BeforeClass
-    public static void initDB() throws TTransportException, IOException, InterruptedException {
-        CassandraTestUtils.initDB();
-        CassandraTestUtils.createTablesWorker();
-    }
 
-
-    // TODO: DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
-    /*@AfterClass
-    public static void dropDB() {
-        CassandraTestUtils.dropDB();
-    }*/
-
-    @Before
-    public void populateTables() {
-        CassandraTestUtils.populateTablesWorker();
-    }
-
-    @After
-    public void cleanTables() {
-        CassandraTestUtils.cleanTablesWorker();
-    }
 }

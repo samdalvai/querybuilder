@@ -53,6 +53,7 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
 
         for (QueryRepresentation representation : qrList) {
             String query = getQuery(queryInfo, args, representation);
+            System.out.println(query);
 
             List<SpecialComparisonClause> spc = ((CassandraQueryRepresentation) representation).getSpecialComparisonClauses();
             List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClausesWithValues(args, spc);
