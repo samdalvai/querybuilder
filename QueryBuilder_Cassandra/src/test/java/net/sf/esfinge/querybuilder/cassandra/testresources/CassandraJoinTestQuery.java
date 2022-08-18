@@ -1,6 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra.testresources;
 
 import net.sf.esfinge.querybuilder.Repository;
+import net.sf.esfinge.querybuilder.annotation.CompareToNull;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface CassandraJoinTestQuery extends Repository<Worker> {
     List<Worker> getWorkerByAddressCityOrLastName(String city, String lastName);
 
     List<Worker> getWorkerByAddressCityOrLastNameOrderById(String city, String lastName);
+
+    List<Worker> getWorkerByAddressState(@CompareToNull String state);
 }

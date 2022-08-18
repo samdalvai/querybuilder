@@ -8,13 +8,13 @@ public class JoinClause {
 
     private String joinTypeName;
     private String joinAttributeName;
-    private ComparisonType comparisonType;
+    private JoinComparisonType comparisonType;
 
     private Object value;
 
     private int argPosition;
 
-    public JoinClause(String joinTypeName, String joinAttributeName, ComparisonType comparisonType) {
+    public JoinClause(String joinTypeName, String joinAttributeName, JoinComparisonType comparisonType) {
         this.joinTypeName = joinTypeName;
         this.joinAttributeName = joinAttributeName;
         this.comparisonType = comparisonType;
@@ -36,11 +36,11 @@ public class JoinClause {
         this.joinAttributeName = joinAttributeName;
     }
 
-    public ComparisonType getComparisonType() {
+    public JoinComparisonType getComparisonType() {
         return comparisonType;
     }
 
-    public void setComparisonType(ComparisonType comparisonType) {
+    public void setComparisonType(JoinComparisonType comparisonType) {
         this.comparisonType = comparisonType;
     }
 

@@ -2,6 +2,7 @@ package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding.resultsprocessi
 
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinComparisonType;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinProcessor;
 import net.sf.esfinge.querybuilder.cassandra.unit.reflection.TestAddress;
 import net.sf.esfinge.querybuilder.cassandra.unit.reflection.TestClassWithAddress;
@@ -38,7 +39,7 @@ public class JoinProcessorTest {
     @Test
     public void joinListEqualWithOneParameterEqualTest() {
         List<JoinClause> joinClauses = new ArrayList<>();
-        joinClauses.add(new JoinClause("address", "city", ComparisonType.EQUALS));
+        joinClauses.add(new JoinClause("address", "city", JoinComparisonType.EQUALS));
         joinClauses.get(0).setValue("Bolzano");
 
         ResultsProcessor processor = new JoinProcessor(joinClauses);
@@ -55,8 +56,8 @@ public class JoinProcessorTest {
     @Test
     public void joinListEqualWithTwoParametersTest() {
         List<JoinClause> joinClauses = new ArrayList<>();
-        joinClauses.add(new JoinClause("address", "city", ComparisonType.EQUALS));
-        joinClauses.add(new JoinClause("address", "code", ComparisonType.GREATER_OR_EQUALS));
+        joinClauses.add(new JoinClause("address", "city", JoinComparisonType.EQUALS));
+        joinClauses.add(new JoinClause("address", "code", JoinComparisonType.GREATER_OR_EQUALS));
         joinClauses.get(0).setValue("Bolzano");
         joinClauses.get(1).setValue(39100);
 
@@ -74,9 +75,9 @@ public class JoinProcessorTest {
     @Test
     public void joinListEqualWithThreeParametersTest() {
         List<JoinClause> joinClauses = new ArrayList<>();
-        joinClauses.add(new JoinClause("address", "city", ComparisonType.STARTS));
-        joinClauses.add(new JoinClause("address", "code", ComparisonType.GREATER_OR_EQUALS));
-        joinClauses.add(new JoinClause("address", "province", ComparisonType.NOT_EQUALS));
+        joinClauses.add(new JoinClause("address", "city", JoinComparisonType.STARTS));
+        joinClauses.add(new JoinClause("address", "code", JoinComparisonType.GREATER_OR_EQUALS));
+        joinClauses.add(new JoinClause("address", "province", JoinComparisonType.NOT_EQUALS));
         joinClauses.get(0).setValue("Bolz");
         joinClauses.get(1).setValue(39100);
         joinClauses.get(2).setValue("WHATEVER");

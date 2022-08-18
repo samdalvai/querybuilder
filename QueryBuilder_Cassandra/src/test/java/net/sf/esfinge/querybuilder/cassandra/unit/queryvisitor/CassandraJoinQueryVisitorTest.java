@@ -2,6 +2,7 @@ package net.sf.esfinge.querybuilder.cassandra.unit.queryvisitor;
 
 import net.sf.esfinge.querybuilder.cassandra.CassandraQueryRepresentation;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinComparisonType;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
@@ -27,7 +28,7 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        JoinClause expected = new JoinClause("address","state",ComparisonType.EQUALS);
+        JoinClause expected = new JoinClause("address","state", JoinComparisonType.EQUALS);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker",
@@ -47,8 +48,8 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        JoinClause expected1 = new JoinClause("address","state",ComparisonType.EQUALS);
-        JoinClause expected2 = new JoinClause("address","city",ComparisonType.EQUALS);
+        JoinClause expected1 = new JoinClause("address","state",JoinComparisonType.EQUALS);
+        JoinClause expected2 = new JoinClause("address","city",JoinComparisonType.EQUALS);
         expected2.setArgPosition(1);
 
         assertEquals(
@@ -70,7 +71,7 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        JoinClause expected = new JoinClause("address","state",ComparisonType.EQUALS);
+        JoinClause expected = new JoinClause("address","state",JoinComparisonType.EQUALS);
         expected.setArgPosition(1);
 
         assertEquals(
@@ -94,7 +95,7 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        JoinClause expected = new JoinClause("address","state",ComparisonType.EQUALS);
+        JoinClause expected = new JoinClause("address","state",JoinComparisonType.EQUALS);
         expected.setArgPosition(2);
 
         assertEquals(
@@ -114,7 +115,7 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        JoinClause expected = new JoinClause("address","state",ComparisonType.EQUALS);
+        JoinClause expected = new JoinClause("address","state",JoinComparisonType.EQUALS);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 1? ALLOW FILTERING",
@@ -136,8 +137,8 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        JoinClause expected1 = new JoinClause("address","state",ComparisonType.EQUALS);
-        JoinClause expected2 = new JoinClause("address","city",ComparisonType.EQUALS);
+        JoinClause expected1 = new JoinClause("address","state",JoinComparisonType.EQUALS);
+        JoinClause expected2 = new JoinClause("address","city",JoinComparisonType.EQUALS);
         expected2.setArgPosition(1);
 
         assertEquals(
@@ -158,7 +159,7 @@ public class CassandraJoinQueryVisitorTest {
         String query = qr.getQuery().toString();
 
         OrderByClause expectedOrderBy = new OrderByClause("age", OrderingDirection.ASC);
-        JoinClause expectedJoin = new JoinClause("address","state",ComparisonType.EQUALS);
+        JoinClause expectedJoin = new JoinClause("address","state",JoinComparisonType.EQUALS);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker",
@@ -180,7 +181,7 @@ public class CassandraJoinQueryVisitorTest {
 
         SpecialComparisonClause expectedSpecialClause = new SpecialComparisonClause("name", SpecialComparisonType.NOT_EQUALS);
 
-        JoinClause expectedJoin = new JoinClause("address","state",ComparisonType.EQUALS);
+        JoinClause expectedJoin = new JoinClause("address","state",JoinComparisonType.EQUALS);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker",

@@ -1,5 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.integration.main;
 
+import com.datastax.driver.core.Session;
 import net.sf.esfinge.querybuilder.QueryBuilder;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraTestUtils;
 import net.sf.esfinge.querybuilder.cassandra.testresources.CassandraJoinTestQuery;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class CassandraJoinQueryBuilderIntegrationTest {
 
@@ -75,7 +75,7 @@ public class CassandraJoinQueryBuilderIntegrationTest {
 
     @Test
     public void queryWithOneNormalParameterAndOneForJoinTest() {
-        List<Worker> list = testQuery.getWorkerByAddressStateAndLastName("MG","Silva" );
+        List<Worker> list = testQuery.getWorkerByAddressStateAndLastName("MG", "Silva");
 
         assertEquals("Pedro", list.get(0).getName());
     }
@@ -99,8 +99,22 @@ public class CassandraJoinQueryBuilderIntegrationTest {
         List<Worker> list = testQuery.getWorkerByAddressCityOrLastNameOrderById("Juiz de Fora", "Silva");
 
         assertEquals(4, list.size());
-        assertEquals(new Integer(1),list.get(0).getId());
-        assertEquals(new Integer(5),list.get(3).getId());
+        assertEquals(new Integer(1), list.get(0).getId());
+        assertEquals(new Integer(5), list.get(3).getId());
+    }
+
+    @Test
+    public void queryWithOneParameterForJoinAndNullParameterTest() {
+        Session session = CassandraTestUtils.getSession();
+
+        String query = "INSERT INTO test.worker(id, name, lastname, age, address) VALUES (6, 'NullPerson', 'NullPerson', 30, {city: 'ACity', state: null})";
+
+        session.execute(query);
+        session.close();
+
+        List<Worker> list = testQuery.getWorkerByAddressState(null);
+
+        assertEquals("NullPerson", list.get(0).getName());
     }
 
 }

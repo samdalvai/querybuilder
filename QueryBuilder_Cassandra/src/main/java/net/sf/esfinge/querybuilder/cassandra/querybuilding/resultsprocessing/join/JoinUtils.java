@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class JoinUtils {
 
-    public static boolean filterByJoinClauseComparisonType(Object objectAttributeValue, Object queryParameterValue, ComparisonType comparisonType) {
+    public static boolean filterByJoinClauseComparisonType(Object objectAttributeValue, Object queryParameterValue, JoinComparisonType comparisonType) {
         switch (comparisonType) {
             case EQUALS:
                 return objectAttributeValue.equals(queryParameterValue);
@@ -31,12 +31,14 @@ public class JoinUtils {
                 return objectAttributeValue.toString().endsWith(queryParameterValue.toString());
             case CONTAINS:
                 return objectAttributeValue.toString().contains(queryParameterValue.toString());
+            case COMPARE_TO_NULL:
+                return queryParameterValue == null ? objectAttributeValue == null : objectAttributeValue.equals(queryParameterValue);
             default:
                 return true;
         }
     }
 
-    public static boolean filterByJoinClauseComparisonType(Double objectAttributeValue, Double queryParameterValue, ComparisonType comparisonType) {
+    public static boolean filterByJoinClauseComparisonType(Double objectAttributeValue, Double queryParameterValue, JoinComparisonType comparisonType) {
         switch (comparisonType) {
             case EQUALS:
                 return objectAttributeValue == queryParameterValue;
@@ -56,12 +58,14 @@ public class JoinUtils {
                 return objectAttributeValue.toString().endsWith(queryParameterValue.toString());
             case CONTAINS:
                 return objectAttributeValue.toString().contains(queryParameterValue.toString());
+            case COMPARE_TO_NULL:
+                return queryParameterValue == null ? objectAttributeValue == null : objectAttributeValue.equals(queryParameterValue);
             default:
                 return true;
         }
     }
 
-    public static boolean filterByJoinClauseComparisonType(Integer objectAttributeValue, Integer queryParameterValue, ComparisonType comparisonType) {
+    public static boolean filterByJoinClauseComparisonType(Integer objectAttributeValue, Integer queryParameterValue, JoinComparisonType comparisonType) {
         switch (comparisonType) {
             case EQUALS:
                 return objectAttributeValue == queryParameterValue;
@@ -81,6 +85,8 @@ public class JoinUtils {
                 return objectAttributeValue.toString().endsWith(queryParameterValue.toString());
             case CONTAINS:
                 return objectAttributeValue.toString().contains(queryParameterValue.toString());
+            case COMPARE_TO_NULL:
+                return queryParameterValue == null ? objectAttributeValue == null : objectAttributeValue.equals(queryParameterValue);
             default:
                 return true;
         }
@@ -100,11 +106,13 @@ public class JoinUtils {
         Method mainGetter = CassandraReflectionUtils.getClassGetterForField(mainClass, mainGetters, joinClause.getJoinTypeName());
 
         return list.stream().filter(obj -> {
+            Method joinGetter = null;
+
             try {
                 Class joinClass = mainGetter.invoke(list.get(0)).getClass();
 
                 Method[] joinGetters = CassandraReflectionUtils.getClassGetters(joinClass);
-                Method joinGetter = CassandraReflectionUtils.getClassGetterForField(joinClass, joinGetters, joinClause.getJoinAttributeName());
+                joinGetter = CassandraReflectionUtils.getClassGetterForField(joinClass, joinGetters, joinClause.getJoinAttributeName());
 
                 Object nestedClass = mainGetter.invoke(obj);
 
@@ -117,7 +125,7 @@ public class JoinUtils {
                     return filterByJoinClause(joinGetter.invoke(nestedClass), joinClause);
                 }
             } catch (Exception e) {
-                throw new MethodInvocationException("Could not invoke method \"" + mainGetter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e);
+                throw new MethodInvocationException("Could not invoke method \"" + joinGetter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e);
             }
         }).collect(Collectors.toList());
     }

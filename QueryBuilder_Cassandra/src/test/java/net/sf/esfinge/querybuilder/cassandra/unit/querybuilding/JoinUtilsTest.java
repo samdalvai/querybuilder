@@ -2,6 +2,7 @@ package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.GetterNotFoundInClassException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinComparisonType;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinUtils;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
@@ -16,77 +17,77 @@ public class JoinUtilsTest {
 
     @Test
     public void filterByJoinClauseEqualStringTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "Hello", ComparisonType.EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "Hello", JoinComparisonType.EQUALS));
     }
 
     @Test
     public void filterByJoinClauseEqualWithNotEqualStringTest() {
-        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "Hellos", ComparisonType.EQUALS));
+        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "Hellos", JoinComparisonType.EQUALS));
     }
 
     @Test
     public void filterByJoinClauseGreaterOrEqualStringTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType(3, 2, ComparisonType.GREATER_OR_EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(3, 2, JoinComparisonType.GREATER_OR_EQUALS));
     }
 
     @Test
     public void filterByJoinClauseLesserOrEqualStringTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType(2, 4, ComparisonType.LESSER_OR_EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(2, 4, JoinComparisonType.LESSER_OR_EQUALS));
     }
 
     @Test
     public void filterByJoinClauseNotEqualStringTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "Hello to all", ComparisonType.NOT_EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "Hello to all", JoinComparisonType.NOT_EQUALS));
     }
 
     @Test
     public void filterByJoinClauseNotEqualWithEqualStringTest() {
-        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "Hello", ComparisonType.NOT_EQUALS));
+        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "Hello", JoinComparisonType.NOT_EQUALS));
     }
 
     @Test
     public void filterByJoinClauseNotEqualIntTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1, 2, ComparisonType.NOT_EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1, 2, JoinComparisonType.NOT_EQUALS));
     }
 
     @Test
     public void ffilterByJoinClauseNotEqualWithEqualIntTest() {
-        assertFalse(JoinUtils.filterByJoinClauseComparisonType(1, 1, ComparisonType.NOT_EQUALS));
+        assertFalse(JoinUtils.filterByJoinClauseComparisonType(1, 1, JoinComparisonType.NOT_EQUALS));
     }
 
     @Test
     public void filterByJoinClauseStartingWithStringTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "He", ComparisonType.STARTS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "He", JoinComparisonType.STARTS));
     }
 
     @Test
     public void filterByJoinClauseNotStartingWithStringTest() {
-        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "whatever", ComparisonType.STARTS));
+        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "whatever", JoinComparisonType.STARTS));
     }
 
     @Test
     public void filterByJoinClauseEndingWithStringTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "lo", ComparisonType.ENDS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "lo", JoinComparisonType.ENDS));
     }
 
     @Test
     public void filterByJoinClauseNotEndingWithStringTest() {
-        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "whatever", ComparisonType.ENDS));
+        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "whatever", JoinComparisonType.ENDS));
     }
 
     @Test
     public void filterByJoinClauseContainingStringTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "el", ComparisonType.CONTAINS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "el", JoinComparisonType.CONTAINS));
     }
 
     @Test
     public void filterByJoinClauseNotContainingStringTest() {
-        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "whatever", ComparisonType.CONTAINS));
+        assertFalse(JoinUtils.filterByJoinClauseComparisonType("Hello", "whatever", JoinComparisonType.CONTAINS));
     }
 
     @Test
     public void filterByJoinClauseWithNotAvailableAttributeTest() {
-        JoinClause clause = new JoinClause("whatever", "whatever", ComparisonType.NOT_EQUALS);
+        JoinClause clause = new JoinClause("whatever", "whatever", JoinComparisonType.NOT_EQUALS);
         clause.setValue("whatever");
 
         List<Person> list = new ArrayList<>();
