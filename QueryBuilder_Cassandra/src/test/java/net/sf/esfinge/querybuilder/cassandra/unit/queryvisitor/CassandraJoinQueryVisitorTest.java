@@ -1,8 +1,13 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.queryvisitor;
 
+import net.sf.esfinge.querybuilder.cassandra.CassandraQueryRepresentation;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraValidationQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.validation.CassandraVisitorFactory;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
+import net.sf.esfinge.querybuilder.methodparser.OrderingDirection;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
 import net.sf.esfinge.querybuilder.methodparser.QueryVisitor;
 import org.junit.jupiter.api.Test;
@@ -155,62 +160,56 @@ public class CassandraJoinQueryVisitorTest {
 
     }
 
-    /*@Test
-    public void mixedWithfixParameterQueryFromOtherClass(){
-        visitor.visitEntity("Person");
-        visitor.visitCondition("address.state", ComparisonType.EQUALS, "SP");
-        visitor.visitConector("and");
-        visitor.visitCondition("age", ComparisonType.GREATER);
-        visitor.visitEnd();
-        QueryRepresentation qr = visitor.getQueryRepresentation();
-
-        String query = qr.getQuery().toString();
-        assertEquals(query,"SELECT o FROM <#keyspace-name#>.Person o WHERE o.address.state = :addressStateEquals and o.age > :ageGreater");
-        assertEquals(qr.getFixParameterValue("addressStateEquals"), "SP");
-        assertTrue(qr.getFixParameters().contains("addressStateEquals"));
-    }*/
-
-
-    /*@Test
-    public void orderByWithConditions(){
-        visitor.visitEntity("Person");
-        visitor.visitCondition("address.state", ComparisonType.EQUALS, "SP");
-        visitor.visitConector("and");
-        visitor.visitCondition("age", ComparisonType.GREATER);
-        visitor.visitOrderBy("age", OrderingDirection.ASC);
-        visitor.visitOrderBy("name", OrderingDirection.DESC);
-        visitor.visitEnd();
-        QueryRepresentation qr = visitor.getQueryRepresentation();
-
-        String query = qr.getQuery().toString();
-        assertEquals(query,"SELECT o FROM <#keyspace-name#>.Person o WHERE o.address.state = :addressStateEquals and o.age > :ageGreater ORDER BY o.age ASC, o.name DESC");
-    }*/
-
-    /*
     @Test
-	public void compositeCondition(){
-		visitor.visitEntity("Person");
-		visitor.visitCondition("address.city", ComparisonType.EQUALS);
-		visitor.visitEnd();
-		QueryRepresentation qr = visitor.getQueryRepresentation();
+    public void oneJoinConditionAndOneOrderByClauseTest(){
+        visitor.visitEntity("Worker");
+        visitor.visitCondition("address.state", ComparisonType.EQUALS);
+        visitor.visitOrderBy("age", OrderingDirection.ASC);
+        visitor.visitEnd();
 
-		String query = qr.getQuery().toString();
-		assertEquals(query,"SELECT o FROM <#keyspace-name#>.Person o WHERE o.address.city = :addressCityEquals");
-	}
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
 
-	@Test
-	public void complexQuery(){
-		visitor.visitEntity("Person");
-		visitor.visitCondition("name", ComparisonType.EQUALS);
-		visitor.visitConector("or");
-		visitor.visitCondition("lastName", ComparisonType.EQUALS);
-		visitor.visitConector("and");
-		visitor.visitCondition("address.city", ComparisonType.EQUALS);
-		visitor.visitEnd();
-		QueryRepresentation qr = visitor.getQueryRepresentation();
+        OrderByClause expected = new OrderByClause("age", OrderingDirection.ASC);
 
-		String query = qr.getQuery().toString();
-		assertEquals(query,"SELECT o FROM <#keyspace-name#>.Person o WHERE o.name = :nameEquals or o.lastName = :lastNameEquals and o.address.city = :addressCityEquals");
-	}*/
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Worker",
+                query);
+
+        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
+        String joinQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
+                joinQuery);
+        assertEquals(expected, ((CassandraQueryRepresentation) visitor.getQueryRepresentation()).getOrderByClauses().get(0));
+    }
+
+    @Test
+    public void oneJoinConditionAndOneSpecialClauseTest(){
+        visitor.visitEntity("Worker");
+        visitor.visitCondition("address.state", ComparisonType.EQUALS);
+        visitor.visitConector("and");
+        visitor.visitCondition("name", ComparisonType.NOT_EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        SpecialComparisonClause expected = new SpecialComparisonClause("name", SpecialComparisonType.NOT_EQUALS);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Worker",
+                query);
+
+        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
+        String joinQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
+                joinQuery);
+
+        assertEquals(expected, ((CassandraQueryRepresentation) visitor.getQueryRepresentation()).getSpecialComparisonClauses().get(0));
+    }
 
 }

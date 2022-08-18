@@ -112,19 +112,45 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
-        if (secondaryVisitor == null) {
-            primaryVisitor.visitCondition(parameter, comparisonType, nullOption);
+        updateArgumentOffsetForPrimaryVisitor();
+
+        if (parameter.contains(".")) {
+            initJoinQueryVisitor(parameter);
+
+            String joinParameter = parameter.substring(parameter.indexOf(".") + 1);
+            joinVisitor.visitCondition(joinParameter, comparisonType, nullOption);
+
+            lastVisitorType = VisitorType.JOIN;
         } else {
-            secondaryVisitor.visitCondition(parameter, comparisonType, nullOption);
+            if (secondaryVisitor == null) {
+                primaryVisitor.visitCondition(parameter, comparisonType, nullOption);
+                lastVisitorType = VisitorType.PRIMARY;
+            } else {
+                secondaryVisitor.visitCondition(parameter, comparisonType, nullOption);
+                lastVisitorType = VisitorType.SECONDARY;
+            }
         }
     }
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, Object value) {
-        if (secondaryVisitor == null) {
-            primaryVisitor.visitCondition(parameter, comparisonType, value);
+        updateArgumentOffsetForPrimaryVisitor();
+
+        if (parameter.contains(".")) {
+            initJoinQueryVisitor(parameter);
+
+            String joinParameter = parameter.substring(parameter.indexOf(".") + 1);
+            joinVisitor.visitCondition(joinParameter, comparisonType, value);
+
+            lastVisitorType = VisitorType.JOIN;
         } else {
-            secondaryVisitor.visitCondition(parameter, comparisonType, value);
+            if (secondaryVisitor == null) {
+                primaryVisitor.visitCondition(parameter, comparisonType, value);
+                lastVisitorType = VisitorType.PRIMARY;
+            } else {
+                secondaryVisitor.visitCondition(parameter, comparisonType, value);
+                lastVisitorType = VisitorType.SECONDARY;
+            }
         }
 
     }
