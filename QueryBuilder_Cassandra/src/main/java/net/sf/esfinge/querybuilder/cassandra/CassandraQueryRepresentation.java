@@ -65,6 +65,18 @@ public class CassandraQueryRepresentation implements QueryRepresentation {
 
         }
 
+        // Set the join clause value based on the parameters
+        for (JoinClause clause : joinClauses) {
+            String propertyName = clause.getJoinTypeName() + clause.getJoinAttributeName().substring(0,1).toUpperCase() + clause.getJoinAttributeName().substring(1);
+
+            if (parameters.get(propertyName) == null) {
+                if (parameters.get(propertyName + clause.getComparisonType().getOpName()) != null)
+                    propertyName += clause.getComparisonType().getOpName();
+            }
+
+            clause.setValue(parameters.get(propertyName));
+        }
+
         // Append the statement value according to the rules
         for (ConditionStatement statement : conditions) {
             if (!(statement.getValue() == null && statement.getNullOption() == NullOption.IGNORE_WHEN_NULL)) {

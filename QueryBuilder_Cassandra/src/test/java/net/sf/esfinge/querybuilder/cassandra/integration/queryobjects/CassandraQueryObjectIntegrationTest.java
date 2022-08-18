@@ -4,6 +4,7 @@ import com.datastax.driver.core.Session;
 import net.sf.esfinge.querybuilder.QueryBuilder;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabasePersonIntegrationTest;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraTestUtils;
+import net.sf.esfinge.querybuilder.cassandra.testresources.Address;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
 import org.junit.Test;
 
@@ -92,6 +93,18 @@ public class CassandraQueryObjectIntegrationTest extends CassandraBasicDatabaseP
         List<Person> list = testQuery.getPersonOrderByNameDesc(qo);
         assertEquals("Silvia", list.get(0).getName());
         assertEquals("Antonio", list.get(list.size() - 1).getName());
+    }
+
+    @Test
+    public void queryObjectWithJoinTest() {
+        JoinQueryObject qo = new JoinQueryObject();
+        qo.setLastName("Silva");
+        qo.setAddressState("MG");
+        qo.setAddressCity("Juiz de Fora");
+
+        List<Person> list = testQuery.getPersonOrderByLastName(qo);
+
+        assertEquals("Pedro", list.get(0).getName());
     }
 
 

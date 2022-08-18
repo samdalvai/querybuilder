@@ -134,7 +134,9 @@ public class JoinUtils {
             return jcs;
 
         for (JoinClause j : jcs) {
-            j.setValue(args[j.getArgPosition()]);
+            if (j.getValue() == null)
+                j.setValue(args[j.getArgPosition()]);
+
             newJcs.add(j);
         }
 
