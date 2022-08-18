@@ -1,6 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra.validation;
 
 import net.sf.esfinge.querybuilder.cassandra.CassandraQueryRepresentation;
+import net.sf.esfinge.querybuilder.cassandra.CassandraQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.exception.InvalidQuerySequenceException;
@@ -123,6 +124,10 @@ public class CassandraValidationQueryVisitor implements QueryVisitor {
 
     public CassandraChainQueryVisitor getSecondaryVisitor() {
         return this.visitor.getSecondaryVisitor();
+    }
+
+    public CassandraQueryVisitor getJoinVisitor() {
+        return this.visitor.getJoinVisitor();
     }
 
     public List<CassandraChainQueryVisitor> getSecondaryVisitorsList() {

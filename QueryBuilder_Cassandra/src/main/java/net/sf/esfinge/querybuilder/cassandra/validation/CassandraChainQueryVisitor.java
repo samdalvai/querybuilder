@@ -23,16 +23,16 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     private final int queryDepth;
 
-    public CassandraChainQueryVisitor(int queryDepth, VisitorType type) {
+    private VisitorType lastVisitorType = VisitorType.PRIMARY;
+
+    public CassandraChainQueryVisitor(int queryDepth) {
         this.primaryVisitor = new CassandraQueryVisitor();
         this.queryDepth = queryDepth;
-        this.visitorType = type;
     }
 
-    public CassandraChainQueryVisitor(int queryDepth, CassandraQueryVisitor previousVisitor, VisitorType type) {
+    public CassandraChainQueryVisitor(int queryDepth, CassandraQueryVisitor previousVisitor) {
         this.primaryVisitor = new CassandraQueryVisitor(previousVisitor);
         this.queryDepth = queryDepth;
-        this.visitorType = type;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
                 if (queryDepth >= queryLimit)
                     throw new SecondaryQueryLimitExceededException("Current query depth is " + queryDepth + ", but the configured limit is " + queryLimit);
 
-                secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor, VisitorType.SECONDARY);
+                secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
                 secondaryVisitor.visitEntity(primaryVisitor.getEntity());
             } else
                 primaryVisitor.visitConector(connector);
@@ -65,10 +65,23 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType) {
-        if (secondaryVisitor == null) {
-            primaryVisitor.visitCondition(parameter, comparisonType);
+        if (parameter.contains(".")){
+            if (joinVisitor == null){
+                joinVisitor = new CassandraQueryVisitor();
+                String joinEntity = parameter.substring(0,1).toUpperCase() + parameter.substring(1,parameter.indexOf("."));
+                System.out.println("Join entity: " + joinEntity);
+                joinVisitor.visitEntity(joinEntity);
+            }
+
+            String joinParameter = parameter.substring(parameter.indexOf(".") + 1);
+            System.out.println("Join parameter: " + joinParameter);
+            joinVisitor.visitCondition(joinParameter, comparisonType);
         } else {
-            secondaryVisitor.visitCondition(parameter, comparisonType);
+            if (secondaryVisitor == null) {
+                primaryVisitor.visitCondition(parameter, comparisonType);
+            } else {
+                secondaryVisitor.visitCondition(parameter, comparisonType);
+            }
         }
 
     }
@@ -103,6 +116,10 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitEnd() {
+        if (joinVisitor != null){
+            joinVisitor.visitEnd();
+        }
+
         if (secondaryVisitor == null) {
             primaryVisitor.visitEnd();
         } else {
