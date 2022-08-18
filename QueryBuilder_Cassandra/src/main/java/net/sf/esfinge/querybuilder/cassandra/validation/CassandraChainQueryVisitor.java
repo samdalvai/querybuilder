@@ -3,15 +3,12 @@ package net.sf.esfinge.querybuilder.cassandra.validation;
 import net.sf.esfinge.querybuilder.cassandra.CassandraQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.config.ConfigReader;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.SecondaryQueryLimitExceededException;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.ConditionStatement;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.OrderingDirection;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
 import net.sf.esfinge.querybuilder.methodparser.QueryVisitor;
 import net.sf.esfinge.querybuilder.methodparser.conditions.NullOption;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,11 +17,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
     private final CassandraQueryVisitor primaryVisitor;
     private CassandraChainQueryVisitor secondaryVisitor;
 
-    private CassandraChainQueryVisitor joinVisitor;
-
     private final int queryDepth;
-
-    private VisitorType lastVisitorType = VisitorType.PRIMARY;
 
     public CassandraChainQueryVisitor(int queryDepth) {
         this.primaryVisitor = new CassandraQueryVisitor();
@@ -45,112 +38,50 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitConector(String connector) {
-        if (lastVisitorType == VisitorType.JOIN){
-            joinVisitor.visitConector(connector);
+        if (secondaryVisitor == null) {
+            if (connector.equalsIgnoreCase("OR")) {
+                primaryVisitor.visitEnd();
+
+                int queryLimit = ConfigReader.getConfiguration().getSecondaryQueryLimit();
+
+                if (queryDepth >= queryLimit)
+                    throw new SecondaryQueryLimitExceededException("Current query depth is " + queryDepth + ", but the configured limit is " + queryLimit);
+
+                secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
+                secondaryVisitor.visitEntity(primaryVisitor.getEntity());
+            } else
+                primaryVisitor.visitConector(connector);
+
         } else {
-            if (secondaryVisitor == null) {
-                if (connector.equalsIgnoreCase("OR")) {
-                    primaryVisitor.visitEnd();
-
-                    int queryLimit = ConfigReader.getConfiguration().getSecondaryQueryLimit();
-
-                    if (queryDepth >= queryLimit)
-                        throw new SecondaryQueryLimitExceededException("Current query depth is " + queryDepth + ", but the configured limit is " + queryLimit);
-
-                    secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
-                    secondaryVisitor.visitEntity(primaryVisitor.getEntity());
-                } else
-                    primaryVisitor.visitConector(connector);
-
-            } else {
-                secondaryVisitor.visitConector(connector);
-            }
-        }
-    }
-
-    private void updateArgumentOffsetForPrimaryVisitor() {
-        if (joinVisitor != null){
-            int joinConditions = joinVisitor.getJoinConditions().size();
-            int joinSpecialClauses = joinVisitor.getJoinSpecialComparisonClauses().size();
-
-            primaryVisitor.setArgumentPositionOffset(primaryVisitor.getConditions().size() + primaryVisitor.getSpecialComparisonClauses().size() + joinConditions + joinSpecialClauses);
-        }
-    }
-
-    private void initJoinQueryVisitor(String parameter){
-        if (joinVisitor == null){
-            joinVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
-            String joinEntity = parameter.substring(0,1).toUpperCase() + parameter.substring(1,parameter.indexOf("."));
-            joinVisitor.visitEntity(joinEntity);
+            secondaryVisitor.visitConector(connector);
         }
     }
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType) {
-        updateArgumentOffsetForPrimaryVisitor();
-
-        if (parameter.contains(".")){
-            initJoinQueryVisitor(parameter);
-
-            String joinParameter = parameter.substring(parameter.indexOf(".") + 1);
-            joinVisitor.visitCondition(joinParameter, comparisonType);
-
-            lastVisitorType = VisitorType.JOIN;
+        if (secondaryVisitor == null) {
+            primaryVisitor.visitCondition(parameter, comparisonType);
         } else {
-            if (secondaryVisitor == null) {
-                primaryVisitor.visitCondition(parameter, comparisonType);
-                lastVisitorType = VisitorType.PRIMARY;
-            } else {
-                secondaryVisitor.visitCondition(parameter, comparisonType);
-                lastVisitorType = VisitorType.SECONDARY;
-            }
+            secondaryVisitor.visitCondition(parameter, comparisonType);
         }
-
     }
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
-        updateArgumentOffsetForPrimaryVisitor();
-
-        if (parameter.contains(".")) {
-            initJoinQueryVisitor(parameter);
-
-            String joinParameter = parameter.substring(parameter.indexOf(".") + 1);
-            joinVisitor.visitCondition(joinParameter, comparisonType, nullOption);
-
-            lastVisitorType = VisitorType.JOIN;
+        if (secondaryVisitor == null) {
+            primaryVisitor.visitCondition(parameter, comparisonType, nullOption);
         } else {
-            if (secondaryVisitor == null) {
-                primaryVisitor.visitCondition(parameter, comparisonType, nullOption);
-                lastVisitorType = VisitorType.PRIMARY;
-            } else {
-                secondaryVisitor.visitCondition(parameter, comparisonType, nullOption);
-                lastVisitorType = VisitorType.SECONDARY;
-            }
+            secondaryVisitor.visitCondition(parameter, comparisonType, nullOption);
         }
     }
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, Object value) {
-        updateArgumentOffsetForPrimaryVisitor();
-
-        if (parameter.contains(".")) {
-            initJoinQueryVisitor(parameter);
-
-            String joinParameter = parameter.substring(parameter.indexOf(".") + 1);
-            joinVisitor.visitCondition(joinParameter, comparisonType, value);
-
-            lastVisitorType = VisitorType.JOIN;
+        if (secondaryVisitor == null) {
+            primaryVisitor.visitCondition(parameter, comparisonType, value);
         } else {
-            if (secondaryVisitor == null) {
-                primaryVisitor.visitCondition(parameter, comparisonType, value);
-                lastVisitorType = VisitorType.PRIMARY;
-            } else {
-                secondaryVisitor.visitCondition(parameter, comparisonType, value);
-                lastVisitorType = VisitorType.SECONDARY;
-            }
+            secondaryVisitor.visitCondition(parameter, comparisonType, value);
         }
-
     }
 
     @Override
@@ -164,10 +95,6 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitEnd() {
-        if (joinVisitor != null){
-            joinVisitor.visitEnd();
-        }
-
         if (secondaryVisitor == null) {
             primaryVisitor.visitEnd();
         } else {
@@ -209,19 +136,4 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         return secondaryVisitor;
     }
 
-    public CassandraChainQueryVisitor getJoinVisitor() {
-        return joinVisitor;
-    }
-
-    public List<ConditionStatement> getJoinConditions() {
-        return primaryVisitor.getConditions();
-    }
-
-    public List<SpecialComparisonClause> getJoinSpecialComparisonClauses() {
-        return primaryVisitor.getSpecialComparisonClauses();
-    }
-
-    public int getArgumentPositionOffset() {
-        return primaryVisitor.getArgumentPositionOffset();
-    }
 }

@@ -126,9 +126,6 @@ public class CassandraValidationQueryVisitor implements QueryVisitor {
         return this.visitor.getSecondaryVisitor();
     }
 
-    public CassandraChainQueryVisitor getJoinVisitor() {
-        return this.visitor.getJoinVisitor();
-    }
 
     public List<CassandraChainQueryVisitor> getSecondaryVisitorsList() {
         List<CassandraChainQueryVisitor> visitors = new ArrayList<>();
