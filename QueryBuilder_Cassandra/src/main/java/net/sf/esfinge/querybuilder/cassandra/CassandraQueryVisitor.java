@@ -19,7 +19,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private final List<ConditionStatement> conditions = new ArrayList<>();
     private final List<OrderByClause> orderByClauses = new ArrayList<>();
     private final List<SpecialComparisonClause> specialComparisonClauses = new ArrayList<>();
-    private final int argumentPositionOffset;
+    private int argumentPositionOffset;
     private String entity;
     private String query = "";
     private int numberOfFixedValues = 0;
@@ -240,6 +240,10 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     public int getArgumentPositionOffset() {
         return argumentPositionOffset;
+    }
+
+    public void setArgumentPositionOffset(int argumentPositionOffset) {
+        this.argumentPositionOffset = argumentPositionOffset;
     }
 
     public CassandraQueryVisitor getPreviousVisitor() {

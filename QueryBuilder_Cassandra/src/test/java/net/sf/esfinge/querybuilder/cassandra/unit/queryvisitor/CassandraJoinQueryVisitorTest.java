@@ -97,7 +97,7 @@ public class CassandraJoinQueryVisitorTest {
         String joinQuery = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 0? ALLOW FILTERING",
+                "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 1? ALLOW FILTERING",
                 query);
 
         assertEquals(

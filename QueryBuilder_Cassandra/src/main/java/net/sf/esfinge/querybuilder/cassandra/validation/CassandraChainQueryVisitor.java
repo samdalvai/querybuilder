@@ -3,12 +3,15 @@ package net.sf.esfinge.querybuilder.cassandra.validation;
 import net.sf.esfinge.querybuilder.cassandra.CassandraQueryVisitor;
 import net.sf.esfinge.querybuilder.cassandra.config.ConfigReader;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.SecondaryQueryLimitExceededException;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.ConditionStatement;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.OrderingDirection;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
 import net.sf.esfinge.querybuilder.methodparser.QueryVisitor;
 import net.sf.esfinge.querybuilder.methodparser.conditions.NullOption;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,15 +70,30 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         }
     }
 
+    public void updateArgumentOffsetForPrimaryVisitor() {
+        if (joinVisitor != null){
+            int joinConditions = joinVisitor.getJoinConditions().size();
+            int joinSpecialClauses = joinVisitor.getJoinSpecialComparisonClauses().size();
+
+            primaryVisitor.setArgumentPositionOffset(primaryVisitor.getArgumentPositionOffset() + joinConditions + joinSpecialClauses);
+        }
+    }
+
+    public void initJoinQueryVisitor(String parameter){
+        if (joinVisitor == null){
+            joinVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
+            String joinEntity = parameter.substring(0,1).toUpperCase() + parameter.substring(1,parameter.indexOf("."));
+            System.out.println("Join entity: " + joinEntity);
+            joinVisitor.visitEntity(joinEntity);
+        }
+    }
+
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType) {
+        updateArgumentOffsetForPrimaryVisitor();
+
         if (parameter.contains(".")){
-            if (joinVisitor == null){
-                joinVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
-                String joinEntity = parameter.substring(0,1).toUpperCase() + parameter.substring(1,parameter.indexOf("."));
-                System.out.println("Join entity: " + joinEntity);
-                joinVisitor.visitEntity(joinEntity);
-            }
+            initJoinQueryVisitor(parameter);
 
             String joinParameter = parameter.substring(parameter.indexOf(".") + 1);
             System.out.println("Join parameter: " + joinParameter);
@@ -171,5 +189,17 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     public CassandraChainQueryVisitor getJoinVisitor() {
         return joinVisitor;
+    }
+
+    public List<ConditionStatement> getJoinConditions() {
+        return primaryVisitor.getConditions();
+    }
+
+    public List<SpecialComparisonClause> getJoinSpecialComparisonClauses() {
+        return primaryVisitor.getSpecialComparisonClauses();
+    }
+
+    public int getArgumentPositionOffset() {
+        return primaryVisitor.getArgumentPositionOffset();
     }
 }
