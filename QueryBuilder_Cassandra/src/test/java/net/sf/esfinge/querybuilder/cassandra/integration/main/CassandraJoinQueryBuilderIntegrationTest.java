@@ -43,15 +43,6 @@ public class CassandraJoinQueryBuilderIntegrationTest {
 
     CassandraJoinTestQuery testQuery = QueryBuilder.create(CassandraJoinTestQuery.class);
 
-    /*
-    "BEGIN BATCH\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (1, 'Pedro', 'Silva', 20, {city: 'Juiz de Fora', state: 'MG'});\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (2, 'Maria', 'Ferreira', 23, {city: 'SJCampos', state: 'SP'});\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (3, 'Marcos', 'Silva', 50, {city: 'SJCampos', state: 'SP'});\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (4, 'Antonio', 'Marques', 33, {city: 'Juiz de Fora', state: 'MG'});\n" +
-                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (5, 'Silvia', 'Bressan', 11, {city: 'Juiz de Fora', state: 'MG'});\n" +
-                "        APPLY BATCH";
-     */
     @Test
     public void queryWithOneParameterForJoinTest() {
         List<Worker> list = testQuery.getWorkerByAddressCity("Juiz de Fora");
@@ -116,5 +107,13 @@ public class CassandraJoinQueryBuilderIntegrationTest {
 
         assertEquals("NullPerson", list.get(0).getName());
     }
+
+    @Test
+    public void complexQueryWithJoinTest() {
+        List<Worker> list = testQuery.getWorkerByNameOrAddressCityAndAgeLesserOrLastNameOrderByName("Pedro", "SJCampos",30,"Si");
+
+        assertEquals("Marcos", list.get(0).getName());
+        assertEquals("Maria", list.get(1).getName());
+        assertEquals("Pedro", list.get(2).getName());}
 
 }
