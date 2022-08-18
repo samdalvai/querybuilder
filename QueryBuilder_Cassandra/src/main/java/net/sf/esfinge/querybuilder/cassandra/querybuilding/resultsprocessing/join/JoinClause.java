@@ -61,11 +61,6 @@ public class JoinClause {
         this.argPosition = argPosition;
     }
 
-    public Class getPropertyTypeClass(){
-        CassandraEntityClassProvider provider = new CassandraEntityClassProvider();
-        return provider.getEntityClass(propertyTypeName);
-    }
-
     @Override
     public String toString() {
         return "JoinClause{" +

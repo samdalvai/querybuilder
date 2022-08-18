@@ -1,12 +1,9 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join;
 
-import net.sf.esfinge.querybuilder.annotation.CompareToNull;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationException;
-import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,26 +122,16 @@ public class JoinUtils {
         }).collect(Collectors.toList());
     }
 
-    public static List<SpecialComparisonClause> getSpecialComparisonClausesWithValues(Object[] args, List<SpecialComparisonClause> spc) {
-        List<SpecialComparisonClause> newSpc = new ArrayList<>();
+    public static List<JoinClause> getJoinClausesWithValues(Object[] args, List<JoinClause> jcs) {
+        List<JoinClause> newJcs = new ArrayList<>();
 
-        for (SpecialComparisonClause c : spc) {
-            c.setValue(args[c.getArgPosition()]);
-            newSpc.add(c);
+        for (JoinClause j : jcs) {
+            j.setValue(args[j.getArgPosition()]);
+            newJcs.add(j);
         }
 
-        return newSpc;
+        return newJcs;
     }
 
-    public static boolean hasCompareToNullAnnotationOnFields(Object obj) {
-        if (obj != null) {
-            for (Field f : obj.getClass().getDeclaredFields()) {
-                if (f.isAnnotationPresent(CompareToNull.class))
-                    return true;
-            }
-        }
-
-        return false;
-    }
 
 }
