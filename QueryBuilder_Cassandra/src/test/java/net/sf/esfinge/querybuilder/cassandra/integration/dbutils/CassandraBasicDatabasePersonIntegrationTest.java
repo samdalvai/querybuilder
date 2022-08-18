@@ -15,13 +15,6 @@ public class CassandraBasicDatabasePersonIntegrationTest {
         CassandraTestUtils.createTablesPerson();
     }
 
-
-    // DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
-    /*@AfterClass
-    public static void dropDB() {
-        CassandraTestUtils.dropDB();
-    }*/
-
     @Before
     public void populateTables() {
         CassandraTestUtils.populateTablesPerson();
@@ -31,4 +24,10 @@ public class CassandraBasicDatabasePersonIntegrationTest {
     public void cleanTables() {
         CassandraTestUtils.cleanTablesPerson();
     }
+
+    // DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
+    /*@AfterClass
+    public static void dropDB() {
+        CassandraTestUtils.dropDB();
+    }*/
 }

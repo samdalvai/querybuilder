@@ -20,13 +20,6 @@ public class CassandraJoinQueryBuilderIntegrationTest {
 
     CassandraJoinTestQuery testQuery = QueryBuilder.create(CassandraJoinTestQuery.class);
 
-
-    // DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
-    /*@AfterClass
-    public static void dropDB() {
-        CassandraTestUtils.dropDB();
-    }*/
-
     @BeforeClass
     public static void initDB() throws TTransportException, IOException, InterruptedException {
         CassandraTestUtils.initDB();
@@ -42,6 +35,12 @@ public class CassandraJoinQueryBuilderIntegrationTest {
     public void cleanTables() {
         CassandraTestUtils.cleanTablesWorker();
     }
+
+    // DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
+    /*@AfterClass
+    public static void dropDB() {
+        CassandraTestUtils.dropDB();
+    }*/
 
     @Test
     public void queryWithOneParameterForJoinTest() {
