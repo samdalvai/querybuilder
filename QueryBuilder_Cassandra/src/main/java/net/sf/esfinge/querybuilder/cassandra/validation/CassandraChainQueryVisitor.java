@@ -70,20 +70,19 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         }
     }
 
-    public void updateArgumentOffsetForPrimaryVisitor() {
+    private void updateArgumentOffsetForPrimaryVisitor() {
         if (joinVisitor != null){
             int joinConditions = joinVisitor.getJoinConditions().size();
             int joinSpecialClauses = joinVisitor.getJoinSpecialComparisonClauses().size();
 
-            primaryVisitor.setArgumentPositionOffset(primaryVisitor.getArgumentPositionOffset() + joinConditions + joinSpecialClauses);
+            primaryVisitor.setArgumentPositionOffset(primaryVisitor.getConditions().size() + primaryVisitor.getSpecialComparisonClauses().size() + joinConditions + joinSpecialClauses);
         }
     }
 
-    public void initJoinQueryVisitor(String parameter){
+    private void initJoinQueryVisitor(String parameter){
         if (joinVisitor == null){
             joinVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
             String joinEntity = parameter.substring(0,1).toUpperCase() + parameter.substring(1,parameter.indexOf("."));
-            System.out.println("Join entity: " + joinEntity);
             joinVisitor.visitEntity(joinEntity);
         }
     }
@@ -96,7 +95,6 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
             initJoinQueryVisitor(parameter);
 
             String joinParameter = parameter.substring(parameter.indexOf(".") + 1);
-            System.out.println("Join parameter: " + joinParameter);
             joinVisitor.visitCondition(joinParameter, comparisonType);
 
             lastVisitorType = VisitorType.JOIN;

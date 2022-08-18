@@ -13,8 +13,6 @@ public class CassandraJoinQueryVisitorTest {
 
     private final QueryVisitor visitor = CassandraVisitorFactory.createQueryVisitor();
 
-    // TODO: // TODO: JOIN QUERY VISITOR TESTS
-
     @Test
     public void oneJoinConditionTest(){
         visitor.visitEntity("Worker");
@@ -83,6 +81,31 @@ public class CassandraJoinQueryVisitorTest {
     }
 
     @Test
+    public void twoConditionsForMainEntityAndOneJoinTest(){
+        visitor.visitEntity("Worker");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitConector("AND");
+        visitor.visitCondition("lastname", ComparisonType.EQUALS);
+        visitor.visitConector("AND");
+        visitor.visitCondition("address.state", ComparisonType.EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
+        String joinQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 0? AND lastname = 1? ALLOW FILTERING",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 2? ALLOW FILTERING",
+                joinQuery);
+    }
+
+    @Test
     public void oneJoinAndOneConditionForMainEntityTest(){
         visitor.visitEntity("Worker");
         visitor.visitCondition("address.state", ComparisonType.EQUALS);
@@ -102,6 +125,32 @@ public class CassandraJoinQueryVisitorTest {
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
+                joinQuery);
+
+    }
+
+    @Test
+    public void twoJoinsAndOneConditionForMainEntityTest(){
+        visitor.visitEntity("Worker");
+        visitor.visitCondition("address.state", ComparisonType.EQUALS);
+        visitor.visitConector("AND");
+        visitor.visitCondition("address.city", ComparisonType.EQUALS);
+        visitor.visitConector("AND");
+        visitor.visitCondition("name", ComparisonType.EQUALS);
+        visitor.visitEnd();
+
+        QueryRepresentation qr = visitor.getQueryRepresentation();
+        String query = qr.getQuery().toString();
+
+        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
+        String joinQuery = qr.getQuery().toString();
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 2? ALLOW FILTERING",
+                query);
+
+        assertEquals(
+                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? AND city = 1? ALLOW FILTERING",
                 joinQuery);
 
     }
