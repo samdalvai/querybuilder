@@ -45,6 +45,8 @@ public class CassandraJoinQueryBuilderIntegrationTest {
     @Test
     public void queryWithOneParameterForJoinTest() {
         List<Worker> list = testQuery.getWorkerByAddressCity("Juiz de Fora");
+
+        list.forEach(System.out::println);
     }
 
     /*
