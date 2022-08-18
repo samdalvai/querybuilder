@@ -96,6 +96,17 @@ public class CassandraQueryObjectIntegrationTest extends CassandraBasicDatabaseP
     }
 
     @Test
+    public void queryObjectWithSpecialComparisonTest() {
+        SpecialComparisonQueryObject qo = new SpecialComparisonQueryObject();
+        qo.setAge(20);
+        qo.setLastNameStarts("Si");
+
+        List<Person> list = testQuery.getPersonOrderByAge(qo);
+
+        assertEquals("Pedro", list.get(0).getName());
+    }
+
+    @Test
     public void queryObjectWithJoinTest() {
         JoinQueryObject qo = new JoinQueryObject();
         qo.setLastName("Silva");

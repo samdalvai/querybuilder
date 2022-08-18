@@ -138,7 +138,9 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
         if (parameter.contains("."))
             joinClauses.get(joinClauses.size() - 1).setValue(value);
-        else
+        else if (comparisonType == ComparisonType.NOT_EQUALS || comparisonType == ComparisonType.STARTS || comparisonType == ComparisonType.ENDS || comparisonType == ComparisonType.CONTAINS){
+            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setValue(value);
+        } else
             conditions.get(conditions.size() - 1).setValue(value);
 
         numberOfFixedValues++;
