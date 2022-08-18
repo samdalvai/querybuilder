@@ -26,4 +26,7 @@ public interface TestQueryObject {
 
     List<Person> getPersonOrderByAge(@QueryObject SpecialComparisonQueryObject qo);
 
+    List<Person> getPersonOrderById(@QueryObject ComplexQueryObject qo);
+
+
 }

@@ -118,5 +118,19 @@ public class CassandraQueryObjectIntegrationTest extends CassandraBasicDatabaseP
         assertEquals("Pedro", list.get(0).getName());
     }
 
+    @Test
+    public void complexQueryObjectTest() {
+        ComplexQueryObject qo = new ComplexQueryObject();
+        qo.setLastName("Silva");
+        qo.setAddressState("MG");
+        qo.setLastNameStarts("Si");
+        qo.setName("Pedro");
+        qo.setAge(null);
+
+        List<Person> list = testQuery.getPersonOrderById(qo);
+
+        assertEquals("Pedro", list.get(0).getName());
+    }
+
 
 }
