@@ -25,12 +25,12 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
-        String secondaryQuery = qr.getQuery().toString();
-
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker",
                 query);
+
+        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
+        String secondaryQuery = qr.getQuery().toString();
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",

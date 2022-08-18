@@ -19,6 +19,8 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
     private final CassandraQueryVisitor primaryVisitor;
     private CassandraChainQueryVisitor secondaryVisitor;
 
+    private CassandraQueryVisitor joinVisitor;
+
     private final int queryDepth;
 
     public CassandraChainQueryVisitor(int queryDepth, VisitorType type) {
@@ -142,4 +144,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         return secondaryVisitor;
     }
 
+    public CassandraQueryVisitor getJoinVisitor() {
+        return joinVisitor;
+    }
 }
