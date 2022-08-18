@@ -97,14 +97,14 @@ public class JoinUtils {
         Class mainClass = list.get(0).getClass();
 
         Method[] mainGetters = CassandraReflectionUtils.getClassGetters(mainClass);
-        Method mainGetter = CassandraReflectionUtils.getClassGetterForField(mainClass, mainGetters, joinClause.getPropertyTypeName());
+        Method mainGetter = CassandraReflectionUtils.getClassGetterForField(mainClass, mainGetters, joinClause.getJoinTypeName());
 
         return list.stream().filter(obj -> {
             try {
                 Class joinClass = mainGetter.invoke(list.get(0)).getClass();
 
                 Method[] joinGetters = CassandraReflectionUtils.getClassGetters(joinClass);
-                Method joinGetter = CassandraReflectionUtils.getClassGetterForField(joinClass, joinGetters, joinClause.getPropertyName());
+                Method joinGetter = CassandraReflectionUtils.getClassGetterForField(joinClass, joinGetters, joinClause.getJoinAttributeName());
 
                 Object nestedClass = mainGetter.invoke(obj);
 

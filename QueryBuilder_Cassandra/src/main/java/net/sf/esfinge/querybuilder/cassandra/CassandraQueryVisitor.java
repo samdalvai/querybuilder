@@ -1,8 +1,10 @@
 package net.sf.esfinge.querybuilder.cassandra;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidConnectorException;
+import net.sf.esfinge.querybuilder.cassandra.exceptions.JoinDepthLimitExceededException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedCassandraOperationException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ConditionStatement;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
@@ -67,40 +69,48 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType) {
-        // Cassandra supports only these conditional operators in the WHERE clause:
-        // IN, =, >, >=, <, or <=, but not all in certain situations.
-        // The other comparison types are implemented at the application logic, namely:
-        // <> (NOT EQUALS), STARTS, ENDS AND CONTAINS
-        if (comparisonType == ComparisonType.NOT_EQUALS || comparisonType == ComparisonType.STARTS || comparisonType == ComparisonType.ENDS || comparisonType == ComparisonType.CONTAINS) {
-            //throw new UnsupportedCassandraOperationException("Comparison type " + comparisonType + " not supported in Cassandra");
-            specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
-
-            // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
-            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
+        if (parameter.contains(".")){
+            updateJoinClauses(parameter,comparisonType);
         } else {
-            conditions.add(new ConditionStatement(parameter, comparisonType));
-            conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
+            // Cassandra supports only these conditional operators in the WHERE clause:
+            // IN, =, >, >=, <, or <=, but not all in certain situations.
+            // The other comparison types are implemented at the application logic, namely:
+            // <> (NOT EQUALS), STARTS, ENDS AND CONTAINS
+            if (comparisonType == ComparisonType.NOT_EQUALS || comparisonType == ComparisonType.STARTS || comparisonType == ComparisonType.ENDS || comparisonType == ComparisonType.CONTAINS) {
+                //throw new UnsupportedCassandraOperationException("Comparison type " + comparisonType + " not supported in Cassandra");
+                specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
+
+                // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
+                specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
+            } else {
+                conditions.add(new ConditionStatement(parameter, comparisonType));
+                conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
+            }
         }
     }
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
-        // Cassandra doesn't support querying based on null values, even for secondary indexes
-        // (like you can in a relational database)
-        if (nullOption == NullOption.COMPARE_TO_NULL) {
-            if (comparisonType == ComparisonType.NOT_EQUALS)
-                specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
-            else if (comparisonType == ComparisonType.EQUALS)
-                specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.COMPARE_TO_NULL));
-            else
-                throw new UnsupportedCassandraOperationException("Cannot apply comparison type \"" + comparisonType.name() + "\" to null value");
-
-            // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
-            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
+        if (parameter.contains(".")){
+            updateJoinClauses(parameter,comparisonType);
         } else {
-            visitCondition(parameter, comparisonType);
+            // Cassandra doesn't support querying based on null values, even for secondary indexes
+            // (like you can in a relational database)
+            if (nullOption == NullOption.COMPARE_TO_NULL) {
+                if (comparisonType == ComparisonType.NOT_EQUALS)
+                    specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
+                else if (comparisonType == ComparisonType.EQUALS)
+                    specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.COMPARE_TO_NULL));
+                else
+                    throw new UnsupportedCassandraOperationException("Cannot apply comparison type \"" + comparisonType.name() + "\" to null value");
 
-            conditions.get(conditions.size() - 1).setNullOption(nullOption);
+                // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
+                specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
+            } else {
+                visitCondition(parameter, comparisonType);
+
+                conditions.get(conditions.size() - 1).setNullOption(nullOption);
+            }
         }
     }
 
@@ -110,6 +120,20 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
         conditions.get(conditions.size() - 1).setValue(value);
         numberOfFixedValues++;
+    }
+
+    private void verifyJoinLimit(String parameter){
+        if (QueryBuildingUtils.countOccurrenceOfCharacterInString(parameter,'.') > 1)
+            throw new JoinDepthLimitExceededException("Join queries are supported only to the depth of 1");
+    }
+
+    private void updateJoinClauses(String parameter, ComparisonType comparisonType){
+            verifyJoinLimit(parameter);
+            String joinTypeName = parameter.substring(0,parameter.indexOf("."));
+            String joinAttributeName = parameter.substring(parameter.indexOf(".") + 1);
+
+            joinClauses.add(new JoinClause(joinTypeName, joinAttributeName, comparisonType));
+            joinClauses.get(joinClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
     }
 
     @Override

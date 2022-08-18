@@ -1,40 +1,39 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join;
 
-import net.sf.esfinge.querybuilder.cassandra.CassandraEntityClassProvider;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
 import java.util.Objects;
 
 public class JoinClause {
 
-    private String propertyTypeName;
-    private String propertyName;
+    private String joinTypeName;
+    private String joinAttributeName;
     private ComparisonType comparisonType;
 
     private Object value;
 
     private int argPosition;
 
-    public JoinClause(String propertyTypeName, String propertyName, ComparisonType comparisonType) {
-        this.propertyTypeName = propertyTypeName;
-        this.propertyName = propertyName;
+    public JoinClause(String joinTypeName, String joinAttributeName, ComparisonType comparisonType) {
+        this.joinTypeName = joinTypeName;
+        this.joinAttributeName = joinAttributeName;
         this.comparisonType = comparisonType;
     }
 
-    public String getPropertyTypeName() {
-        return propertyTypeName;
+    public String getJoinTypeName() {
+        return joinTypeName;
     }
 
-    public void setPropertyTypeName(String propertyTypeName) {
-        this.propertyTypeName = propertyTypeName;
+    public void setJoinTypeName(String joinTypeName) {
+        this.joinTypeName = joinTypeName;
     }
 
-    public String getPropertyName() {
-        return propertyName;
+    public String getJoinAttributeName() {
+        return joinAttributeName;
     }
 
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    public void setJoinAttributeName(String joinAttributeName) {
+        this.joinAttributeName = joinAttributeName;
     }
 
     public ComparisonType getComparisonType() {
@@ -64,8 +63,8 @@ public class JoinClause {
     @Override
     public String toString() {
         return "JoinClause{" +
-                "propertyTypeName='" + propertyTypeName + '\'' +
-                ", propertyName='" + propertyName + '\'' +
+                "propertyTypeName='" + joinTypeName + '\'' +
+                ", propertyName='" + joinAttributeName + '\'' +
                 ", comparisonType=" + comparisonType +
                 ", value=" + value +
                 ", argPosition=" + argPosition +
@@ -77,11 +76,11 @@ public class JoinClause {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JoinClause that = (JoinClause) o;
-        return argPosition == that.argPosition && Objects.equals(propertyTypeName, that.propertyTypeName) && Objects.equals(propertyName, that.propertyName) && comparisonType == that.comparisonType && Objects.equals(value, that.value);
+        return argPosition == that.argPosition && Objects.equals(joinTypeName, that.joinTypeName) && Objects.equals(joinAttributeName, that.joinAttributeName) && comparisonType == that.comparisonType && Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(propertyTypeName, propertyName, comparisonType, value, argPosition);
+        return Objects.hash(joinTypeName, joinAttributeName, comparisonType, value, argPosition);
     }
 }
