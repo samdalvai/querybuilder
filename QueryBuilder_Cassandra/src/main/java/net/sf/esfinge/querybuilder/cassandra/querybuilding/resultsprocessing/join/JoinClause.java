@@ -1,5 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join;
 
+import net.sf.esfinge.querybuilder.cassandra.CassandraEntityClassProvider;
 import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
 import java.util.Objects;
@@ -58,6 +59,11 @@ public class JoinClause {
 
     public void setArgPosition(int argPosition) {
         this.argPosition = argPosition;
+    }
+
+    public Class getPropertyTypeClass(){
+        CassandraEntityClassProvider provider = new CassandraEntityClassProvider();
+        return provider.getEntityClass(propertyTypeName);
     }
 
     @Override

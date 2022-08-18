@@ -1,5 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join;
 
+import jnr.ffi.annotations.In;
 import net.sf.esfinge.querybuilder.annotation.CompareToNull;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
@@ -19,13 +20,63 @@ public class JoinUtils {
             case EQUALS:
                 return objectAttributeValue.equals(queryParameterValue);
             case GREATER_OR_EQUALS:
-                return objectAttributeValue.equals(queryParameterValue) || (double) objectAttributeValue >= (double) queryParameterValue;
+                return objectAttributeValue.equals(queryParameterValue) || (Double) objectAttributeValue >= (Double) queryParameterValue;
             case LESSER_OR_EQUALS:
-                return objectAttributeValue.equals(queryParameterValue) || (double) objectAttributeValue <= (double) queryParameterValue;
+                return objectAttributeValue.equals(queryParameterValue) || (Double) objectAttributeValue <= (Double) queryParameterValue;
             case GREATER:
-                return (double) objectAttributeValue > (double) queryParameterValue;
+                return (Double) objectAttributeValue > (Double) queryParameterValue;
             case LESSER:
-                return (double) objectAttributeValue < (double) queryParameterValue;
+                return (Double) objectAttributeValue < (Double) queryParameterValue;
+            case NOT_EQUALS:
+                return !objectAttributeValue.equals(queryParameterValue);
+            case STARTS:
+                return objectAttributeValue.toString().startsWith(queryParameterValue.toString());
+            case ENDS:
+                return objectAttributeValue.toString().endsWith(queryParameterValue.toString());
+            case CONTAINS:
+                return objectAttributeValue.toString().contains(queryParameterValue.toString());
+            default:
+                return true;
+        }
+    }
+
+    public static boolean filterByJoinClauseComparisonType(Double objectAttributeValue, Double queryParameterValue, ComparisonType comparisonType) {
+        switch (comparisonType) {
+            case EQUALS:
+                return objectAttributeValue == queryParameterValue;
+            case GREATER_OR_EQUALS:
+                return objectAttributeValue >= queryParameterValue;
+            case LESSER_OR_EQUALS:
+                return objectAttributeValue <= queryParameterValue;
+            case GREATER:
+                return objectAttributeValue > queryParameterValue;
+            case LESSER:
+                return objectAttributeValue < queryParameterValue;
+            case NOT_EQUALS:
+                return !objectAttributeValue.equals(queryParameterValue);
+            case STARTS:
+                return objectAttributeValue.toString().startsWith(queryParameterValue.toString());
+            case ENDS:
+                return objectAttributeValue.toString().endsWith(queryParameterValue.toString());
+            case CONTAINS:
+                return objectAttributeValue.toString().contains(queryParameterValue.toString());
+            default:
+                return true;
+        }
+    }
+
+    public static boolean filterByJoinClauseComparisonType(Integer objectAttributeValue, Integer queryParameterValue, ComparisonType comparisonType) {
+        switch (comparisonType) {
+            case EQUALS:
+                return objectAttributeValue == queryParameterValue;
+            case GREATER_OR_EQUALS:
+                return objectAttributeValue >= queryParameterValue;
+            case LESSER_OR_EQUALS:
+                return objectAttributeValue <= queryParameterValue;
+            case GREATER:
+                return objectAttributeValue > queryParameterValue;
+            case LESSER:
+                return objectAttributeValue < queryParameterValue;
             case NOT_EQUALS:
                 return !objectAttributeValue.equals(queryParameterValue);
             case STARTS:
@@ -47,24 +98,32 @@ public class JoinUtils {
         if (list.size() == 0)
             return list;
 
-        Class clazz = list.get(0).getClass();
+        Class mainClass = list.get(0).getClass();
 
-        Method[] getters = CassandraReflectionUtils.getClassGetters(clazz);
+        Method[] mainGetters = CassandraReflectionUtils.getClassGetters(mainClass);
+        Method mainGetter = CassandraReflectionUtils.getClassGetterForField(mainClass, mainGetters, joinClause.getPropertyName());
 
-        Method getter = CassandraReflectionUtils.getClassGetterForField(clazz, getters, joinClause.getPropertyName());
+        System.out.println("main class: " + mainClass);
+
+        Class joinClass = joinClause.getPropertyTypeClass();
+
+        Method[] joinGetters = CassandraReflectionUtils.getClassGetters(joinClass);
+        Method joinGetter = CassandraReflectionUtils.getClassGetterForField(joinClass, mainGetters, joinClause.getPropertyName());
+
+        System.out.println("join class: " + joinClass);
 
         return list.stream().filter(obj -> {
             try {
                 // If we have the @CompareToNull annotation on the parameter of the query method
                 // but we pass a non null value to the method, then we should skip attributes
                 // in the results which are not null
-                if (getter.invoke(obj) == null && joinClause.getValue() != null) {
+                if (mainGetter.invoke(obj) == null && joinClause.getValue() != null) {
                     return false;
                 } else {
-                    return filterByJoinClause(getter.invoke(obj), joinClause);
+                    return filterByJoinClause(mainGetter.invoke(obj), joinClause);
                 }
             } catch (Exception e) {
-                throw new MethodInvocationException("Could not invoke method \"" + getter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e);
+                throw new MethodInvocationException("Could not invoke method \"" + mainGetter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e);
             }
         }).collect(Collectors.toList());
     }
