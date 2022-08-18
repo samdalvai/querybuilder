@@ -4,6 +4,6 @@ public enum VisitorType {
 
     PRIMARY,
     SECONDARY,
-    JOIN;
+    JOIN
 
 }

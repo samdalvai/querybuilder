@@ -18,11 +18,7 @@ import static org.junit.Assert.assertEquals;
 
 public class CassandraJoinQueryBuilderIntegrationTest {
 
-    @BeforeClass
-    public static void initDB() throws TTransportException, IOException, InterruptedException {
-        CassandraTestUtils.initDB();
-        CassandraTestUtils.createTablesWorker();
-    }
+    CassandraJoinTestQuery testQuery = QueryBuilder.create(CassandraJoinTestQuery.class);
 
 
     // TODO: DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
@@ -30,6 +26,12 @@ public class CassandraJoinQueryBuilderIntegrationTest {
     public static void dropDB() {
         CassandraTestUtils.dropDB();
     }*/
+
+    @BeforeClass
+    public static void initDB() throws TTransportException, IOException, InterruptedException {
+        CassandraTestUtils.initDB();
+        CassandraTestUtils.createTablesWorker();
+    }
 
     @Before
     public void populateTables() {
@@ -40,8 +42,6 @@ public class CassandraJoinQueryBuilderIntegrationTest {
     public void cleanTables() {
         CassandraTestUtils.cleanTablesWorker();
     }
-
-    CassandraJoinTestQuery testQuery = QueryBuilder.create(CassandraJoinTestQuery.class);
 
     @Test
     public void queryWithOneParameterForJoinTest() {
@@ -110,10 +110,11 @@ public class CassandraJoinQueryBuilderIntegrationTest {
 
     @Test
     public void complexQueryWithJoinTest() {
-        List<Worker> list = testQuery.getWorkerByNameOrAddressCityAndAgeLesserOrLastNameOrderByName("Pedro", "SJCampos",30,"Si");
+        List<Worker> list = testQuery.getWorkerByNameOrAddressCityAndAgeLesserOrLastNameOrderByName("Pedro", "SJCampos", 30, "Si");
 
         assertEquals("Marcos", list.get(0).getName());
         assertEquals("Maria", list.get(1).getName());
-        assertEquals("Pedro", list.get(2).getName());}
+        assertEquals("Pedro", list.get(2).getName());
+    }
 
 }

@@ -1,7 +1,5 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join;
 
-import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
-
 import java.util.Objects;
 
 public class JoinClause {

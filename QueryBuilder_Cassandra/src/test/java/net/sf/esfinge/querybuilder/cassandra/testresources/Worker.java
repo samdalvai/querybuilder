@@ -2,7 +2,6 @@ package net.sf.esfinge.querybuilder.cassandra.testresources;
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-import net.sf.esfinge.querybuilder.cassandra.annotations.JoinColumn;
 import net.sf.esfinge.querybuilder.cassandra.entity.CassandraEntity;
 
 import java.util.Objects;
@@ -19,7 +18,6 @@ public class Worker implements CassandraEntity {
     private String lastName;
     private Integer age;
 
-    @JoinColumn(referencedColumnName = "id")
     private Address address;
 
     public Integer getId() {

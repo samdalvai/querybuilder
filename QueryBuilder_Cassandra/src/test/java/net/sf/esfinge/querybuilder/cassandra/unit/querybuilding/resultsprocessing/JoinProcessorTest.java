@@ -6,7 +6,6 @@ import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.joi
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinProcessor;
 import net.sf.esfinge.querybuilder.cassandra.unit.reflection.TestAddress;
 import net.sf.esfinge.querybuilder.cassandra.unit.reflection.TestClassWithAddress;
-import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import org.junit.Before;
 import org.junit.Test;
 

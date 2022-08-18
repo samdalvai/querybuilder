@@ -24,12 +24,11 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private final List<OrderByClause> orderByClauses = new ArrayList<>();
     private final List<SpecialComparisonClause> specialComparisonClauses = new ArrayList<>();
     private final List<JoinClause> joinClauses = new ArrayList<>();
-    private int argumentPositionOffset;
+    private final int argumentPositionOffset;
+    CassandraQueryVisitor previousVisitor;
     private String entity;
     private String query = "";
     private int numberOfFixedValues = 0;
-
-    CassandraQueryVisitor previousVisitor;
 
     public CassandraQueryVisitor() {
         argumentPositionOffset = 0;
@@ -70,9 +69,9 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType) {
-        if (parameter.contains(".")){
+        if (parameter.contains(".")) {
             verifyJoinLimit(parameter);
-            String joinTypeName = parameter.substring(0,parameter.indexOf("."));
+            String joinTypeName = parameter.substring(0, parameter.indexOf("."));
             String joinAttributeName = parameter.substring(parameter.indexOf(".") + 1);
 
             joinClauses.add(new JoinClause(joinTypeName, joinAttributeName, JoinComparisonType.fromComparisonType(comparisonType)));
@@ -97,9 +96,9 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitCondition(String parameter, ComparisonType comparisonType, NullOption nullOption) {
-        if (parameter.contains(".")){
+        if (parameter.contains(".")) {
             verifyJoinLimit(parameter);
-            String joinTypeName = parameter.substring(0,parameter.indexOf("."));
+            String joinTypeName = parameter.substring(0, parameter.indexOf("."));
             String joinAttributeName = parameter.substring(parameter.indexOf(".") + 1);
 
             if (nullOption == NullOption.COMPARE_TO_NULL) {
@@ -141,8 +140,8 @@ public class CassandraQueryVisitor implements QueryVisitor {
         numberOfFixedValues++;
     }
 
-    private void verifyJoinLimit(String parameter){
-        if (QueryBuildingUtils.countOccurrenceOfCharacterInString(parameter,'.') > 1)
+    private void verifyJoinLimit(String parameter) {
+        if (QueryBuildingUtils.countOccurrenceOfCharacterInString(parameter, '.') > 1)
             throw new JoinDepthLimitExceededException("Join queries are supported only to the depth of 1");
     }
 

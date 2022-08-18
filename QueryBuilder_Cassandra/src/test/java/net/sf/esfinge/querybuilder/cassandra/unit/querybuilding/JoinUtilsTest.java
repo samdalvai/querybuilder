@@ -1,11 +1,11 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.querybuilding;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.GetterNotFoundInClassException;
+import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedComparisonException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinComparisonType;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinUtils;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Person;
-import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -26,16 +26,6 @@ public class JoinUtilsTest {
     }
 
     @Test
-    public void filterByJoinClauseGreaterOrEqualStringTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType(3, 2, JoinComparisonType.GREATER_OR_EQUALS));
-    }
-
-    @Test
-    public void filterByJoinClauseLesserOrEqualStringTest() {
-        assertTrue(JoinUtils.filterByJoinClauseComparisonType(2, 4, JoinComparisonType.LESSER_OR_EQUALS));
-    }
-
-    @Test
     public void filterByJoinClauseNotEqualStringTest() {
         assertTrue(JoinUtils.filterByJoinClauseComparisonType("Hello", "Hello to all", JoinComparisonType.NOT_EQUALS));
     }
@@ -51,7 +41,7 @@ public class JoinUtilsTest {
     }
 
     @Test
-    public void ffilterByJoinClauseNotEqualWithEqualIntTest() {
+    public void filterByJoinClauseNotEqualWithEqualIntTest() {
         assertFalse(JoinUtils.filterByJoinClauseComparisonType(1, 1, JoinComparisonType.NOT_EQUALS));
     }
 
@@ -86,6 +76,30 @@ public class JoinUtilsTest {
     }
 
     @Test
+    public void filterByJoinWithIntegersTest() {
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1, 1, JoinComparisonType.EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(2, 1, JoinComparisonType.GREATER_OR_EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(2, 1, JoinComparisonType.GREATER));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1, 2, JoinComparisonType.LESSER_OR_EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1, 2, JoinComparisonType.LESSER));
+    }
+
+    @Test
+    public void filterByJoinWithDoublesTest() {
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1.1, 1.1, JoinComparisonType.EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1.1, 1.0, JoinComparisonType.GREATER_OR_EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1.1, 1.0, JoinComparisonType.GREATER));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1.1, 2.1, JoinComparisonType.LESSER_OR_EQUALS));
+        assertTrue(JoinUtils.filterByJoinClauseComparisonType(1.1, 2.1, JoinComparisonType.LESSER));
+    }
+
+    @Test
+    public void unsupportedComparisonTypeTest() {
+        assertThrows(UnsupportedComparisonException.class, () -> JoinUtils.filterByJoinClauseComparisonType(1.1, 1.1, JoinComparisonType.STARTS));
+        assertThrows(UnsupportedComparisonException.class, () -> JoinUtils.filterByJoinClauseComparisonType(1, 1, JoinComparisonType.CONTAINS));
+    }
+
+    @Test
     public void filterByJoinClauseWithNotAvailableAttributeTest() {
         JoinClause clause = new JoinClause("whatever", "whatever", JoinComparisonType.NOT_EQUALS);
         clause.setValue("whatever");
@@ -100,13 +114,4 @@ public class JoinUtilsTest {
         assertThrows(GetterNotFoundInClassException.class, () -> JoinUtils.filterListByJoinClause(list, clause));
     }
 
-    /*@Test
-    public void hasCompareToNullAnnotationWithAnnotationPresentTest() {
-        assertTrue(SpecialComparisonUtils.hasCompareToNullAnnotationOnFields(new CompareNullQueryObject()));
-    }
-
-    @Test
-    public void hasCompareToNullAnnotationWithAnnotationNotPresentTest() {
-        assertFalse(SpecialComparisonUtils.hasCompareToNullAnnotationOnFields(new Person()));
-    }*/
 }

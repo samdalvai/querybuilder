@@ -1,7 +1,5 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.reflection;
 
-import net.sf.esfinge.querybuilder.cassandra.testresources.Address;
-
 import java.util.Objects;
 
 public class TestClassWithAddress {

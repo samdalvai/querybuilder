@@ -15,9 +15,8 @@ import java.util.Set;
 public class CassandraChainQueryVisitor implements QueryVisitor {
 
     private final CassandraQueryVisitor primaryVisitor;
-    private CassandraChainQueryVisitor secondaryVisitor;
-
     private final int queryDepth;
+    private CassandraChainQueryVisitor secondaryVisitor;
 
     public CassandraChainQueryVisitor(int queryDepth) {
         this.primaryVisitor = new CassandraQueryVisitor();

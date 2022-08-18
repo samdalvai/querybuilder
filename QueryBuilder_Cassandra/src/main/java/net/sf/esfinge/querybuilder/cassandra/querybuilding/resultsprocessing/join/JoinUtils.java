@@ -1,8 +1,8 @@
 package net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join;
 
 import net.sf.esfinge.querybuilder.cassandra.exceptions.MethodInvocationException;
+import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedComparisonException;
 import net.sf.esfinge.querybuilder.cassandra.reflection.CassandraReflectionUtils;
-import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class JoinUtils {
     public static boolean filterByJoinClauseComparisonType(Double objectAttributeValue, Double queryParameterValue, JoinComparisonType comparisonType) {
         switch (comparisonType) {
             case EQUALS:
-                return objectAttributeValue == queryParameterValue;
+                return objectAttributeValue.equals(queryParameterValue);
             case GREATER_OR_EQUALS:
                 return objectAttributeValue >= queryParameterValue;
             case LESSER_OR_EQUALS:
@@ -53,11 +53,9 @@ public class JoinUtils {
             case NOT_EQUALS:
                 return !objectAttributeValue.equals(queryParameterValue);
             case STARTS:
-                return objectAttributeValue.toString().startsWith(queryParameterValue.toString());
             case ENDS:
-                return objectAttributeValue.toString().endsWith(queryParameterValue.toString());
             case CONTAINS:
-                return objectAttributeValue.toString().contains(queryParameterValue.toString());
+                throw new UnsupportedComparisonException(comparisonType + " not supported for " + objectAttributeValue + " and " + queryParameterValue);
             case COMPARE_TO_NULL:
                 return queryParameterValue == null ? objectAttributeValue == null : objectAttributeValue.equals(queryParameterValue);
             default:
@@ -68,7 +66,7 @@ public class JoinUtils {
     public static boolean filterByJoinClauseComparisonType(Integer objectAttributeValue, Integer queryParameterValue, JoinComparisonType comparisonType) {
         switch (comparisonType) {
             case EQUALS:
-                return objectAttributeValue == queryParameterValue;
+                return objectAttributeValue.equals(queryParameterValue);
             case GREATER_OR_EQUALS:
                 return objectAttributeValue >= queryParameterValue;
             case LESSER_OR_EQUALS:
@@ -80,11 +78,9 @@ public class JoinUtils {
             case NOT_EQUALS:
                 return !objectAttributeValue.equals(queryParameterValue);
             case STARTS:
-                return objectAttributeValue.toString().startsWith(queryParameterValue.toString());
             case ENDS:
-                return objectAttributeValue.toString().endsWith(queryParameterValue.toString());
             case CONTAINS:
-                return objectAttributeValue.toString().contains(queryParameterValue.toString());
+                throw new UnsupportedComparisonException(comparisonType + " not supported for " + objectAttributeValue + " and " + queryParameterValue);
             case COMPARE_TO_NULL:
                 return queryParameterValue == null ? objectAttributeValue == null : objectAttributeValue.equals(queryParameterValue);
             default:
