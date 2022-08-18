@@ -21,7 +21,7 @@ public class CassandraJoinQueryBuilderIntegrationTest {
     CassandraJoinTestQuery testQuery = QueryBuilder.create(CassandraJoinTestQuery.class);
 
 
-    // TODO: DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
+    // DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
     /*@AfterClass
     public static void dropDB() {
         CassandraTestUtils.dropDB();

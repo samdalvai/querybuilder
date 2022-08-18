@@ -16,7 +16,7 @@ public class CassandraBasicDatabasePersonIntegrationTest {
     }
 
 
-    // TODO: DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
+    // DROPPING THE DB IN THE INTEGRATION TESTS CAN LEAD TO UNEXPECTED ERRORS
     /*@AfterClass
     public static void dropDB() {
         CassandraTestUtils.dropDB();
