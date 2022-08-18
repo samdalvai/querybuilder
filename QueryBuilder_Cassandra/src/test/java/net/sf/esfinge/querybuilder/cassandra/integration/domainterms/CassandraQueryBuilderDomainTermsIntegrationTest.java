@@ -43,7 +43,6 @@ public class CassandraQueryBuilderDomainTermsIntegrationTest extends CassandraBa
         assertEquals("The list should have Marcos", "Marcos", list.get(0).getName());
     }
 
-    // getPersonSilvaFamilyFromCampos
     @Test
     public void twoDomainTermsWithJoin() {
         List<Person> list = testQuery.getPersonSilvaFamilyFromCampos();
