@@ -12,11 +12,14 @@ public class SecondaryQueryUtils {
 
 
     public static boolean reflectiveEquals(Object obj1, Object obj2) {
+        System.out.println("is " + obj1 + " equal to " + obj2 + "?");
+
         if (!obj1.getClass().equals(obj2.getClass()))
             return false;
 
         Method[] obj1Getters = CassandraReflectionUtils.getClassGetters(obj1.getClass());
         Method[] obj2Getters = CassandraReflectionUtils.getClassGetters(obj2.getClass());
+
 
         for (int i = 0; i < obj1Getters.length; i++) {
             try {
@@ -24,10 +27,16 @@ public class SecondaryQueryUtils {
                 Object result2 = obj2Getters[i].invoke(obj2);
 
                 if (result1 == null) {
-                    return result2 == null;
+                    if (result2 != null)
+                        return false;
                 }
 
-                if (!result1.equals(result2))
+                if (result2 == null) {
+                    if (result1 != null)
+                        return false;
+                }
+
+                if (result1 != null && !result1.equals(result2))
                     return false;
 
             } catch (Exception e) {
