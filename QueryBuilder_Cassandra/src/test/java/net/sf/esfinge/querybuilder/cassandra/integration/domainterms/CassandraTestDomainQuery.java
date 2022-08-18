@@ -16,7 +16,8 @@ import java.util.List;
 @DomainTerms({
         @DomainTerm(term = "adult guys", conditions = @Condition(property = "age", comparison = ComparisonType.GREATER_OR_EQUALS, value = "25")),
         @DomainTerm(term = "silva family", conditions = @Condition(property = "lastName", value = "Silva")),
-        @DomainTerm(term = "from campos", conditions = @Condition(property = "address.city", value = "SJCampos"))
+        @DomainTerm(term = "from campos", conditions = @Condition(property = "address.city", value = "SJCampos")),
+        @DomainTerm(term = "name starts with m", conditions = @Condition(property = "name", comparison = ComparisonType.STARTS, value = "M"))
 })
 public interface CassandraTestDomainQuery extends Repository<Person> {
     List<Person> getPersonTeenager();
@@ -28,4 +29,6 @@ public interface CassandraTestDomainQuery extends Repository<Person> {
     List<Person> getPersonSilvaFamilyByAge(@Greater Integer age);
 
     List<Person> getPersonSilvaFamilyFromCampos();
+
+    List<Person> getPersonNameStartsWithM();
 }
