@@ -3,6 +3,7 @@ package net.sf.esfinge.querybuilder.cassandra;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.InvalidConnectorException;
 import net.sf.esfinge.querybuilder.cassandra.exceptions.UnsupportedCassandraOperationException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.ConditionStatement;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
@@ -19,6 +20,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
     private final List<ConditionStatement> conditions = new ArrayList<>();
     private final List<OrderByClause> orderByClauses = new ArrayList<>();
     private final List<SpecialComparisonClause> specialComparisonClauses = new ArrayList<>();
+    private final List<JoinClause> joinClauses = new ArrayList<>();
     private int argumentPositionOffset;
     private String entity;
     private String query = "";
@@ -36,7 +38,8 @@ public class CassandraQueryVisitor implements QueryVisitor {
         // the position of the arguments of the secondary queries
 
         this.argumentPositionOffset = previousVisitor.getConditions().size() +
-                previousVisitor.getSpecialComparisonClauses().size() -
+                previousVisitor.getSpecialComparisonClauses().size() +
+                previousVisitor.getJoinClauses().size() -
                 previousVisitor.getNumberOfFixedValues() +
                 previousVisitor.getArgumentPositionOffset();
 
@@ -73,10 +76,10 @@ public class CassandraQueryVisitor implements QueryVisitor {
             specialComparisonClauses.add(new SpecialComparisonClause(parameter, SpecialComparisonType.fromComparisonType(comparisonType)));
 
             // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
-            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
+            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
         } else {
             conditions.add(new ConditionStatement(parameter, comparisonType));
-            conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
+            conditions.get(conditions.size() - 1).setConditionIndex(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
         }
     }
 
@@ -93,7 +96,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
                 throw new UnsupportedCassandraOperationException("Cannot apply comparison type \"" + comparisonType.name() + "\" to null value");
 
             // Need to set the position of the argument, otherwise cannot keep track of which argument is associated with this condition
-            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
+            specialComparisonClauses.get(specialComparisonClauses.size() - 1).setArgPosition(conditions.size() + specialComparisonClauses.size() + joinClauses.size() - 1 - numberOfFixedValues + argumentPositionOffset);
         } else {
             visitCondition(parameter, comparisonType);
 
@@ -242,11 +245,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
         return argumentPositionOffset;
     }
 
-    public void setArgumentPositionOffset(int argumentPositionOffset) {
-        this.argumentPositionOffset = argumentPositionOffset;
-    }
-
-    public CassandraQueryVisitor getPreviousVisitor() {
-        return previousVisitor;
+    public List<JoinClause> getJoinClauses() {
+        return joinClauses;
     }
 }
