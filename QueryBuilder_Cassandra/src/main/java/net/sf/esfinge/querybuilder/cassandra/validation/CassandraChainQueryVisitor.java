@@ -17,8 +17,6 @@ import java.util.Set;
 
 public class CassandraChainQueryVisitor implements QueryVisitor {
 
-    VisitorType visitorType;
-
     private final CassandraQueryVisitor primaryVisitor;
     private CassandraChainQueryVisitor secondaryVisitor;
 

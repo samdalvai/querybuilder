@@ -6,7 +6,7 @@ import java.util.List;
 
 public class JoinProcessor extends BasicResultsProcessor {
 
-        @Override
+    @Override
     public <E> List<E> resultsProcessing(List<E> list) {
         return null;
     }

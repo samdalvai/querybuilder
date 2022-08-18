@@ -33,10 +33,10 @@ public class CassandraJoinQueryBuilderIntegrationTest {
         CassandraTestUtils.populateTablesWorker();
     }
 
-    /*@After
+    @After
     public void cleanTables() {
         CassandraTestUtils.cleanTablesWorker();
-    }*/
+    }
 
     CassandraJoinTestQuery testQuery = QueryBuilder.create(CassandraJoinTestQuery.class);
 
