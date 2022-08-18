@@ -1,7 +1,5 @@
 package net.sf.esfinge.querybuilder.cassandra.testresources;
 
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.UDT;
 import net.sf.esfinge.querybuilder.cassandra.entity.CassandraEntity;
 

@@ -1,7 +1,6 @@
 package net.sf.esfinge.querybuilder.cassandra.integration.main;
 
 import net.sf.esfinge.querybuilder.QueryBuilder;
-import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraBasicDatabaseWorkerIntegrationTest;
 import net.sf.esfinge.querybuilder.cassandra.integration.dbutils.CassandraTestUtils;
 import net.sf.esfinge.querybuilder.cassandra.testresources.CassandraJoinTestQuery;
 import net.sf.esfinge.querybuilder.cassandra.testresources.Worker;
@@ -34,10 +33,10 @@ public class CassandraJoinQueryBuilderIntegrationTest {
         CassandraTestUtils.populateTablesWorker();
     }
 
-    @After
+    /*@After
     public void cleanTables() {
         CassandraTestUtils.cleanTablesWorker();
-    }
+    }*/
 
     CassandraJoinTestQuery testQuery = QueryBuilder.create(CassandraJoinTestQuery.class);
 
