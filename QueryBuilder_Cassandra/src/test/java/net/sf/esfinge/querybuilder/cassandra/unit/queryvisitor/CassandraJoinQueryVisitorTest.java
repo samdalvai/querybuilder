@@ -1,6 +1,7 @@
 package net.sf.esfinge.querybuilder.cassandra.unit.queryvisitor;
 
 import net.sf.esfinge.querybuilder.cassandra.CassandraQueryRepresentation;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderByClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonType;
@@ -10,6 +11,7 @@ import net.sf.esfinge.querybuilder.methodparser.ComparisonType;
 import net.sf.esfinge.querybuilder.methodparser.OrderingDirection;
 import net.sf.esfinge.querybuilder.methodparser.QueryRepresentation;
 import net.sf.esfinge.querybuilder.methodparser.QueryVisitor;
+import org.apache.cassandra.tools.nodetool.Join;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -18,7 +20,7 @@ public class CassandraJoinQueryVisitorTest {
 
     private final QueryVisitor visitor = CassandraVisitorFactory.createQueryVisitor();
 
-    /*@Test
+    @Test
     public void oneJoinConditionTest(){
         visitor.visitEntity("Worker");
         visitor.visitCondition("address.state", ComparisonType.EQUALS);
@@ -27,16 +29,13 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
+        JoinClause expected = new JoinClause("address","state",ComparisonType.EQUALS);
+
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker",
                 query);
+        assertEquals(expected, ((CassandraQueryRepresentation) qr).getJoinClauses().get(0));
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String joinQuery = qr.getQuery().toString();
-
-        assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
-                joinQuery);
     }
 
     @Test
@@ -50,16 +49,16 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String joinQuery = qr.getQuery().toString();
+        JoinClause expected1 = new JoinClause("address","state",ComparisonType.EQUALS);
+        JoinClause expected2 = new JoinClause("address","city",ComparisonType.EQUALS);
+        expected2.setArgPosition(1);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker",
                 query);
+        assertEquals(expected1, ((CassandraQueryRepresentation) qr).getJoinClauses().get(0));
+        assertEquals(expected2, ((CassandraQueryRepresentation) qr).getJoinClauses().get(1));
 
-        assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? AND city = 1? ALLOW FILTERING",
-                joinQuery);
     }
 
     @Test
@@ -73,16 +72,15 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String joinQuery = qr.getQuery().toString();
+        JoinClause expected = new JoinClause("address","state",ComparisonType.EQUALS);
+        expected.setArgPosition(1);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 0? ALLOW FILTERING",
                 query);
+        assertEquals(expected, ((CassandraQueryRepresentation) qr).getJoinClauses().get(0));
 
-        assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 1? ALLOW FILTERING",
-                joinQuery);
+
     }
 
     @Test
@@ -98,16 +96,13 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String joinQuery = qr.getQuery().toString();
+        JoinClause expected = new JoinClause("address","state",ComparisonType.EQUALS);
+        expected.setArgPosition(2);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 0? AND lastname = 1? ALLOW FILTERING",
                 query);
-
-        assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 2? ALLOW FILTERING",
-                joinQuery);
+        assertEquals(expected, ((CassandraQueryRepresentation) qr).getJoinClauses().get(0));
     }
 
     @Test
@@ -121,17 +116,13 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String joinQuery = qr.getQuery().toString();
+        JoinClause expected = new JoinClause("address","state",ComparisonType.EQUALS);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 1? ALLOW FILTERING",
                 query);
 
-        assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
-                joinQuery);
-
+        assertEquals(expected, ((CassandraQueryRepresentation) qr).getJoinClauses().get(0));
     }
 
     @Test
@@ -147,17 +138,15 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String joinQuery = qr.getQuery().toString();
+        JoinClause expected1 = new JoinClause("address","state",ComparisonType.EQUALS);
+        JoinClause expected2 = new JoinClause("address","city",ComparisonType.EQUALS);
+        expected2.setArgPosition(1);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 2? ALLOW FILTERING",
                 query);
-
-        assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? AND city = 1? ALLOW FILTERING",
-                joinQuery);
-
+        assertEquals(expected1, ((CassandraQueryRepresentation) qr).getJoinClauses().get(0));
+        assertEquals(expected2, ((CassandraQueryRepresentation) qr).getJoinClauses().get(1));
     }
 
     @Test
@@ -170,19 +159,14 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        OrderByClause expected = new OrderByClause("age", OrderingDirection.ASC);
+        OrderByClause expectedOrderBy = new OrderByClause("age", OrderingDirection.ASC);
+        JoinClause expectedJoin = new JoinClause("address","state",ComparisonType.EQUALS);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker",
                 query);
-
-        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String joinQuery = qr.getQuery().toString();
-
-        assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
-                joinQuery);
-        assertEquals(expected, ((CassandraQueryRepresentation) visitor.getQueryRepresentation()).getOrderByClauses().get(0));
+        assertEquals(expectedOrderBy, ((CassandraQueryRepresentation) visitor.getQueryRepresentation()).getOrderByClauses().get(0));
+        assertEquals(expectedJoin, ((CassandraQueryRepresentation) qr).getJoinClauses().get(0));
     }
 
     @Test
@@ -196,20 +180,16 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        SpecialComparisonClause expected = new SpecialComparisonClause("name", SpecialComparisonType.NOT_EQUALS);
+        SpecialComparisonClause expectedSpecialClause = new SpecialComparisonClause("name", SpecialComparisonType.NOT_EQUALS);
+
+        JoinClause expectedJoin = new JoinClause("address","state",ComparisonType.EQUALS);
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker",
                 query);
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String joinQuery = qr.getQuery().toString();
-
-        assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
-                joinQuery);
-
-        assertEquals(expected, ((CassandraQueryRepresentation) visitor.getQueryRepresentation()).getSpecialComparisonClauses().get(0));
-    }*/
+        assertEquals(expectedSpecialClause, ((CassandraQueryRepresentation) visitor.getQueryRepresentation()).getSpecialComparisonClauses().get(0));
+        assertEquals(expectedJoin, ((CassandraQueryRepresentation) qr).getJoinClauses().get(0));
+    }
 
 }
