@@ -14,6 +14,30 @@ public class JoinClause {
         this.comparisonType = comparisonType;
     }
 
+    public String getPropertyTypeName() {
+        return propertyTypeName;
+    }
+
+    public void setPropertyTypeName(String propertyTypeName) {
+        this.propertyTypeName = propertyTypeName;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public ComparisonType getComparisonType() {
+        return comparisonType;
+    }
+
+    public void setComparisonType(ComparisonType comparisonType) {
+        this.comparisonType = comparisonType;
+    }
+
     @Override
     public String toString() {
         return "JoinClause{" +
