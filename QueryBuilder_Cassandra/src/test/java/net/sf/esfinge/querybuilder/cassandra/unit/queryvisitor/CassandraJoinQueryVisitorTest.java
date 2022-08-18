@@ -14,7 +14,6 @@ public class CassandraJoinQueryVisitorTest {
     private final QueryVisitor visitor = CassandraVisitorFactory.createQueryVisitor();
 
     // TODO: // TODO: JOIN QUERY VISITOR TESTS
-    // TODO: PROBLEM WITH COMPLEX QUERIES AND CASSANDRA: JOINS DO NOT EXIST, IMPLEMENT THEM AT APPLICATION LEVEL??
 
     @Test
     public void oneJoinConditionTest(){
@@ -30,11 +29,11 @@ public class CassandraJoinQueryVisitorTest {
                 query);
 
         qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String secondaryQuery = qr.getQuery().toString();
+        String joinQuery = qr.getQuery().toString();
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
-                secondaryQuery);
+                joinQuery);
     }
 
     @Test
@@ -49,7 +48,7 @@ public class CassandraJoinQueryVisitorTest {
         String query = qr.getQuery().toString();
 
         qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
-        String secondaryQuery = qr.getQuery().toString();
+        String joinQuery = qr.getQuery().toString();
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker",
@@ -57,7 +56,7 @@ public class CassandraJoinQueryVisitorTest {
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? AND city = 1? ALLOW FILTERING",
-                secondaryQuery);
+                joinQuery);
     }
 
     @Test
@@ -71,8 +70,8 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
-        String secondaryQuery = qr.getQuery().toString();
+        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
+        String joinQuery = qr.getQuery().toString();
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 0? ALLOW FILTERING",
@@ -80,7 +79,7 @@ public class CassandraJoinQueryVisitorTest {
 
         assertEquals(
                 "SELECT * FROM <#keyspace-name#>.Address WHERE state = 1? ALLOW FILTERING",
-                secondaryQuery);
+                joinQuery);
     }
 
     @Test
@@ -94,16 +93,16 @@ public class CassandraJoinQueryVisitorTest {
         QueryRepresentation qr = visitor.getQueryRepresentation();
         String query = qr.getQuery().toString();
 
-        qr = ((CassandraValidationQueryVisitor) visitor).getSecondaryVisitor().getQueryRepresentation();
-        String secondaryQuery = qr.getQuery().toString();
+        qr = ((CassandraValidationQueryVisitor) visitor).getJoinVisitor().getQueryRepresentation();
+        String joinQuery = qr.getQuery().toString();
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Worker",
+                "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 0? ALLOW FILTERING",
                 query);
 
         assertEquals(
-                "SELECT * FROM <#keyspace-name#>.Worker WHERE name = 1? ALLOW FILTERING",
-                secondaryQuery);
+                "SELECT * FROM <#keyspace-name#>.Address WHERE state = 0? ALLOW FILTERING",
+                joinQuery);
 
     }
 

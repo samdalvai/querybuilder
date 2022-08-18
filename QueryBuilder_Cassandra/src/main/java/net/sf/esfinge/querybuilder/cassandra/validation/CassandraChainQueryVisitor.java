@@ -19,7 +19,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
     private final CassandraQueryVisitor primaryVisitor;
     private CassandraChainQueryVisitor secondaryVisitor;
 
-    private CassandraQueryVisitor joinVisitor;
+    private CassandraChainQueryVisitor joinVisitor;
 
     private final int queryDepth;
 
@@ -44,22 +44,26 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
 
     @Override
     public void visitConector(String connector) {
-        if (secondaryVisitor == null) {
-            if (connector.equalsIgnoreCase("OR")) {
-                primaryVisitor.visitEnd();
-
-                int queryLimit = ConfigReader.getConfiguration().getSecondaryQueryLimit();
-
-                if (queryDepth >= queryLimit)
-                    throw new SecondaryQueryLimitExceededException("Current query depth is " + queryDepth + ", but the configured limit is " + queryLimit);
-
-                secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
-                secondaryVisitor.visitEntity(primaryVisitor.getEntity());
-            } else
-                primaryVisitor.visitConector(connector);
-
+        if (lastVisitorType == VisitorType.JOIN){
+            joinVisitor.visitConector(connector);
         } else {
-            secondaryVisitor.visitConector(connector);
+            if (secondaryVisitor == null) {
+                if (connector.equalsIgnoreCase("OR")) {
+                    primaryVisitor.visitEnd();
+
+                    int queryLimit = ConfigReader.getConfiguration().getSecondaryQueryLimit();
+
+                    if (queryDepth >= queryLimit)
+                        throw new SecondaryQueryLimitExceededException("Current query depth is " + queryDepth + ", but the configured limit is " + queryLimit);
+
+                    secondaryVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
+                    secondaryVisitor.visitEntity(primaryVisitor.getEntity());
+                } else
+                    primaryVisitor.visitConector(connector);
+
+            } else {
+                secondaryVisitor.visitConector(connector);
+            }
         }
     }
 
@@ -67,7 +71,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
     public void visitCondition(String parameter, ComparisonType comparisonType) {
         if (parameter.contains(".")){
             if (joinVisitor == null){
-                joinVisitor = new CassandraQueryVisitor();
+                joinVisitor = new CassandraChainQueryVisitor(this.queryDepth + 1, primaryVisitor);
                 String joinEntity = parameter.substring(0,1).toUpperCase() + parameter.substring(1,parameter.indexOf("."));
                 System.out.println("Join entity: " + joinEntity);
                 joinVisitor.visitEntity(joinEntity);
@@ -76,11 +80,15 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
             String joinParameter = parameter.substring(parameter.indexOf(".") + 1);
             System.out.println("Join parameter: " + joinParameter);
             joinVisitor.visitCondition(joinParameter, comparisonType);
+
+            lastVisitorType = VisitorType.JOIN;
         } else {
             if (secondaryVisitor == null) {
                 primaryVisitor.visitCondition(parameter, comparisonType);
+                lastVisitorType = VisitorType.PRIMARY;
             } else {
                 secondaryVisitor.visitCondition(parameter, comparisonType);
+                lastVisitorType = VisitorType.SECONDARY;
             }
         }
 
@@ -161,7 +169,7 @@ public class CassandraChainQueryVisitor implements QueryVisitor {
         return secondaryVisitor;
     }
 
-    public CassandraQueryVisitor getJoinVisitor() {
+    public CassandraChainQueryVisitor getJoinVisitor() {
         return joinVisitor;
     }
 }
