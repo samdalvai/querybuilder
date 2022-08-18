@@ -24,8 +24,6 @@ public class OrderingProcessor extends BasicResultsProcessor {
 
     @Override
     public <E> List<E> resultsProcessing(List<E> list) {
-        System.out.println("list size: " + list.size());
-
         int orderingLimit = ConfigReader.getConfiguration().getOrderingLimit();
 
         if (orderByClauses.isEmpty() || list.isEmpty())

@@ -12,8 +12,6 @@ public class SecondaryQueryUtils {
 
 
     public static boolean reflectiveEquals(Object obj1, Object obj2) {
-        System.out.println("is " + obj1 + " equal to " + obj2 + "?");
-
         if (!obj1.getClass().equals(obj2.getClass()))
             return false;
 

@@ -130,6 +130,9 @@ public class JoinUtils {
     public static List<JoinClause> getJoinClausesWithValues(Object[] args, List<JoinClause> jcs) {
         List<JoinClause> newJcs = new ArrayList<>();
 
+        if (args == null)
+            return jcs;
+
         for (JoinClause j : jcs) {
             j.setValue(args[j.getArgPosition()]);
             newJcs.add(j);
