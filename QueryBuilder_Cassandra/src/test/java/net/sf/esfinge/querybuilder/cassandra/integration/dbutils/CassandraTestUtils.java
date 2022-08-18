@@ -83,13 +83,6 @@ public class CassandraTestUtils {
 
         session.execute(query);
 
-        /*query = "BEGIN BATCH\n" +
-                "        INSERT INTO test.address(id, city, state) VALUES (1, 'SJCampos', 'SP');\n" +
-                "        INSERT INTO test.address(id, city, state) VALUES (2, 'Campinas', 'SP');\n" +
-                "        INSERT INTO test.address(id, city, state) VALUES (3, 'Juiz de Fora', 'MG');\n" +
-                "        APPLY BATCH";
-
-        session.execute(query);*/
 
         session.close();
     }
@@ -101,9 +94,6 @@ public class CassandraTestUtils {
 
         session.execute(query);
 
-        //query = "TRUNCATE test.address";
-
-        //session.execute(query);
         session.close();
     }
 

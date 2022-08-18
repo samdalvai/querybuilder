@@ -13,6 +13,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class CassandraJoinQueryBuilderIntegrationTest {
 
     @BeforeClass
@@ -40,29 +43,64 @@ public class CassandraJoinQueryBuilderIntegrationTest {
 
     CassandraJoinTestQuery testQuery = QueryBuilder.create(CassandraJoinTestQuery.class);
 
-    // TODO: JOIN QUERY INTEGRATION TESTS
+    /*
+    "BEGIN BATCH\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (1, 'Pedro', 'Silva', 20, {city: 'Juiz de Fora', state: 'MG'});\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (2, 'Maria', 'Ferreira', 23, {city: 'SJCampos', state: 'SP'});\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (3, 'Marcos', 'Silva', 50, {city: 'SJCampos', state: 'SP'});\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (4, 'Antonio', 'Marques', 33, {city: 'Juiz de Fora', state: 'MG'});\n" +
+                "        INSERT INTO test.worker(id, name, lastname, age, address) VALUES (5, 'Silvia', 'Bressan', 11, {city: 'Juiz de Fora', state: 'MG'});\n" +
+                "        APPLY BATCH";
+     */
     @Test
     public void queryWithOneParameterForJoinTest() {
         List<Worker> list = testQuery.getWorkerByAddressCity("Juiz de Fora");
 
-        list.forEach(System.out::println);
+        assertEquals(3, list.size());
     }
 
-    /*
     @Test
-	public void queryWithOtherTable(){
-		List<Person> list = tq.getPersonByAddressCity("Juiz de Fora");
-		assertEquals("The list should have 2 persons", 2, list.size());
-		assertEquals("The first should be Antonio", "Antonio", list.get(0).getName());
-		assertEquals("The second should be Silvia", "Silvia", list.get(1).getName());
-	}
+    public void queryWithTwoParametersForJoinTest() {
+        List<Worker> list = testQuery.getWorkerByAddressCityAndAddressState("Juiz de Fora", "MG");
 
-	@Test
-	public void compositeQueryWithOtherTable(){
-		List<Person> list = tq.getPersonByLastNameAndAddressState("Silva","SP");
-		assertEquals("The list should have 2 persons", 2, list.size());
-		assertEquals("The first should be Pedro", "Pedro", list.get(0).getName());
-		assertEquals("Marcos", list.get(1).getName());
-	}
-     */
+        assertEquals(3, list.size());
+    }
+
+    @Test
+    public void queryWithOneParameterForJoinAndOneNormalTest() {
+        List<Worker> list = testQuery.getWorkerByLastNameAndAddressState("Silva", "MG");
+
+        assertEquals("Pedro", list.get(0).getName());
+    }
+
+    @Test
+    public void queryWithOneNormalParameterAndOneForJoinTest() {
+        List<Worker> list = testQuery.getWorkerByAddressStateAndLastName("MG","Silva" );
+
+        assertEquals("Pedro", list.get(0).getName());
+    }
+
+    @Test
+    public void queryWithOrConnectorAndTwoParametersForJoinTest() {
+        List<Worker> list = testQuery.getWorkerByAddressCityOrAddressState("Juiz de Fora", "MG");
+
+        assertEquals(3, list.size());
+    }
+
+    @Test
+    public void queryWithOrConnectorAndMixedParametersTest() {
+        List<Worker> list = testQuery.getWorkerByAddressCityOrLastName("Juiz de Fora", "Silva");
+
+        assertEquals(4, list.size());
+    }
+
+    @Test
+    public void queryWithOrConnectorAndMixedParametersWithOrderingTest() {
+        List<Worker> list = testQuery.getWorkerByAddressCityOrLastNameOrderById("Juiz de Fora", "Silva");
+
+        assertEquals(4, list.size());
+        assertEquals(new Integer(1),list.get(0).getId());
+        assertEquals(new Integer(5),list.get(3).getId());
+    }
+
 }

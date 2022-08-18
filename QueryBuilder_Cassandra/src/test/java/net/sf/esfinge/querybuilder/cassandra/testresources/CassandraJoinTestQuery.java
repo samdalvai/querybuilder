@@ -6,8 +6,17 @@ import java.util.List;
 
 public interface CassandraJoinTestQuery extends Repository<Worker> {
 
-    // TODO: METHODS WITH CUSTOM CLASS ATTRIBUTE DON'T WORK IN CASSANDRA, BECAUSE THERE IS NO SUCH THIS AS JOINS, IMPLEMENT AT APPLICATION LOGIC OR LEAVE IT FORBIDDEN?
     List<Worker> getWorkerByAddressCity(String city);
 
+    List<Worker> getWorkerByAddressCityAndAddressState(String city, String state);
+
     List<Worker> getWorkerByLastNameAndAddressState(String lastname, String state);
+
+    List<Worker> getWorkerByAddressStateAndLastName(String state, String lastname);
+
+    List<Worker> getWorkerByAddressCityOrAddressState(String city, String state);
+
+    List<Worker> getWorkerByAddressCityOrLastName(String city, String lastName);
+
+    List<Worker> getWorkerByAddressCityOrLastNameOrderById(String city, String lastName);
 }

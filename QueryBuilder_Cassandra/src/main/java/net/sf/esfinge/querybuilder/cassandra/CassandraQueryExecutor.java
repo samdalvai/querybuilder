@@ -9,6 +9,9 @@ import net.sf.esfinge.querybuilder.cassandra.cassandrautils.MappingManagerProvid
 import net.sf.esfinge.querybuilder.cassandra.exceptions.WrongTypeOfExpectedResultException;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.QueryBuildingUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ResultsProcessor;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinClause;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinProcessor;
+import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.join.JoinUtils;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.ordering.OrderingProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.secondaryquery.SecondaryQueryProcessor;
 import net.sf.esfinge.querybuilder.cassandra.querybuilding.resultsprocessing.specialcomparison.SpecialComparisonClause;
@@ -53,12 +56,14 @@ public class CassandraQueryExecutor<E> implements QueryExecutor {
 
         for (QueryRepresentation representation : qrList) {
             String query = getQuery(queryInfo, args, representation);
-            System.out.println(query);
 
             List<SpecialComparisonClause> spc = ((CassandraQueryRepresentation) representation).getSpecialComparisonClauses();
             List<SpecialComparisonClause> newSpc = SpecialComparisonUtils.getSpecialComparisonClausesWithValues(args, spc);
 
-            ResultsProcessor specialComparisonProcessor = new SpecialComparisonProcessor(newSpc);
+            List<JoinClause> jcs = ((CassandraQueryRepresentation) representation).getJoinClauses();
+            List<JoinClause> newJcs = JoinUtils.getJoinClausesWithValues(args, jcs);
+
+            ResultsProcessor specialComparisonProcessor = new SpecialComparisonProcessor(newSpc, new JoinProcessor(newJcs));
 
             List<E> queryResults = specialComparisonProcessor.postProcess(getQueryResults(query));
 
