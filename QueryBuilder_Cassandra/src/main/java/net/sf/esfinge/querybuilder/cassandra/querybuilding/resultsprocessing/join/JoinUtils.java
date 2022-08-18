@@ -96,7 +96,7 @@ public class JoinUtils {
         if (list.size() == 0)
             return list;
 
-        Class mainClass = list.get(0).getClass();
+        Class<?> mainClass = list.get(0).getClass();
 
         Method[] mainGetters = CassandraReflectionUtils.getClassGetters(mainClass);
         Method mainGetter = CassandraReflectionUtils.getClassGetterForField(mainClass, mainGetters, joinClause.getJoinTypeName());
@@ -121,6 +121,7 @@ public class JoinUtils {
                     return filterByJoinClause(joinGetter.invoke(nestedClass), joinClause);
                 }
             } catch (Exception e) {
+                assert joinGetter != null;
                 throw new MethodInvocationException("Could not invoke method \"" + joinGetter.getName() + "\" on object \"" + obj + "\", this is caused by: " + e);
             }
         }).collect(Collectors.toList());

@@ -27,7 +27,7 @@ public enum JoinComparisonType {
             case ENDS:
                 return JoinComparisonType.ENDS;
             default:
-                throw new ComparisonTypeNotFoundException("Comparison type \"" + comparisonType.name() + "\" cannot be converted to SpecialComparisonType");
+                throw new ComparisonTypeNotFoundException("Comparison type \"" + comparisonType.name() + "\" cannot be converted to JoinComparisonType");
         }
     }
 
