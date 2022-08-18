@@ -221,7 +221,7 @@ public class CassandraQueryVisitor implements QueryVisitor {
 
     @Override
     public QueryRepresentation getQueryRepresentation() {
-        return new CassandraQueryRepresentation(getQuery(), isDynamic(), getFixParametersMap(), conditions, orderByClauses, specialComparisonClauses, entity);
+        return new CassandraQueryRepresentation(getQuery(), isDynamic(), getFixParametersMap(), conditions, orderByClauses, specialComparisonClauses, joinClauses, entity);
     }
 
     public String getEntity() {
